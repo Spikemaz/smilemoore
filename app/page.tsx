@@ -1,3 +1,5 @@
+import MailchimpSignup from './components/MailchimpSignup';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
@@ -98,6 +100,13 @@ export default function Home() {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <MailchimpSignup />
         </div>
       </section>
 
