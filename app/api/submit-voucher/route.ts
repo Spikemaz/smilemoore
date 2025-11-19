@@ -6,7 +6,7 @@ import { updateVisitorStatus } from '@/app/lib/visitorTracking';
 
 export async function POST(request: Request) {
   try {
-    const { email, name, phone, address, campaignSource } = await request.json();
+    const { email, name, phone, address, campaignSource, timeToSubmit, scrollDepth } = await request.json();
 
     // Validate required fields - only email is required for initial submission
     if (!email) {
@@ -53,12 +53,14 @@ export async function POST(request: Request) {
     // Get Customer ID for linking (it's totalSignups + 1, formatted)
     const customerId = (totalSignups + 1).toString().padStart(5, '0');
 
-    // Update visitor status to "Email Submitted"
+    // Update visitor status to "Email Submitted" with time and scroll metrics
     await updateVisitorStatus(
       ip,
       email,
       customerId,
-      'Email Submitted'
+      'Email Submitted',
+      timeToSubmit,
+      scrollDepth
     );
 
     // Check if we should announce new batch

@@ -61,6 +61,17 @@ export async function POST(request: Request) {
       language,
       timezone,
       landingPage,
+      fbclid,
+      gclid,
+      msclkid,
+      ttclid,
+      li_fat_id,
+      pageLoadTime,
+      isReturningVisitor,
+      sessionCount,
+      firstVisitDate,
+      dayOfWeek,
+      hourOfDay,
     } = await request.json();
 
     // Get IP address from request headers
@@ -74,34 +85,47 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Prepare row data with all tracking information
+    // Prepare row data with all tracking information (columns A-AH)
     const values = [[
-      visitorId,
-      timestamp,
-      ip,
-      campaignSource || 'direct',
-      deviceType || 'unknown',
-      browser || 'unknown',
-      userAgent || 'unknown',
-      referrer || 'direct',
-      '', // Email (empty initially)
-      '', // Customer ID (empty initially)
-      'Visited', // Status
-      utmSource || '',
-      utmMedium || '',
-      utmCampaign || '',
-      utmTerm || '',
-      utmContent || '',
-      os || 'unknown',
-      screenResolution || 'unknown',
-      language || 'unknown',
-      timezone || 'unknown',
-      landingPage || '',
+      visitorId, // A
+      timestamp, // B
+      ip, // C
+      campaignSource || 'direct', // D
+      deviceType || 'unknown', // E
+      browser || 'unknown', // F
+      userAgent || 'unknown', // G
+      referrer || 'direct', // H
+      '', // I - Email (empty initially)
+      '', // J - Customer ID (empty initially)
+      'Visited', // K - Status
+      utmSource || '', // L
+      utmMedium || '', // M
+      utmCampaign || '', // N
+      utmTerm || '', // O
+      utmContent || '', // P
+      os || 'unknown', // Q
+      screenResolution || 'unknown', // R
+      language || 'unknown', // S
+      timezone || 'unknown', // T
+      landingPage || '', // U
+      fbclid || '', // V
+      gclid || '', // W
+      msclkid || '', // X
+      ttclid || '', // Y
+      li_fat_id || '', // Z
+      pageLoadTime || 0, // AA
+      isReturningVisitor ? 'Yes' : 'No', // AB
+      sessionCount || 1, // AC
+      firstVisitDate || '', // AD
+      dayOfWeek || '', // AE
+      hourOfDay || 0, // AF
+      '', // AG - Time to Email Submit (calculated later)
+      '', // AH - Max Scroll Depth % (updated later)
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:U',
+      range: 'Visitors!A:AH',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });
@@ -109,6 +133,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       visitorId,
+      timestamp,
       message: 'Visitor tracked successfully',
     });
   } catch (error) {

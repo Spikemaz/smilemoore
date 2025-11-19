@@ -38,11 +38,18 @@ export default function LandingPage() {
   const [voucherValue, setVoucherValue] = useState<number>(50);
   const [isLoading, setIsLoading] = useState(true);
   const [visitorId, setVisitorId] = useState<string>('');
+  const [pageLoadTime, setPageLoadTime] = useState<number>(0);
+  const [maxScrollDepth, setMaxScrollDepth] = useState<number>(0);
+  const [pageLoadTimestamp] = useState<number>(Date.now());
 
   // Track visitor immediately on page load
   useEffect(() => {
     async function trackVisitor() {
       try {
+        // Calculate page load time
+        const loadTime = performance.now();
+        setPageLoadTime(loadTime);
+
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -52,6 +59,13 @@ export default function LandingPage() {
         const utmCampaign = urlParams.get('utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || '';
         const utmContent = urlParams.get('utm_content') || '';
+
+        // Extract click IDs for ad platforms
+        const fbclid = urlParams.get('fbclid') || '';
+        const gclid = urlParams.get('gclid') || '';
+        const msclkid = urlParams.get('msclkid') || ''; // Microsoft Ads
+        const ttclid = urlParams.get('ttclid') || ''; // TikTok
+        const li_fat_id = urlParams.get('li_fat_id') || ''; // LinkedIn
 
         // Detect device type
         const deviceType = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
@@ -87,6 +101,23 @@ export default function LandingPage() {
         // Get full landing page URL
         const landingPage = window.location.href;
 
+        // Check if returning visitor
+        const existingVisitorId = localStorage.getItem('smilemoore_visitor_id');
+        const sessionCount = parseInt(localStorage.getItem('smilemoore_session_count') || '0') + 1;
+        const isReturningVisitor = !!existingVisitorId;
+        const firstVisitDate = localStorage.getItem('smilemoore_first_visit') || new Date().toISOString();
+
+        // Store first visit date if new
+        if (!existingVisitorId) {
+          localStorage.setItem('smilemoore_first_visit', firstVisitDate);
+        }
+        localStorage.setItem('smilemoore_session_count', sessionCount.toString());
+
+        // Get current date/time for analysis
+        const now = new Date();
+        const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
+        const hourOfDay = now.getHours();
+
         // Track the visit
         const response = await fetch('/api/track-visitor', {
           method: 'POST',
@@ -107,6 +138,17 @@ export default function LandingPage() {
             language,
             timezone,
             landingPage,
+            fbclid,
+            gclid,
+            msclkid,
+            ttclid,
+            li_fat_id,
+            pageLoadTime: Math.round(loadTime),
+            isReturningVisitor,
+            sessionCount,
+            firstVisitDate,
+            dayOfWeek,
+            hourOfDay,
           }),
         });
 
@@ -115,6 +157,8 @@ export default function LandingPage() {
           setVisitorId(data.visitorId);
           // Store in sessionStorage to link later
           sessionStorage.setItem('visitorId', data.visitorId);
+          // Store in localStorage for return visitor tracking
+          localStorage.setItem('smilemoore_visitor_id', data.visitorId);
         }
       } catch (error) {
         console.error('Error tracking visitor:', error);
@@ -123,6 +167,23 @@ export default function LandingPage() {
 
     trackVisitor();
   }, []);
+
+  // Track scroll depth
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const scrollPercentage = Math.round((scrollTop / (documentHeight - windowHeight)) * 100);
+
+      if (scrollPercentage > maxScrollDepth) {
+        setMaxScrollDepth(scrollPercentage);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [maxScrollDepth]);
 
   // Fetch initial voucher status
   useEffect(() => {
@@ -159,6 +220,9 @@ export default function LandingPage() {
 
     try {
       if (step === 1) {
+        // Calculate time from page load to email submission (in seconds)
+        const timeToSubmit = Math.round((Date.now() - pageLoadTimestamp) / 1000);
+
         // Submit email immediately to Google Sheets
         const response = await fetch('/api/submit-voucher', {
           method: 'POST',
@@ -171,6 +235,8 @@ export default function LandingPage() {
             phone: '',
             address: '',
             campaignSource: 'direct',
+            timeToSubmit,
+            scrollDepth: maxScrollDepth,
           }),
         });
 

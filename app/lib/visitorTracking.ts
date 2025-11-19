@@ -25,7 +25,9 @@ export async function updateVisitorStatus(
   ipAddress: string,
   email?: string,
   customerId?: string,
-  status?: 'Email Submitted' | 'Voucher Claimed'
+  status?: 'Email Submitted' | 'Voucher Claimed',
+  timeToEmailSubmit?: number,
+  maxScrollDepth?: number
 ): Promise<boolean> {
   try {
     const sheets = getGoogleSheetsClient();
@@ -33,7 +35,7 @@ export async function updateVisitorStatus(
     // Find the visitor row by IP address (most recent within last 30 minutes)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:K',
+      range: 'Visitors!A:AH',
     });
 
     const rows = response.data.values;
@@ -78,6 +80,20 @@ export async function updateVisitorStatus(
       updates.push({
         range: `Visitors!K${matchRowIndex}`, // Column K = Status
         values: [[status]],
+      });
+    }
+
+    if (timeToEmailSubmit !== undefined) {
+      updates.push({
+        range: `Visitors!AG${matchRowIndex}`, // Column AG = Time to Email Submit
+        values: [[timeToEmailSubmit]],
+      });
+    }
+
+    if (maxScrollDepth !== undefined) {
+      updates.push({
+        range: `Visitors!AH${matchRowIndex}`, // Column AH = Max Scroll Depth
+        values: [[maxScrollDepth]],
       });
     }
 
