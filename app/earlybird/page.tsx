@@ -111,6 +111,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'name',
             value: formData.name,
+            campaignSource: 'earlybird-qr',
           }),
         });
 
@@ -127,6 +128,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'phone',
             value: formData.phone,
+            campaignSource: 'earlybird-qr',
           }),
         });
 
@@ -143,6 +145,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'address',
             value: formData.address,
+            campaignSource: 'earlybird-qr',
           }),
         });
 

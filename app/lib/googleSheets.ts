@@ -4,8 +4,8 @@ const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
 // Initialize Google Sheets API
 function getGoogleSheetsClient() {
-  const client_email = process.env.GOOGLE_CLIENT_EMAIL;
-  const private_key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const client_email = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
+  const private_key = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
   if (!client_email || !private_key) {
     throw new Error('Google Sheets credentials not configured');
@@ -22,19 +22,58 @@ function getGoogleSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
-// Get total number of signups
+// Get next customer ID from CustomerID sheet
+async function getNextCustomerId(): Promise<string> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Read current counter from CustomerID sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A2',
+    });
+
+    const currentId = response.data.values?.[0]?.[0];
+    const nextId = currentId ? parseInt(currentId) + 1 : 1;
+
+    // Update the counter
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A2',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[nextId]],
+      },
+    });
+
+    // Format as 00001, 00002, etc.
+    return nextId.toString().padStart(5, '0');
+  } catch (error) {
+    console.error('Error getting next customer ID:', error);
+    throw error;
+  }
+}
+
+// Get total number of signups across ALL campaigns
 export async function getTotalSignups(): Promise<number> {
   try {
     const sheets = getGoogleSheetsClient();
 
-    // Read from "Signups" sheet, column A (skipping header)
-    const response = await sheets.spreadsheets.values.get({
+    // Count from both Home and Earlybird tabs
+    const homeResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Signups!A2:A', // Start from row 2 (skip header)
+      range: 'Home!A2:A',
     });
 
-    const rows = response.data.values;
-    return rows ? rows.length : 0;
+    const earlybirdResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Earlybird!A2:A',
+    });
+
+    const homeRows = homeResponse.data.values?.length || 0;
+    const earlybirdRows = earlybirdResponse.data.values?.length || 0;
+
+    return homeRows + earlybirdRows;
   } catch (error) {
     console.error('Error reading from Google Sheets:', error);
     return 0;
@@ -55,10 +94,16 @@ export async function addSignup(data: {
   try {
     const sheets = getGoogleSheetsClient();
     const timestamp = new Date().toISOString();
-    const totalSignups = await getTotalSignups();
 
-    // Append to "Signups" sheet
+    // Get unique customer ID
+    const customerId = await getNextCustomerId();
+
+    // Determine which sheet to use based on campaign source
+    const sheetName = data.campaignSource === 'earlybird-qr' ? 'Earlybird' : 'Home';
+
+    // Prepare row data
     const values = [[
+      customerId,
       timestamp,
       data.email,
       data.name,
@@ -68,12 +113,11 @@ export async function addSignup(data: {
       data.voucherValue,
       data.voucherCode,
       data.batchNumber,
-      totalSignups + 1, // Running total
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Signups!A:J',
+      range: `${sheetName}!A:J`,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });
@@ -90,33 +134,34 @@ export async function initializeSheet(): Promise<boolean> {
   try {
     const sheets = getGoogleSheetsClient();
 
-    // Check if "Signups" sheet exists
     const spreadsheet = await sheets.spreadsheets.get({
       spreadsheetId: SPREADSHEET_ID,
     });
 
-    const signupsSheet = spreadsheet.data.sheets?.find(
-      (sheet) => sheet.properties?.title === 'Signups'
-    );
+    const existingSheets = spreadsheet.data.sheets?.map(s => s.properties?.title) || [];
 
-    if (!signupsSheet) {
-      // Create "Signups" sheet
+    // Create sheets that don't exist
+    const sheetsToCreate = [];
+    if (!existingSheets.includes('Home')) {
+      sheetsToCreate.push({ addSheet: { properties: { title: 'Home' } } });
+    }
+    if (!existingSheets.includes('Earlybird')) {
+      sheetsToCreate.push({ addSheet: { properties: { title: 'Earlybird' } } });
+    }
+    if (!existingSheets.includes('CustomerID')) {
+      sheetsToCreate.push({ addSheet: { properties: { title: 'CustomerID' } } });
+    }
+
+    if (sheetsToCreate.length > 0) {
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
-        requestBody: {
-          requests: [{
-            addSheet: {
-              properties: {
-                title: 'Signups',
-              },
-            },
-          }],
-        },
+        requestBody: { requests: sheetsToCreate },
       });
     }
 
-    // Add headers
+    // Add headers to Home and Earlybird sheets
     const headers = [[
+      'Customer ID',
       'Timestamp',
       'Email',
       'Name',
@@ -126,14 +171,29 @@ export async function initializeSheet(): Promise<boolean> {
       'Voucher Value',
       'Voucher Code',
       'Batch Number',
-      'Total Signups',
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Signups!A1:J1',
+      range: 'Home!A1:J1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
+    });
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Earlybird!A1:J1',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: headers },
+    });
+
+    // Initialize CustomerID counter
+    const customerIdHeaders = [['Last Customer ID'], ['0']];
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A1:A2',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: customerIdHeaders },
     });
 
     return true;

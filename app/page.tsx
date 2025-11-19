@@ -111,6 +111,7 @@ export default function LandingPage() {
             email: formData.email,
             field: 'name',
             value: formData.name,
+            campaignSource: 'direct',
           }),
         });
 
@@ -127,6 +128,7 @@ export default function LandingPage() {
             email: formData.email,
             field: 'phone',
             value: formData.phone,
+            campaignSource: 'direct',
           }),
         });
 
@@ -143,6 +145,7 @@ export default function LandingPage() {
             email: formData.email,
             field: 'address',
             value: formData.address,
+            campaignSource: 'direct',
           }),
         });
 

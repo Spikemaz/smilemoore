@@ -17,7 +17,7 @@ async function getAuthClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, field, value } = await request.json();
+    const { email, field, value, campaignSource } = await request.json();
 
     if (!email || !field || !value) {
       return NextResponse.json(
@@ -29,10 +29,13 @@ export async function POST(request: NextRequest) {
     const authClient = await getAuthClient();
     const sheets = google.sheets({ version: 'v4', auth: authClient as any });
 
-    // Find the row with this email
+    // Determine which sheet to search based on campaign source
+    const sheetName = campaignSource === 'earlybird-qr' ? 'Earlybird' : 'Home';
+
+    // Find the row with this email (email is in column C now)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Signups!A:A',
+      range: `${sheetName}!C:C`,
     });
 
     const rows = response.data.values || [];
@@ -47,9 +50,9 @@ export async function POST(request: NextRequest) {
 
     // Update the specific field
     const columnMap: { [key: string]: string } = {
-      name: 'B',
-      phone: 'C',
-      address: 'D',
+      name: 'D',     // Column D
+      phone: 'E',    // Column E
+      address: 'F',  // Column F (postcode)
     };
 
     const column = columnMap[field];
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Signups!${column}${rowIndex + 1}`,
+      range: `${sheetName}!${column}${rowIndex + 1}`,
       valueInputOption: 'RAW',
       requestBody: {
         values: [[value]],
