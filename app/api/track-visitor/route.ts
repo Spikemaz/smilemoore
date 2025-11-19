@@ -45,7 +45,23 @@ async function getNextVisitorId(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
-    const { campaignSource, deviceType, browser, userAgent, referrer } = await request.json();
+    const {
+      campaignSource,
+      deviceType,
+      browser,
+      userAgent,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      utmTerm,
+      utmContent,
+      os,
+      screenResolution,
+      language,
+      timezone,
+      landingPage,
+    } = await request.json();
 
     // Get IP address from request headers
     const ip = request.headers.get('x-forwarded-for') ||
@@ -58,7 +74,7 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Prepare row data
+    // Prepare row data with all tracking information
     const values = [[
       visitorId,
       timestamp,
@@ -71,11 +87,21 @@ export async function POST(request: Request) {
       '', // Email (empty initially)
       '', // Customer ID (empty initially)
       'Visited', // Status
+      utmSource || '',
+      utmMedium || '',
+      utmCampaign || '',
+      utmTerm || '',
+      utmContent || '',
+      os || 'unknown',
+      screenResolution || 'unknown',
+      language || 'unknown',
+      timezone || 'unknown',
+      landingPage || '',
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:K',
+      range: 'Visitors!A:U',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

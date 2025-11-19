@@ -43,21 +43,49 @@ export default function LandingPage() {
   useEffect(() => {
     async function trackVisitor() {
       try {
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract UTM parameters
+        const utmSource = urlParams.get('utm_source') || '';
+        const utmMedium = urlParams.get('utm_medium') || '';
+        const utmCampaign = urlParams.get('utm_campaign') || '';
+        const utmTerm = urlParams.get('utm_term') || '';
+        const utmContent = urlParams.get('utm_content') || '';
+
         // Detect device type
         const deviceType = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
           ? 'Mobile'
           : 'Desktop';
 
-        // Detect browser
+        // Detect operating system
         const userAgent = navigator.userAgent;
-        let browser = 'Unknown';
-        if (userAgent.includes('Chrome')) browser = 'Chrome';
-        else if (userAgent.includes('Safari')) browser = 'Safari';
-        else if (userAgent.includes('Firefox')) browser = 'Firefox';
-        else if (userAgent.includes('Edge')) browser = 'Edge';
+        let os = 'Unknown';
+        if (userAgent.includes('Windows')) os = 'Windows';
+        else if (userAgent.includes('Mac')) os = 'MacOS';
+        else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) os = 'iOS';
+        else if (userAgent.includes('Android')) os = 'Android';
+        else if (userAgent.includes('Linux')) os = 'Linux';
 
-        // Get campaign source from URL path
-        const campaignSource = window.location.pathname.slice(1) || 'direct';
+        // Detect browser
+        let browser = 'Unknown';
+        if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) browser = 'Chrome';
+        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) browser = 'Safari';
+        else if (userAgent.includes('Firefox')) browser = 'Firefox';
+        else if (userAgent.includes('Edg')) browser = 'Edge';
+
+        // Get screen resolution
+        const screenResolution = `${window.screen.width}x${window.screen.height}`;
+
+        // Get language and timezone
+        const language = navigator.language || 'unknown';
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+
+        // Get campaign source from URL path or UTM
+        const campaignSource = window.location.pathname.slice(1) || utmSource || 'direct';
+
+        // Get full landing page URL
+        const landingPage = window.location.href;
 
         // Track the visit
         const response = await fetch('/api/track-visitor', {
@@ -69,6 +97,16 @@ export default function LandingPage() {
             browser,
             userAgent,
             referrer: document.referrer || 'direct',
+            utmSource,
+            utmMedium,
+            utmCampaign,
+            utmTerm,
+            utmContent,
+            os,
+            screenResolution,
+            language,
+            timezone,
+            landingPage,
           }),
         });
 
