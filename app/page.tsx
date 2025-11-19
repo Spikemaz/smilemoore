@@ -416,7 +416,7 @@ export default function LandingPage() {
             </div>
 
             <p className="text-sm text-gray-500 mt-6">
-              ⚡ 127 local residents secured their voucher in the last 24 hours
+              🎁 Every voucher claim is automatically entered to win 1 year FREE dentistry (worth £2,000+)
             </p>
           </div>
         )}
