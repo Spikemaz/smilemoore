@@ -15,6 +15,11 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get IP address from request headers
+    const ip = request.headers.get('x-forwarded-for') ||
+               request.headers.get('x-real-ip') ||
+               'unknown';
+
     // Get current signup count
     const totalSignups = await getTotalSignups();
     const counter = new VoucherCounter(totalSignups);
@@ -34,6 +39,7 @@ export async function POST(request: Request) {
       voucherValue: tier.value,
       voucherCode,
       batchNumber,
+      ipAddress: ip,
     });
 
     if (!success) {

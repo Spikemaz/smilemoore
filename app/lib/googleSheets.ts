@@ -84,6 +84,7 @@ export async function addSignup(data: {
   voucherValue: number;
   voucherCode: string;
   batchNumber: number;
+  ipAddress?: string;
 }): Promise<boolean> {
   try {
     const sheets = getGoogleSheetsClient();
@@ -107,11 +108,12 @@ export async function addSignup(data: {
       data.voucherValue,
       data.voucherCode,
       data.batchNumber,
+      data.ipAddress || 'unknown',
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A:J',
+      range: 'Home!A:K',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });
@@ -165,18 +167,19 @@ export async function initializeSheet(): Promise<boolean> {
       'Voucher Value',
       'Voucher Code',
       'Batch Number',
+      'IP Address',
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:J1',
+      range: 'Home!A1:K1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:J1',
+      range: 'Earlybird!A1:K1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
