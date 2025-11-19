@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 
+// Declare dataLayer for GTM
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
 interface VoucherStatus {
   totalSignups: number;
   currentTier: {
