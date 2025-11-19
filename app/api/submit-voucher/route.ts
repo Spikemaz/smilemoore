@@ -7,10 +7,10 @@ export async function POST(request: Request) {
   try {
     const { email, name, phone, address, campaignSource } = await request.json();
 
-    // Validate required fields
-    if (!email || !name || !phone || !address) {
+    // Validate required fields - only email is required for initial submission
+    if (!email) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
