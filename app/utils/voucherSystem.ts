@@ -48,35 +48,14 @@ export class VoucherCounter {
   getInitialDisplay(): number {
     const vouchersLeftInBatch = BATCH_SIZE - this.vouchersClaimedInBatch;
 
-    // If we've hit the threshold, show the minimum
-    if (vouchersLeftInBatch <= MIN_DISPLAY_THRESHOLD) {
-      return vouchersLeftInBatch;
-    }
-
-    // Otherwise show random between remaining and 100
-    const maxDisplay = Math.min(TOTAL_PER_BATCH - this.vouchersClaimedInBatch, TOTAL_PER_BATCH);
-    const minDisplay = Math.max(vouchersLeftInBatch, MIN_DISPLAY_THRESHOLD);
-
-    return Math.floor(Math.random() * (maxDisplay - minDisplay + 1)) + minDisplay;
+    // Show actual remaining vouchers (no randomization)
+    return vouchersLeftInBatch;
   }
 
   // Get random decrease amount during form filling
   getRandomDecrease(currentDisplay: number, step: number): number {
-    const vouchersLeftInBatch = BATCH_SIZE - this.vouchersClaimedInBatch;
-    const minAllowed = Math.max(vouchersLeftInBatch, MIN_DISPLAY_THRESHOLD);
-
-    // Don't decrease if we're at or below the minimum
-    if (currentDisplay <= minAllowed) {
-      return 0;
-    }
-
-    // Calculate safe decrease range
-    const maxDecrease = currentDisplay - minAllowed;
-
-    // Randomly decrease by 0-3 vouchers (or whatever is safe)
-    const decrease = Math.floor(Math.random() * Math.min(4, maxDecrease + 1));
-
-    return decrease;
+    // No fake decreases - counter stays at real value
+    return 0;
   }
 
   // Check if new batch should be released

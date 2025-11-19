@@ -48,19 +48,7 @@ export default function LandingPage() {
     fetchVoucherStatus();
   }, []);
 
-  // Simulate countdown during form filling
-  useEffect(() => {
-    if (step >= 2 && step <= 4 && vouchersRemaining > 1) {
-      const interval = setInterval(() => {
-        setVouchersRemaining((prev) => {
-          const shouldDecrease = Math.random() > 0.7;
-          return shouldDecrease ? Math.max(1, prev - 1) : prev;
-        });
-      }, 8000 + Math.random() * 12000);
-
-      return () => clearInterval(interval);
-    }
-  }, [step, vouchersRemaining]);
+  // No fake countdown - counter shows real database value
 
   const getProgress = () => {
     switch (step) {
