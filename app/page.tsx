@@ -1,154 +1,237 @@
-import MailchimpSignup from './components/MailchimpSignup';
-
-export default function Home() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      {/* Minimal Header */}
+      <header className="bg-white py-4">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Smile Moore</h1>
-            </div>
-            <div className="hidden md:flex space-x-8">
-              <a href="#services" className="text-gray-700 hover:text-blue-600">Services</a>
-              <a href="#about" className="text-gray-700 hover:text-blue-600">About</a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600">Contact</a>
-            </div>
-            <a href="#book" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              Book Appointment
+            <h1 className="text-2xl font-bold text-blue-600">Smile Moore</h1>
+            <a href="/home" className="text-sm text-gray-600 hover:text-blue-600">
+              Learn More →
             </a>
           </div>
         </nav>
       </header>
 
-      {/* Early Bird Special Banner */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-2">Early Bird Special Offer!</h2>
-          <p className="text-xl">Book your appointment now and save</p>
-        </div>
-      </section>
-
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Your Smile, Our Priority
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Professional dental care and cosmetic dentistry services to keep your smile healthy and beautiful
-          </p>
-          <div className="flex gap-4 justify-center">
-            <a href="#book" className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
-              Book Now
-            </a>
-            <a href="#services" className="bg-gray-100 text-gray-700 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-200 transition-colors">
-              Our Services
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="bg-gray-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Services</h3>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h4 className="text-xl font-bold text-gray-900 mb-4">General Dentistry</h4>
-              <p className="text-gray-600">Comprehensive dental care including check-ups, cleanings, and preventive treatments</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Cosmetic Dentistry</h4>
-              <p className="text-gray-600">Teeth whitening, veneers, and smile makeovers to enhance your appearance</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Emergency Care</h4>
-              <p className="text-gray-600">Prompt treatment for dental emergencies and urgent care needs</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-20">
+      {/* Hero Section with Lead Capture */}
+      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Value Proposition */}
             <div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">About Smile Moore</h3>
-              <p className="text-gray-600 mb-4">
-                We are dedicated to providing exceptional dental care in a comfortable and welcoming environment.
-                Our experienced team uses the latest technology and techniques to ensure the best outcomes for our patients.
+              <div className="inline-block bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                🎉 Early Bird Special Offer
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                Get Your Perfect Smile Today
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-blue-100">
+                Professional dental care with flexible appointments and payment plans
               </p>
-              <p className="text-gray-600">
-                Whether you need routine care or advanced cosmetic procedures, we are committed to helping you achieve
-                and maintain a healthy, beautiful smile.
-              </p>
+
+              {/* Trust Signals */}
+              <div className="flex flex-wrap gap-6 mb-8">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">✓</span>
+                  <span>Same-day appointments</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">✓</span>
+                  <span>Flexible payment plans</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">✓</span>
+                  <span>Expert care</span>
+                </div>
+              </div>
             </div>
-            <div className="bg-blue-50 p-8 rounded-lg">
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Why Choose Us?</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <span className="text-blue-600 mr-2">✓</span>
-                  <span className="text-gray-600">Experienced and caring dental team</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-600 mr-2">✓</span>
-                  <span className="text-gray-600">State-of-the-art equipment and technology</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-600 mr-2">✓</span>
-                  <span className="text-gray-600">Flexible appointment scheduling</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-600 mr-2">✓</span>
-                  <span className="text-gray-600">Comprehensive range of dental services</span>
-                </li>
-              </ul>
+
+            {/* Right Column - Booking Form */}
+            <div className="bg-white rounded-2xl shadow-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Book Your Free Consultation</h3>
+              <p className="text-gray-600 mb-6">Limited spots available - Reserve yours now!</p>
+
+              <form className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="John Smith"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="07XXX XXXXXX"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">
+                    Interested In
+                  </label>
+                  <select
+                    id="service"
+                    name="service"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option>General Check-up</option>
+                    <option>Cosmetic Dentistry</option>
+                    <option>Teeth Whitening</option>
+                    <option>Emergency Care</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+                >
+                  Book Free Consultation
+                </button>
+
+                <p className="text-xs text-gray-500 text-center">
+                  By submitting, you agree to our privacy policy
+                </p>
+              </form>
+
+              {/* Or Call */}
+              <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+                <p className="text-sm text-gray-600 mb-2">Or call us directly:</p>
+                <a href="tel:+44XXXXXXXXXX" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
+                  Available Soon
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MailchimpSignup />
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="bg-gray-50 py-20">
+      {/* Benefits Section */}
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Get In Touch</h3>
-            <p className="text-gray-600">Have questions? We'd love to hear from you</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Why Choose Smile Moore?
+          </h2>
+          <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <h4 className="font-bold text-gray-900 mb-2">Phone</h4>
-              <p className="text-gray-600">Available Soon</p>
+              <div className="text-4xl mb-4">👨‍⚕️</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Expert Team</h3>
+              <p className="text-gray-600">Experienced dentists with years of expertise</p>
             </div>
             <div className="text-center">
-              <h4 className="font-bold text-gray-900 mb-2">Email</h4>
-              <p className="text-gray-600">info@smilemoore.co.uk</p>
+              <div className="text-4xl mb-4">⚡</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Fast Appointments</h3>
+              <p className="text-gray-600">Same-day and emergency slots available</p>
             </div>
             <div className="text-center">
-              <h4 className="font-bold text-gray-900 mb-2">Address</h4>
-              <p className="text-gray-600">Location Coming Soon</p>
+              <div className="text-4xl mb-4">💰</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Flexible Payments</h3>
+              <p className="text-gray-600">Payment plans to suit your budget</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl mb-4">⭐</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Quality Care</h3>
+              <p className="text-gray-600">Latest technology and techniques</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      {/* Services Overview */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Our Services
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md border-2 border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">General Dentistry</h3>
+              <p className="text-gray-600 mb-4">Check-ups, cleanings, fillings, and preventive care</p>
+              <a href="/home#services" className="text-blue-600 font-semibold hover:text-blue-700">
+                Learn more →
+              </a>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md border-2 border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Cosmetic Dentistry</h3>
+              <p className="text-gray-600 mb-4">Whitening, veneers, and smile transformations</p>
+              <a href="/home#services" className="text-blue-600 font-semibold hover:text-blue-700">
+                Learn more →
+              </a>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md border-2 border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Emergency Care</h3>
+              <p className="text-gray-600 mb-4">Urgent dental care when you need it most</p>
+              <a href="/home#services" className="text-blue-600 font-semibold hover:text-blue-700">
+                Learn more →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-blue-600 text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Transform Your Smile?
+          </h2>
+          <p className="text-xl mb-8">Book your free consultation today - Limited spots available!</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              Book Now
+            </a>
+            <a
+              href="/home"
+              className="bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-blue-800 transition-colors border-2 border-white"
+            >
+              Learn More
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Simple Footer */}
+      <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Smile Moore Dental Practice</h3>
-            <p className="text-gray-400 mb-4">Professional dental care for the whole family</p>
+            <p className="text-gray-400 mb-2">Smile Moore Dental Practice</p>
             <p className="text-sm text-gray-500">© 2025 Smile Moore. All rights reserved.</p>
+            <a href="/home" className="text-sm text-gray-400 hover:text-white mt-2 inline-block">
+              Full Website →
+            </a>
           </div>
         </div>
       </footer>
