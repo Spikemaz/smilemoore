@@ -207,9 +207,9 @@ export default function LandingPage() {
   const getProgress = () => {
     switch (step) {
       case 1: return 0;
-      case 2: return 25;
-      case 3: return 50;
-      case 4: return 75;
+      case 2: return 33;
+      case 3: return 72;
+      case 4: return 99;
       case 5: return 100;
       default: return 0;
     }
@@ -339,14 +339,11 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Progress Bar */}
-      {step <= 4 && (
+      {/* Progress Bar - Only show after step 1 */}
+      {step > 1 && step <= 4 && (
         <div className="bg-white shadow-sm sticky top-0 z-50">
           <div className="max-w-4xl mx-auto px-4 py-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-semibold text-gray-700">
-                Step {step} of 4
-              </span>
+            <div className="flex justify-end items-center mb-2">
               <span className="text-sm font-semibold text-blue-600">
                 {getProgress()}% Complete
               </span>
@@ -399,7 +396,7 @@ export default function LandingPage() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Claim My £{voucherValue} Voucher →
+                Submit
               </button>
             </form>
 
