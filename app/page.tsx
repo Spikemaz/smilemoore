@@ -1,6 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface VoucherStatus {
+  totalSignups: number;
+  currentTier: {
+    min: number;
+    max: number;
+    value: number;
+    message: string;
+  };
+  initialDisplay: number;
+  batchInfo: {
+    currentBatch: number;
+    vouchersInBatch: number;
+    shouldAnnounce: boolean;
+    announcement: string | null;
+  };
+}
 
 export default function LandingPage() {
   const [step, setStep] = useState(1);
@@ -10,7 +27,40 @@ export default function LandingPage() {
     phone: '',
     address: '',
   });
-  const [vouchersRemaining] = useState(37); // Update this number as needed
+  const [vouchersRemaining, setVouchersRemaining] = useState<number>(91);
+  const [voucherValue, setVoucherValue] = useState<number>(50);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch initial voucher status
+  useEffect(() => {
+    async function fetchVoucherStatus() {
+      try {
+        const response = await fetch('/api/voucher-status');
+        const data: VoucherStatus = await response.json();
+        setVouchersRemaining(data.initialDisplay);
+        setVoucherValue(data.currentTier.value);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching voucher status:', error);
+        setIsLoading(false);
+      }
+    }
+    fetchVoucherStatus();
+  }, []);
+
+  // Simulate countdown during form filling
+  useEffect(() => {
+    if (step >= 2 && step <= 4 && vouchersRemaining > 1) {
+      const interval = setInterval(() => {
+        setVouchersRemaining((prev) => {
+          const shouldDecrease = Math.random() > 0.7;
+          return shouldDecrease ? Math.max(1, prev - 1) : prev;
+        });
+      }, 8000 + Math.random() * 12000);
+
+      return () => clearInterval(interval);
+    }
+  }, [step, vouchersRemaining]);
 
   const getProgress = () => {
     switch (step) {
@@ -23,11 +73,33 @@ export default function LandingPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step < 5) {
+
+    if (step < 4) {
       setStep(step + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (step === 4) {
+      // Submit to Google Sheets
+      try {
+        const response = await fetch('/api/submit-voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          setStep(5);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          alert('Failed to submit. Please try again.');
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        alert('Failed to submit. Please try again.');
+      }
     }
   };
 
@@ -41,7 +113,7 @@ export default function LandingPage() {
       <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 text-center font-bold">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2">
           <span className="text-2xl animate-pulse">🔥</span>
-          <span>Only {vouchersRemaining} £50 Vouchers Remaining!</span>
+          <span>Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
           <span className="text-2xl animate-pulse">🔥</span>
         </div>
       </div>
@@ -79,7 +151,7 @@ export default function LandingPage() {
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Claim Your <span className="text-blue-600">£50 Voucher</span>
+              Claim Your <span className="text-blue-600">£{voucherValue} Voucher</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8">
               New patient special - Valid for dental treatments
@@ -106,7 +178,7 @@ export default function LandingPage() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Claim My £50 Voucher →
+                Claim My £{voucherValue} Voucher →
               </button>
             </form>
 
@@ -254,7 +326,7 @@ export default function LandingPage() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 shadow-lg animate-pulse"
               >
-                🎉 Claim My £50 Voucher Now!
+                🎉 Claim My £{voucherValue} Voucher Now!
               </button>
             </form>
           </div>
@@ -273,7 +345,7 @@ export default function LandingPage() {
                   Congratulations, {formData.name}!
                 </h2>
                 <p className="text-2xl mb-6">
-                  Your £50 voucher is confirmed!
+                  Your £{voucherValue} voucher is confirmed!
                 </p>
                 <div className="bg-white/20 backdrop-blur rounded-xl p-6 inline-block">
                   <p className="text-lg mb-2">Check your phone for:</p>
