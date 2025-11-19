@@ -76,20 +76,73 @@ export default function EarlyBirdPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (step < 4) {
-      setStep(step + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (step === 4) {
-      // Submit to Google Sheets with campaign source
-      try {
+    try {
+      if (step === 1) {
+        // Submit email immediately to Google Sheets with QR campaign tracking
         const response = await fetch('/api/submit-voucher', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            ...formData,
+            email: formData.email,
+            name: '',
+            phone: '',
+            address: '',
             campaignSource: 'earlybird-qr',
+          }),
+        });
+
+        if (!response.ok) {
+          alert('Failed to submit. Please try again.');
+          return;
+        }
+
+        setStep(2);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (step === 2) {
+        // Update name in Google Sheets
+        await fetch('/api/update-voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            field: 'name',
+            value: formData.name,
+          }),
+        });
+
+        setStep(3);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (step === 3) {
+        // Update phone in Google Sheets
+        await fetch('/api/update-voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            field: 'phone',
+            value: formData.phone,
+          }),
+        });
+
+        setStep(4);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (step === 4) {
+        // Update address in Google Sheets
+        const response = await fetch('/api/update-voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            field: 'address',
+            value: formData.address,
           }),
         });
 
@@ -99,10 +152,10 @@ export default function EarlyBirdPage() {
         } else {
           alert('Failed to submit. Please try again.');
         }
-      } catch (error) {
-        console.error('Submission error:', error);
-        alert('Failed to submit. Please try again.');
       }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Failed to submit. Please try again.');
     }
   };
 
