@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { addSignup } from '@/app/lib/googleSheets';
 import { VoucherCounter } from '@/app/utils/voucherSystem';
 import { getTotalSignups } from '@/app/lib/googleSheets';
+import { updateVisitorStatus } from '@/app/lib/visitorTracking';
 
 export async function POST(request: Request) {
   try {
@@ -48,6 +49,17 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Get Customer ID for linking (it's totalSignups + 1, formatted)
+    const customerId = (totalSignups + 1).toString().padStart(5, '0');
+
+    // Update visitor status to "Email Submitted"
+    await updateVisitorStatus(
+      ip,
+      email,
+      customerId,
+      'Email Submitted'
+    );
 
     // Check if we should announce new batch
     const announcement = counter.shouldReleaseBatch()

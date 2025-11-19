@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import { updateVisitorStatus } from '@/app/lib/visitorTracking';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -69,6 +70,20 @@ export async function POST(request: NextRequest) {
         values: [[value]],
       },
     });
+
+    // If this is the final field (address), update visitor status to "Voucher Claimed"
+    if (field === 'address') {
+      const ip = request.headers.get('x-forwarded-for') ||
+                 request.headers.get('x-real-ip') ||
+                 'unknown';
+
+      await updateVisitorStatus(
+        ip,
+        undefined,
+        undefined,
+        'Voucher Claimed'
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

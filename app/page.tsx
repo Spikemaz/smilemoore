@@ -37,6 +37,54 @@ export default function LandingPage() {
   const [vouchersRemaining, setVouchersRemaining] = useState<number>(91);
   const [voucherValue, setVoucherValue] = useState<number>(50);
   const [isLoading, setIsLoading] = useState(true);
+  const [visitorId, setVisitorId] = useState<string>('');
+
+  // Track visitor immediately on page load
+  useEffect(() => {
+    async function trackVisitor() {
+      try {
+        // Detect device type
+        const deviceType = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
+          ? 'Mobile'
+          : 'Desktop';
+
+        // Detect browser
+        const userAgent = navigator.userAgent;
+        let browser = 'Unknown';
+        if (userAgent.includes('Chrome')) browser = 'Chrome';
+        else if (userAgent.includes('Safari')) browser = 'Safari';
+        else if (userAgent.includes('Firefox')) browser = 'Firefox';
+        else if (userAgent.includes('Edge')) browser = 'Edge';
+
+        // Get campaign source from URL path
+        const campaignSource = window.location.pathname.slice(1) || 'direct';
+
+        // Track the visit
+        const response = await fetch('/api/track-visitor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            campaignSource,
+            deviceType,
+            browser,
+            userAgent,
+            referrer: document.referrer || 'direct',
+          }),
+        });
+
+        const data = await response.json();
+        if (data.visitorId) {
+          setVisitorId(data.visitorId);
+          // Store in sessionStorage to link later
+          sessionStorage.setItem('visitorId', data.visitorId);
+        }
+      } catch (error) {
+        console.error('Error tracking visitor:', error);
+      }
+    }
+
+    trackVisitor();
+  }, []);
 
   // Fetch initial voucher status
   useEffect(() => {

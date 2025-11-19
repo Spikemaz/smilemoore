@@ -19,7 +19,15 @@
       "Bash(npm install:*)",
       "Bash(curl:*)",
       "Bash(start http://localhost:3000)",
-      "Bash(start:*)"
+      "Bash(start:*)",
+      "Bash(findstr:*)",
+      "Bash(pgrep:*)",
+      "Bash(tasklist)",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(pkill:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
