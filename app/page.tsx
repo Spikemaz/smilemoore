@@ -86,6 +86,13 @@ export default function LandingPage() {
           return;
         }
 
+        // Track email submission
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'email_submitted',
+          voucher_value: voucherValue
+        });
+
         setStep(2);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 2) {
@@ -138,6 +145,14 @@ export default function LandingPage() {
         });
 
         if (response.ok) {
+          // Track voucher claimed
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'voucher_claimed',
+            voucher_value: voucherValue,
+            currency: 'GBP'
+          });
+
           setStep(5);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
@@ -157,11 +172,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       {/* Voucher Counter Header */}
-      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 text-center font-bold">
+      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 text-center font-bold">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2">
-          <span className="text-2xl animate-pulse">🔥</span>
+          <span className="text-2xl animate-pulse">✨</span>
           <span>Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
-          <span className="text-2xl animate-pulse">🔥</span>
+          <span className="text-2xl animate-pulse">✨</span>
         </div>
       </div>
 
@@ -245,7 +260,7 @@ export default function LandingPage() {
             </div>
 
             <p className="text-sm text-gray-500 mt-6">
-              127 people claimed their voucher today
+              ⚡ 127 local residents secured their voucher in the last 24 hours
             </p>
           </div>
         )}
