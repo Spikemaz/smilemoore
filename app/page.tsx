@@ -22,6 +22,14 @@ export default function Home() {
         </nav>
       </header>
 
+      {/* Early Bird Special Banner */}
+      <section className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold mb-2">Early Bird Special Offer!</h2>
+          <p className="text-xl">Book your appointment now and save</p>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
