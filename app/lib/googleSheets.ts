@@ -54,26 +54,20 @@ async function getNextCustomerId(): Promise<string> {
   }
 }
 
-// Get total number of signups across ALL campaigns
+// Get total number of signups - all in Home tab now
 export async function getTotalSignups(): Promise<number> {
   try {
     const sheets = getGoogleSheetsClient();
 
-    // Count from both Home and Earlybird tabs
+    // Count from Home tab only (all signups go here now)
     const homeResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Home!A2:A',
     });
 
-    const earlybirdResponse = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A2:A',
-    });
-
     const homeRows = homeResponse.data.values?.length || 0;
-    const earlybirdRows = earlybirdResponse.data.values?.length || 0;
 
-    return homeRows + earlybirdRows;
+    return homeRows;
   } catch (error) {
     console.error('Error reading from Google Sheets:', error);
     return 0;
@@ -98,8 +92,8 @@ export async function addSignup(data: {
     // Get unique customer ID
     const customerId = await getNextCustomerId();
 
-    // Determine which sheet to use based on campaign source
-    const sheetName = data.campaignSource === 'earlybird-qr' ? 'Earlybird' : 'Home';
+    // All signups go to Home tab, but with different source labels
+    const sourceLabel = data.campaignSource === 'earlybird-qr' ? 'QR Scan' : 'Home';
 
     // Prepare row data
     const values = [[
@@ -109,7 +103,7 @@ export async function addSignup(data: {
       data.name,
       data.phone,
       data.postcode,
-      data.campaignSource,
+      sourceLabel,
       data.voucherValue,
       data.voucherCode,
       data.batchNumber,
@@ -117,7 +111,7 @@ export async function addSignup(data: {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${sheetName}!A:J`,
+      range: 'Home!A:J',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

@@ -29,13 +29,11 @@ export async function POST(request: NextRequest) {
     const authClient = await getAuthClient();
     const sheets = google.sheets({ version: 'v4', auth: authClient as any });
 
-    // Determine which sheet to search based on campaign source
-    const sheetName = campaignSource === 'earlybird-qr' ? 'Earlybird' : 'Home';
-
-    // Find the row with this email (email is in column C now)
+    // All data is in Home tab now
+    // Find the row with this email (email is in column C)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${sheetName}!C:C`,
+      range: 'Home!C:C',
     });
 
     const rows = response.data.values || [];
@@ -65,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${sheetName}!${column}${rowIndex + 1}`,
+      range: `Home!${column}${rowIndex + 1}`,
       valueInputOption: 'RAW',
       requestBody: {
         values: [[value]],
