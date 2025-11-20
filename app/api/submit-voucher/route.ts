@@ -27,16 +27,15 @@ export async function POST(request: Request) {
     const tier = counter.getCurrentTier();
     const batchNumber = Math.floor(totalSignups / 90) + 1;
 
-    // Generate unique alphanumeric voucher code
+    // Generate random alphanumeric voucher code
     const customerId = totalSignups + 1;
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded I, O, 0, 1 for clarity
     let code = '';
-    let num = customerId;
 
-    // Convert customer ID to base-32 alphanumeric (5 characters)
-    for (let i = 0; i < 5; i++) {
-      code = chars[num % chars.length] + code;
-      num = Math.floor(num / chars.length);
+    // Generate random 6-character code (e.g., SMILEA4N21K)
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      code += chars[randomIndex];
     }
 
     const voucherCode = `SMILE${code}`;
