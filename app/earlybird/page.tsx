@@ -920,13 +920,14 @@ export default function EarlyBirdPage() {
               <div className="bg-white p-4 rounded-lg mb-4">
                 <p className="text-sm mb-2" style={{ color: '#666' }}>Your referral link:</p>
                 <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
-                  {typeof window !== 'undefined' ? `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name)}` : 'Loading...'}
+                  {typeof window !== 'undefined' ? `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name)}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
                 </p>
               </div>
 
               <button
                 onClick={async () => {
-                  const referralLink = `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name)}`;
+                  const randomNum = Math.floor(100 + Math.random() * 900);
+                  const referralLink = `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name)}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
                     alert('✅ Link copied to clipboard! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
