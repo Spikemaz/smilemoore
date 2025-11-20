@@ -46,6 +46,7 @@ export default function LandingPage() {
   const [phoneSubmitTime, setPhoneSubmitTime] = useState<number>(0);
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [totalSignups, setTotalSignups] = useState<number>(0);
+  const [referredBy, setReferredBy] = useState<string>('');
   const [surveyData, setSurveyData] = useState({
     dentalCare: '',
     timeline: '',
@@ -83,6 +84,14 @@ export default function LandingPage() {
         const utmCampaign = urlParams.get('utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || '';
         const utmContent = urlParams.get('utm_content') || '';
+
+        // Extract referral parameter
+        const ref = urlParams.get('ref') || '';
+        if (ref) {
+          // Convert ref back to email format (reverse the encoding)
+          const referrerEmail = ref.replace(/-at-/g, '@').replace(/-/g, '.');
+          setReferredBy(referrerEmail);
+        }
 
         // Extract click IDs for ad platforms
         const fbclid = urlParams.get('fbclid') || '';
@@ -870,10 +879,12 @@ export default function LandingPage() {
                     ...extendedSurvey,
                   }),
                 });
-                window.location.href = '/home';
+                setStep(8);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               } catch (error) {
                 console.error('Survey submission error:', error);
-                window.location.href = '/home';
+                setStep(8);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }} className="space-y-8">
               {/* Question 1 */}
@@ -1209,6 +1220,78 @@ export default function LandingPage() {
                 Complete Survey & Confirm Entry →
               </button>
             </form>
+          </div>
+        )}
+
+        {/* Step 8: Congratulations & Share */}
+        {step === 8 && (
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+            <div className="mb-6">
+              <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-6xl">🎉</span>
+              </div>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+                Congratulations!
+              </h2>
+              <p className="text-2xl mb-6" style={{ color: '#70d490' }}>
+                You're Entered to Win 1 Year of FREE Dentistry!
+              </p>
+              <p className="text-lg mb-8" style={{ color: '#666' }}>
+                Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
+              </p>
+            </div>
+
+            {/* Share Section */}
+            <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
+              <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                Want 10 Extra Entries?
+              </h3>
+              <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
+                Share this with your friends and get <span className="font-bold">+10 bonus entries</span> for each friend who claims their voucher!
+              </p>
+
+              <div className="bg-white p-4 rounded-lg mb-4">
+                <p className="text-sm mb-2" style={{ color: '#666' }}>Your referral link:</p>
+                <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${formData.email.replace('@', '-at-').replace(/\./g, '-')}` : 'Loading...'}
+                </p>
+              </div>
+
+              <button
+                onClick={async () => {
+                  const referralLink = `${window.location.origin}?ref=${formData.email.replace('@', '-at-').replace(/\./g, '-')}`;
+                  try {
+                    await navigator.clipboard.writeText(referralLink);
+                    alert('✅ Link copied to clipboard! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                  } catch (err) {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = referralLink;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('✅ Link copied! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                  }
+                }}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                📋 Copy Share Link
+              </button>
+
+              <p className="text-sm" style={{ color: '#1f3a33', opacity: 0.8 }}>
+                The more friends you share with, the better your chances!
+              </p>
+            </div>
+
+            <button
+              onClick={() => window.location.href = '/home'}
+              className="text-white px-8 py-4 rounded-xl text-lg font-bold transition-all"
+              style={{ backgroundColor: '#70d490' }}
+            >
+              Continue to Website →
+            </button>
           </div>
         )}
       </div>

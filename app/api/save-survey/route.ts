@@ -77,13 +77,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the row with all survey data (columns L through Z)
+    // Update the row with all survey data (columns M through AA)
     const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : '';
     const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!L${rowIndex}:Z${rowIndex}`,
+      range: `Home!M${rowIndex}:AA${rowIndex}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[

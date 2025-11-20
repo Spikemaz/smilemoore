@@ -6,7 +6,7 @@ import { updateVisitorStatus } from '@/app/lib/visitorTracking';
 
 export async function POST(request: Request) {
   try {
-    const { email, name, phone, address, campaignSource, timeToSubmit, scrollDepth } = await request.json();
+    const { email, name, phone, address, campaignSource, timeToSubmit, scrollDepth, referredBy } = await request.json();
 
     // Validate required fields - only email is required for initial submission
     if (!email) {
@@ -52,6 +52,7 @@ export async function POST(request: Request) {
       voucherCode,
       batchNumber,
       ipAddress: ip,
+      referredBy: referredBy || '',
     });
 
     if (!success) {
