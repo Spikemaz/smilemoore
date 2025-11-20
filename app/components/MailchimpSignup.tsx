@@ -48,7 +48,7 @@ export default function MailchimpSignup() {
           placeholder="Enter your email"
           required
           className="px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2"
-          style={{ borderColor: '#cfe8d7', outlineColor: '#70d490' }}
+          style={{ borderColor: '#cfe8d7', outlineColor: '#70d490', color: '#1f3a33' }}
           disabled={status === 'loading'}
         />
         <button

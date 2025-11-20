@@ -566,7 +566,7 @@ export default function LandingPage() {
                   onChange={(e) => updateField('phone', e.target.value)}
                   required
                   className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
-                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="07XXX XXXXXX"
                   autoFocus
                 />
@@ -613,7 +613,7 @@ export default function LandingPage() {
                   onChange={(e) => updateField('address', e.target.value)}
                   required
                   className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
-                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="SW1A 1AA"
                   autoFocus
                 />
