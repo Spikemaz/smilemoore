@@ -35,9 +35,9 @@ export default function MailchimpSignup() {
   };
 
   return (
-    <div className="bg-blue-50 p-8 rounded-lg">
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">Stay Updated</h3>
-      <p className="text-gray-600 mb-4">
+    <div className="p-8 rounded-lg" style={{ backgroundColor: '#cfe8d7' }}>
+      <h3 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>Stay Updated</h3>
+      <p className="mb-4" style={{ color: '#1f3a33' }}>
         Subscribe to our newsletter for dental tips and special offers
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -47,13 +47,15 @@ export default function MailchimpSignup() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
-          className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2"
+          style={{ borderColor: '#cfe8d7', outlineColor: '#70d490' }}
           disabled={status === 'loading'}
         />
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+          className="text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:bg-gray-400"
+          style={{ backgroundColor: '#1f3a33' }}
         >
           {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
         </button>

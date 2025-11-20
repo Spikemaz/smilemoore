@@ -900,10 +900,13 @@ export default function EarlyBirdPage() {
               <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
                 Congratulations!
               </h2>
-              <p className="text-2xl mb-6" style={{ color: '#70d490' }}>
-                You're Entered to Win 1 Year of FREE Dentistry!
+              <p className="text-2xl mb-4" style={{ color: '#70d490' }}>
+                You're Now Eligible for Your £{voucherValue} Voucher!
               </p>
-              <p className="text-lg mb-8" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
+                Plus, you've received <span className="font-bold">3 entries</span> into the draw to win 1 Year of FREE Dentistry worth £2,000!
+              </p>
+              <p className="text-base mb-8" style={{ color: '#666' }}>
                 Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
               </p>
             </div>
@@ -911,10 +914,10 @@ export default function EarlyBirdPage() {
             {/* Share Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Want 10 Extra Entries?
+                Want Even More Entries?
               </h3>
               <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
-                Share this with your friends and get <span className="font-bold">+10 bonus entries</span> for each friend who claims their voucher!
+                Share your unique link with friends and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
