@@ -52,6 +52,19 @@ export default function LandingPage() {
     appointmentTimes: '',
     importantFactors: [] as string[],
   });
+  const [extendedSurvey, setExtendedSurvey] = useState({
+    previousExperience: '',
+    mostImportantFactor: '',
+    smileConfidence: '',
+    sameClinician: '',
+    neededTreatments: [] as string[],
+    beforeAppointment: '',
+    stayLongTerm: '',
+    preventingVisits: '',
+    cosmeticImportance: '',
+    preferredContact: '',
+    additionalFeedback: '',
+  });
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -688,21 +701,9 @@ export default function LandingPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
-              // Save survey responses
-              try {
-                await fetch('/api/save-survey', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.email,
-                    ...surveyData,
-                  }),
-                });
-                window.location.href = '/home';
-              } catch (error) {
-                console.error('Survey submission error:', error);
-                window.location.href = '/home';
-              }
+              // Move to extended survey (step 7)
+              setStep(7);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
               {/* Question 1 */}
               <div className="text-left">
@@ -836,6 +837,376 @@ export default function LandingPage() {
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 Submit & Enter Prize Draw →
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Step 7: Extended Survey Questions */}
+        {step === 7 && (
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div className="text-center mb-6">
+              <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
+                🔥 BONUS QUESTIONS
+              </span>
+              <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                Can we ask for a little more feedback?
+              </h3>
+              <p className="text-lg" style={{ color: '#666' }}>
+                It takes 20 seconds and it will really shape your dental experience.
+              </p>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              // Save all survey responses
+              try {
+                await fetch('/api/save-survey', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.email,
+                    ...surveyData,
+                    ...extendedSurvey,
+                  }),
+                });
+                window.location.href = '/home';
+              } catch (error) {
+                console.error('Survey submission error:', error);
+                window.location.href = '/home';
+              }
+            }} className="space-y-8">
+              {/* Question 1 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  1. How would you describe your previous experience with dental practices?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Mostly positive',
+                    'Mixed experiences',
+                    'Mostly negative',
+                    'I\'ve avoided going for a while',
+                    'I feel nervous about dental visits'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value={option}
+                        checked={extendedSurvey.previousExperience === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, previousExperience: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 2 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  2. When thinking about dental care, which factor matters most to you?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Feeling listened to',
+                    'Pain-free treatment',
+                    'Clear explanations',
+                    'Availability of appointments',
+                    'Cost transparency',
+                    'A calm, modern clinic environment'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.mostImportantFactor === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="mostImportantFactor"
+                        value={option}
+                        checked={extendedSurvey.mostImportantFactor === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, mostImportantFactor: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. How confident do you currently feel about your smile?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Very confident',
+                    'Mostly confident',
+                    'A little self-conscious',
+                    'Not confident',
+                    'I\'d like help improving it'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.smileConfidence === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="smileConfidence"
+                        value={option}
+                        checked={extendedSurvey.smileConfidence === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, smileConfidence: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 4 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  4. How important is seeing the same clinician each time?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Essential',
+                    'Preferable',
+                    'Not important',
+                    'Depends on the treatment'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.sameClinician === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="sameClinician"
+                        value={option}
+                        checked={extendedSurvey.sameClinician === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, sameClinician: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 5 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  5. What types of treatments do you think you may need in the next year?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Hygienist visits',
+                    'Check-ups',
+                    'Whitening',
+                    'Composite bonding / veneers',
+                    'Teeth straightening (e.g., aligners)',
+                    'Fillings / crowns / restorative work',
+                    'Not sure — I need guidance'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.neededTreatments.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={extendedSurvey.neededTreatments.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setExtendedSurvey({ ...extendedSurvey, neededTreatments: [...extendedSurvey.neededTreatments, value] });
+                          } else {
+                            setExtendedSurvey({ ...extendedSurvey, neededTreatments: extendedSurvey.neededTreatments.filter(t => t !== value) });
+                          }
+                        }}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 6 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  6. How do you usually feel before a dental appointment?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Relaxed',
+                    'Neutral',
+                    'Slightly anxious',
+                    'Very anxious',
+                    'I often delay or avoid going'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.beforeAppointment === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="beforeAppointment"
+                        value={option}
+                        checked={extendedSurvey.beforeAppointment === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, beforeAppointment: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 7 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  7. What would make you more likely to stay with a dental practice long-term?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Consistency of clinician',
+                    'Clear pricing & no surprises',
+                    'Flexible appointment times',
+                    'Gentle, patient-focused approach',
+                    'Quick availability',
+                    'Modern technology & facilities'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.stayLongTerm === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="stayLongTerm"
+                        value={option}
+                        checked={extendedSurvey.stayLongTerm === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, stayLongTerm: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 8 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  8. What prevents you from attending the dentist as often as you'd like?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Cost',
+                    'Time / busy schedule',
+                    'Anxiety',
+                    'Difficulty getting appointments',
+                    'Not had a practice I felt comfortable with',
+                    'Nothing stops me'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.preventingVisits === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="preventingVisits"
+                        value={option}
+                        checked={extendedSurvey.preventingVisits === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, preventingVisits: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 9 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  9. How important is it that your dental practice offers cosmetic options?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Very important',
+                    'Somewhat important',
+                    'Neutral',
+                    'Not important',
+                    'Unsure'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.cosmeticImportance === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="cosmeticImportance"
+                        value={option}
+                        checked={extendedSurvey.cosmeticImportance === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, cosmeticImportance: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 10 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  10. How do you prefer to receive updates or reminders?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'WhatsApp',
+                    'Email',
+                    'Text message',
+                    'Phone call',
+                    'No preference'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.preferredContact === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="preferredContact"
+                        value={option}
+                        checked={extendedSurvey.preferredContact === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, preferredContact: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional Feedback */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  Anything else you'd like us to know? (Optional)
+                </label>
+                <textarea
+                  value={extendedSurvey.additionalFeedback}
+                  onChange={(e) => setExtendedSurvey({ ...extendedSurvey, additionalFeedback: e.target.value })}
+                  className="w-full px-6 py-4 text-base border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  placeholder="Share any thoughts, preferences, or concerns..."
+                  rows={4}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                Complete Survey & Confirm Entry →
               </button>
             </form>
           </div>

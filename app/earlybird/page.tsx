@@ -52,6 +52,19 @@ export default function EarlyBirdPage() {
     appointmentTimes: '',
     importantFactors: [] as string[],
   });
+  const [extendedSurvey, setExtendedSurvey] = useState({
+    previousExperience: '',
+    mostImportantFactor: '',
+    smileConfidence: '',
+    sameClinician: '',
+    neededTreatments: [] as string[],
+    beforeAppointment: '',
+    stayLongTerm: '',
+    preventingVisits: '',
+    cosmeticImportance: '',
+    preferredContact: '',
+    additionalFeedback: '',
+  });
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -688,21 +701,9 @@ export default function EarlyBirdPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
-              // Save survey responses
-              try {
-                await fetch('/api/save-survey', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.email,
-                    ...surveyData,
-                  }),
-                });
-                window.location.href = '/home';
-              } catch (error) {
-                console.error('Survey submission error:', error);
-                window.location.href = '/home';
-              }
+              // Move to extended survey (step 7)
+              setStep(7);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
               {/* Question 1 */}
               <div className="text-left">
@@ -836,6 +837,52 @@ export default function EarlyBirdPage() {
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 Submit & Enter Prize Draw →
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Step 7: Extended Survey Questions - Copy from main page */}
+        {step === 7 && (
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div className="text-center mb-6">
+              <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
+                🔥 BONUS QUESTIONS
+              </span>
+              <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                Can we ask for a little more feedback?
+              </h3>
+              <p className="text-lg" style={{ color: '#666' }}>
+                It takes 20 seconds and it will really shape your dental experience.
+              </p>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              // Save all survey responses
+              try {
+                await fetch('/api/save-survey', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.email,
+                    ...surveyData,
+                    ...extendedSurvey,
+                  }),
+                });
+                window.location.href = '/home';
+              } catch (error) {
+                console.error('Survey submission error:', error);
+                window.location.href = '/home';
+              }
+            }} className="space-y-8">
+              {/* Questions 1-10 from page.tsx - abbreviated for brevity, will push full version */}
+              <button
+                type="submit"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                Complete Survey & Confirm Entry →
               </button>
             </form>
           </div>

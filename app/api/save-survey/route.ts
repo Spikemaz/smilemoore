@@ -24,7 +24,24 @@ function getGoogleSheetsClient() {
 
 export async function POST(request: Request) {
   try {
-    const { email, dentalCare, timeline, appointmentTimes, importantFactors } = await request.json();
+    const {
+      email,
+      dentalCare,
+      timeline,
+      appointmentTimes,
+      importantFactors,
+      previousExperience,
+      mostImportantFactor,
+      smileConfidence,
+      sameClinician,
+      neededTreatments,
+      beforeAppointment,
+      stayLongTerm,
+      preventingVisits,
+      cosmeticImportance,
+      preferredContact,
+      additionalFeedback
+    } = await request.json();
 
     if (!email) {
       return NextResponse.json(
@@ -38,7 +55,7 @@ export async function POST(request: Request) {
     // Find the row with this email in the Home sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A:K',
+      range: 'Home!A:Z',
     });
 
     const rows = response.data.values || [];
@@ -60,15 +77,32 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the row with survey data (columns L, M, N, O)
+    // Update the row with all survey data (columns L through Z)
     const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : '';
+    const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!L${rowIndex}:O${rowIndex}`,
+      range: `Home!L${rowIndex}:Z${rowIndex}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[dentalCare, timeline, appointmentTimes, factorsString]],
+        values: [[
+          dentalCare,
+          timeline,
+          appointmentTimes,
+          factorsString,
+          previousExperience || '',
+          mostImportantFactor || '',
+          smileConfidence || '',
+          sameClinician || '',
+          treatmentsString,
+          beforeAppointment || '',
+          stayLongTerm || '',
+          preventingVisits || '',
+          cosmeticImportance || '',
+          preferredContact || '',
+          additionalFeedback || '',
+        ]],
       },
     });
 

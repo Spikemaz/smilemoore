@@ -172,18 +172,29 @@ export async function initializeSheet(): Promise<boolean> {
       'Registration Timeline',
       'Preferred Times',
       'Important Factors',
+      'Previous Experience',
+      'Most Important Factor',
+      'Smile Confidence',
+      'Same Clinician',
+      'Needed Treatments',
+      'Before Appointment',
+      'Stay Long Term',
+      'Preventing Visits',
+      'Cosmetic Importance',
+      'Preferred Contact',
+      'Additional Feedback',
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:O1',
+      range: 'Home!A1:Z1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:O1',
+      range: 'Earlybird!A1:Z1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
