@@ -583,7 +583,7 @@ export default function EarlyBirdPage() {
                   onChange={(e) => updateField('name', e.target.value)}
                   required
                   className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
-                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="John Smith"
                   autoFocus
                 />

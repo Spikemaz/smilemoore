@@ -112,6 +112,34 @@ export async function POST(request: NextRequest) {
         phoneToPostcode,
         totalTime
       );
+
+      // Get all voucher details from the row to send confirmation email
+      const voucherDetailsResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!C${rowIndex + 1}:I${rowIndex + 1}`, // Email, Name, Phone, Postcode, Source, Value, Code
+      });
+
+      const voucherDetails = voucherDetailsResponse.data.values?.[0];
+      if (voucherDetails) {
+        const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode] = voucherDetails;
+
+        // Send confirmation email
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/send-voucher-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: emailAddr,
+              name,
+              voucherCode,
+              voucherValue,
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send confirmation email:', emailError);
+          // Don't fail the request if email fails
+        }
+      }
     }
 
     return NextResponse.json({ success: true });
