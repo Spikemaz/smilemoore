@@ -513,9 +513,12 @@ export default function LandingPage() {
                 <span className="text-4xl">🎁</span>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Final Step to Unlock Your Voucher
+                Final Question - You're One Step Away!
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 mb-2">
+                Getting your £{voucherValue} voucher sent to you now...
+              </p>
+              <p className="text-md text-gray-500">
                 Where should we send your welcome pack?
               </p>
             </div>
