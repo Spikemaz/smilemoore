@@ -41,6 +41,9 @@ export default function LandingPage() {
   const [pageLoadTime, setPageLoadTime] = useState<number>(0);
   const [maxScrollDepth, setMaxScrollDepth] = useState<number>(0);
   const [pageLoadTimestamp] = useState<number>(Date.now());
+  const [emailSubmitTime, setEmailSubmitTime] = useState<number>(0);
+  const [nameSubmitTime, setNameSubmitTime] = useState<number>(0);
+  const [phoneSubmitTime, setPhoneSubmitTime] = useState<number>(0);
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -222,6 +225,8 @@ export default function LandingPage() {
       if (step === 1) {
         // Calculate time from page load to email submission (in seconds)
         const timeToSubmit = Math.round((Date.now() - pageLoadTimestamp) / 1000);
+        const emailTime = Date.now();
+        setEmailSubmitTime(emailTime);
 
         // Submit email immediately to Google Sheets
         const response = await fetch('/api/submit-voucher', {
@@ -255,6 +260,11 @@ export default function LandingPage() {
         setStep(2);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 2) {
+        // Calculate time between email submit and name submit
+        const nameTime = Date.now();
+        const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
+        setNameSubmitTime(nameTime);
+
         // Update name in Google Sheets
         await fetch('/api/update-voucher', {
           method: 'POST',
@@ -266,12 +276,18 @@ export default function LandingPage() {
             field: 'name',
             value: formData.name,
             campaignSource: 'direct',
+            emailToName,
           }),
         });
 
         setStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 3) {
+        // Calculate time between name submit and phone submit
+        const phoneTime = Date.now();
+        const nameToPhone = Math.round((phoneTime - nameSubmitTime) / 1000);
+        setPhoneSubmitTime(phoneTime);
+
         // Update phone in Google Sheets
         await fetch('/api/update-voucher', {
           method: 'POST',
@@ -283,12 +299,20 @@ export default function LandingPage() {
             field: 'phone',
             value: formData.phone,
             campaignSource: 'direct',
+            nameToPhone,
           }),
         });
 
         setStep(4);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 4) {
+        // Calculate time between phone submit and postcode submit
+        const postcodeTime = Date.now();
+        const phoneToPostcode = Math.round((postcodeTime - phoneSubmitTime) / 1000);
+
+        // Calculate total time from page load to completion
+        const totalTime = Math.round((postcodeTime - pageLoadTimestamp) / 1000);
+
         // Update address in Google Sheets
         const response = await fetch('/api/update-voucher', {
           method: 'POST',
@@ -300,6 +324,8 @@ export default function LandingPage() {
             field: 'address',
             value: formData.address,
             campaignSource: 'direct',
+            phoneToPostcode,
+            totalTime,
           }),
         });
 
@@ -402,15 +428,7 @@ export default function LandingPage() {
               </button>
             </form>
 
-            <div className="mt-8 flex items-center justify-center gap-6 text-sm" style={{ color: '#666' }}>
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-xl">🔒</span>
-                <span className="font-semibold">Secure & Private</span>
-                <span className="text-xs">Your data is protected</span>
-              </div>
-            </div>
-
-            <p className="text-sm mt-6" style={{ color: '#666' }}>
+            <p className="text-sm mt-8" style={{ color: '#666' }}>
               🎁 Every voucher claim is automatically entered to win 1 year FREE dentistry (worth £2,000+)
             </p>
           </div>

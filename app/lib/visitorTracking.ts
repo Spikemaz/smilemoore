@@ -27,7 +27,11 @@ export async function updateVisitorStatus(
   customerId?: string,
   status?: 'Email Submitted' | 'Voucher Claimed',
   timeToEmailSubmit?: number,
-  maxScrollDepth?: number
+  maxScrollDepth?: number,
+  emailToName?: number,
+  nameToPhone?: number,
+  phoneToPostcode?: number,
+  totalTime?: number
 ): Promise<boolean> {
   try {
     const sheets = getGoogleSheetsClient();
@@ -35,7 +39,7 @@ export async function updateVisitorStatus(
     // Find the visitor row by IP address (most recent within last 30 minutes)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AH',
+      range: 'Visitors!A:AL',
     });
 
     const rows = response.data.values;
@@ -94,6 +98,34 @@ export async function updateVisitorStatus(
       updates.push({
         range: `Visitors!AH${matchRowIndex}`, // Column AH = Max Scroll Depth
         values: [[maxScrollDepth]],
+      });
+    }
+
+    if (emailToName !== undefined) {
+      updates.push({
+        range: `Visitors!AI${matchRowIndex}`, // Column AI = Email to Name time
+        values: [[emailToName]],
+      });
+    }
+
+    if (nameToPhone !== undefined) {
+      updates.push({
+        range: `Visitors!AJ${matchRowIndex}`, // Column AJ = Name to Phone time
+        values: [[nameToPhone]],
+      });
+    }
+
+    if (phoneToPostcode !== undefined) {
+      updates.push({
+        range: `Visitors!AK${matchRowIndex}`, // Column AK = Phone to Postcode time
+        values: [[phoneToPostcode]],
+      });
+    }
+
+    if (totalTime !== undefined) {
+      updates.push({
+        range: `Visitors!AL${matchRowIndex}`, // Column AL = Total Time
+        values: [[totalTime]],
       });
     }
 

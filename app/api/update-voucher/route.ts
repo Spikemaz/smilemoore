@@ -18,7 +18,7 @@ async function getAuthClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, field, value, campaignSource } = await request.json();
+    const { email, field, value, campaignSource, emailToName, nameToPhone, phoneToPostcode, totalTime } = await request.json();
 
     if (!email || !field || !value) {
       return NextResponse.json(
@@ -71,17 +71,46 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // If this is the final field (address), update visitor status to "Voucher Claimed"
-    if (field === 'address') {
-      const ip = request.headers.get('x-forwarded-for') ||
-                 request.headers.get('x-real-ip') ||
-                 'unknown';
+    // Get IP for visitor tracking
+    const ip = request.headers.get('x-forwarded-for') ||
+               request.headers.get('x-real-ip') ||
+               'unknown';
 
+    // Update visitor tracking with step timing data
+    if (field === 'name' && emailToName !== undefined) {
       await updateVisitorStatus(
         ip,
         undefined,
         undefined,
-        'Voucher Claimed'
+        undefined,
+        undefined,
+        undefined,
+        emailToName
+      );
+    } else if (field === 'phone' && nameToPhone !== undefined) {
+      await updateVisitorStatus(
+        ip,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        nameToPhone
+      );
+    } else if (field === 'address') {
+      // Final step - update status and timing
+      await updateVisitorStatus(
+        ip,
+        undefined,
+        undefined,
+        'Voucher Claimed',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        phoneToPostcode,
+        totalTime
       );
     }
 
