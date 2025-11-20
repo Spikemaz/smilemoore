@@ -207,8 +207,8 @@ export default function LandingPage() {
   const getProgress = () => {
     switch (step) {
       case 1: return 0;
-      case 2: return 33;
-      case 3: return 72;
+      case 2: return 50;
+      case 3: return 90;
       case 4: return 99;
       case 5: return 100;
       default: return 0;
