@@ -542,7 +542,7 @@ export default function EarlyBirdPage() {
                 Thanks, {formData.name}!
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
-                We'll send your voucher via SMS and email
+                We'll send your voucher via SMS
               </p>
             </div>
 
