@@ -410,7 +410,7 @@ export default function LandingPage() {
       {step > 1 && step <= 4 && (
         <div className="shadow-sm sticky top-0 z-50" style={{ backgroundColor: '#1f3a33' }}>
           <div className="max-w-4xl mx-auto px-4 py-4">
-            <div className="flex justify-end items-center mb-2">
+            <div className="flex justify-center items-center mb-2">
               <span className="text-sm font-semibold" style={{ color: '#cfe8d7' }}>
                 {getProgress()}% Complete
               </span>
