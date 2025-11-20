@@ -474,11 +474,11 @@ export default function LandingPage() {
         {/* Step 2: Name */}
         {step === 2 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-8">
-              <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+            <div className="text-center mb-6">
+              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">✓</span>
               </div>
-              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Great! Your voucher is reserved
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
@@ -518,8 +518,8 @@ export default function LandingPage() {
         {/* Step 3: Phone */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Thanks, {formData.name}!
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
@@ -562,14 +562,14 @@ export default function LandingPage() {
         {/* Step 4: Address (Final Required) */}
         {step === 4 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-8">
-              <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+            <div className="text-center mb-6">
+              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">🎁</span>
               </div>
-              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Final Question - You're One Step Away!
               </h2>
-              <p className="text-lg mb-2" style={{ color: '#666' }}>
+              <p className="text-lg" style={{ color: '#666' }}>
                 Getting your £{voucherValue} voucher sent to you now...
               </p>
             </div>
