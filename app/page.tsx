@@ -427,10 +427,6 @@ export default function LandingPage() {
                 Submit
               </button>
             </form>
-
-            <p className="text-sm mt-8" style={{ color: '#666' }}>
-              🎁 Every voucher claimed gives you the chance to be selected for 1 year of FREE dentistry! (subject to terms and conditions)
-            </p>
           </div>
         )}
 
