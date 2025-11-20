@@ -1,3 +1,5 @@
+'use client';
+
 import MailchimpSignup from '../components/MailchimpSignup';
 
 export default function HomePage() {
