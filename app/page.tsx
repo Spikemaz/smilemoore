@@ -357,11 +357,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Voucher Counter Header */}
-      <div className="py-3 px-4 text-center font-bold" style={{ backgroundColor: '#70d490', color: '#1f3a33' }}>
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2">
-          <span className="text-2xl animate-pulse">✨</span>
-          <span>Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
-          <span className="text-2xl animate-pulse">✨</span>
+      <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#70d490', color: '#1f3a33' }}>
+        <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
+          <span className="text-3xl md:text-4xl animate-pulse">✨</span>
+          <span className="text-lg md:text-xl">Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
+          <span className="text-3xl md:text-4xl animate-pulse">✨</span>
         </div>
       </div>
 
@@ -402,7 +402,7 @@ export default function LandingPage() {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="text-left">
+              <div className="text-center">
                 <label htmlFor="email" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   Enter your email to claim your voucher
                 </label>
@@ -412,7 +412,7 @@ export default function LandingPage() {
                   value={formData.email}
                   onChange={(e) => updateField('email', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="your@email.com"
                   autoFocus
