@@ -666,12 +666,7 @@ export default function LandingPage() {
       {/* Trust Signals Footer */}
       {step <= 4 && (
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="grid md:grid-cols-3 gap-6 text-center">
-            <div className="flex flex-col items-center">
-              <span className="text-3xl mb-2">🔒</span>
-              <p className="font-semibold text-gray-700">Secure & Private</p>
-              <p className="text-sm text-gray-500">Your data is protected</p>
-            </div>
+          <div className="grid md:grid-cols-2 gap-6 text-center">
             <div className="flex flex-col items-center">
               <span className="text-3xl mb-2">⚡</span>
               <p className="font-semibold text-gray-700">Instant Voucher</p>
