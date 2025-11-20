@@ -28,7 +28,9 @@
       "Bash(pkill:*)",
       "Bash(git reset:*)",
       "Bash(git rm:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(timeout:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
