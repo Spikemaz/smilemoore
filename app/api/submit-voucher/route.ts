@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     await updateVisitorStatus(
       ip,
       email,
-      customerId,
+      customerId.toString().padStart(5, '0'),
       'Email Submitted',
       timeToSubmit,
       scrollDepth
