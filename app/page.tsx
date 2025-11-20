@@ -331,7 +331,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       {/* Voucher Counter Header */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 text-center font-bold">
+      <div className="text-white py-3 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2">
           <span className="text-2xl animate-pulse">✨</span>
           <span>Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
@@ -359,7 +359,7 @@ export default function LandingPage() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-4 py-12">
+      <div className="max-w-2xl mx-auto px-4 py-6">
         {/* Step 1: Email */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
