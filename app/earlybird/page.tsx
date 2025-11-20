@@ -44,6 +44,8 @@ export default function EarlyBirdPage() {
   const [emailSubmitTime, setEmailSubmitTime] = useState<number>(0);
   const [nameSubmitTime, setNameSubmitTime] = useState<number>(0);
   const [phoneSubmitTime, setPhoneSubmitTime] = useState<number>(0);
+  const [voucherCode, setVoucherCode] = useState<string>('');
+  const [totalSignups, setTotalSignups] = useState<number>(0);
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -261,6 +263,14 @@ export default function EarlyBirdPage() {
           return;
         }
 
+        const data = await response.json();
+        if (data.voucherCode) {
+          setVoucherCode(data.voucherCode);
+        }
+        if (data.totalSignups) {
+          setTotalSignups(data.totalSignups);
+        }
+
         // Track email submission
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
@@ -369,19 +379,19 @@ export default function EarlyBirdPage() {
     if (vouchersRemaining <= 3) {
       return (
         <span className="text-lg md:text-xl">
-          Final <span className="text-white underline font-extrabold">{vouchersRemaining}</span> vouchers available last chance!
+          Final <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> vouchers available last chance!
         </span>
       );
     } else if (vouchersRemaining <= 100) {
       return (
         <span className="text-lg md:text-xl">
-          Due to popular demand only <span className="text-white underline font-extrabold">{vouchersRemaining}</span> more £{voucherValue} vouchers are available it's your final chance!
+          Due to popular demand only <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
         </span>
       );
     } else {
       return (
         <span className="text-lg md:text-xl">
-          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="text-white underline font-extrabold">{vouchersRemaining}</span> Are Taken.
+          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> Are Taken.
         </span>
       );
     }
@@ -477,7 +487,7 @@ export default function EarlyBirdPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="text-left">
+              <div className="text-center">
                 <label htmlFor="name" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   What's your full name?
                 </label>
@@ -487,7 +497,7 @@ export default function EarlyBirdPage() {
                   value={formData.name}
                   onChange={(e) => updateField('name', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="John Smith"
                   autoFocus
@@ -518,8 +528,8 @@ export default function EarlyBirdPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="text-left">
-                <label htmlFor="phone" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
+              <div className="text-center">
+                <label htmlFor="phone" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
                   What's your phone number?
                 </label>
                 <input
@@ -528,12 +538,12 @@ export default function EarlyBirdPage() {
                   value={formData.phone}
                   onChange={(e) => updateField('phone', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="07XXX XXXXXX"
                   autoFocus
                 />
-                <p className="text-sm mt-2" style={{ color: '#666' }}>
+                <p className="text-sm mt-2 text-center" style={{ color: '#666' }}>
                   We'll text you the voucher code instantly
                 </p>
               </div>
@@ -562,14 +572,11 @@ export default function EarlyBirdPage() {
               <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Getting your £{voucherValue} voucher sent to you now...
               </p>
-              <p className="text-md" style={{ color: '#666' }}>
-                Where should we send your welcome pack?
-              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="text-left">
-                <label htmlFor="address" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
+              <div className="text-center">
+                <label htmlFor="address" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
                   Your postcode
                 </label>
                 <input
@@ -578,14 +585,11 @@ export default function EarlyBirdPage() {
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="SW1A 1AA"
                   autoFocus
                 />
-                <p className="text-sm mt-2" style={{ color: '#666' }}>
-                  We'll mail you a physical voucher card
-                </p>
               </div>
 
               <button
@@ -601,8 +605,8 @@ export default function EarlyBirdPage() {
 
         {/* Step 5: Success + Bonus Offer */}
         {step === 5 && (
-          <div className="space-y-8">
-            {/* Success Message */}
+          <div>
+            {/* Success Message with Bonus Offer */}
             <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
               <div className="mb-6">
                 <div className="inline-block rounded-full p-6 mb-4 animate-bounce" style={{ backgroundColor: '#cfe8d7' }}>
@@ -614,59 +618,49 @@ export default function EarlyBirdPage() {
                 <p className="text-2xl mb-6">
                   Your £{voucherValue} voucher is confirmed!
                 </p>
-                <div className="rounded-xl p-6 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
-                  <p className="text-lg mb-2">Check your phone for:</p>
-                  <div className="text-3xl font-mono font-bold tracking-wider">
-                    SMILE50
+                <div className="rounded-xl p-6 mb-6 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
+                  <p className="text-lg mb-2">Check your email and phone for:</p>
+                  <div className="text-3xl font-mono font-bold tracking-wider mb-3">
+                    {voucherCode}
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bonus Questionnaire */}
-            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center" style={{ backgroundColor: '#1f3a33', color: 'white' }}>
-              <div className="mb-6">
-                <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                  ⭐ EXCLUSIVE BONUS OPPORTUNITY ⭐
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold mb-4">
-                Win 1 Year of FREE Dentistry!
-              </h3>
-              <p className="text-xl mb-2">
-                Worth over <span className="font-bold text-3xl" style={{ color: '#cfe8d7' }}>£2,000</span>
-              </p>
-              <p className="text-lg mb-8 opacity-90">
-                You're already qualified! Just answer 4 quick questions to enter the draw
-              </p>
-
-              <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
-                <div className="flex items-center justify-center gap-4 text-lg">
-                  <div className="flex items-center gap-2">
-                    <span>✓</span>
-                    <span>Takes 30 seconds</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>✓</span>
-                    <span>No purchase needed</span>
-                  </div>
+                  <p className="text-sm" style={{ color: '#cfe8d7' }}>
+                    Keep this code safe you will need it to claim your voucher
+                  </p>
                 </div>
               </div>
 
-              <button
-                onClick={() => setStep(6)}
-                className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
-                style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
-              >
-                Yes! Enter Me in the Draw →
-              </button>
+              {/* Bonus Offer in Same Element */}
+              <div className="border-t pt-6" style={{ borderColor: 'rgba(207, 232, 215, 0.3)' }}>
+                <div className="mb-4">
+                  <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
+                    ⭐ BONUS OPPORTUNITY ⭐
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3">
+                  Win 1 Year of FREE Dentistry Worth £2,000!
+                </h3>
+                <p className="text-lg mb-4">
+                  Join {totalSignups} other voucher holders competing for this prize!
+                </p>
+                <p className="text-base mb-6 opacity-90">
+                  Answer 4 quick questions to enter the draw
+                </p>
 
-              <button
-                onClick={() => window.location.href = '/home'}
-                className="text-white/80 hover:text-white underline text-sm"
-              >
-                No thanks, I'll skip this opportunity
-              </button>
+                <button
+                  onClick={() => setStep(6)}
+                  className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
+                  style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                >
+                  Yes! Enter Me in the Draw →
+                </button>
+
+                <button
+                  onClick={() => window.location.href = '/home'}
+                  className="text-white/80 hover:text-white underline text-sm"
+                >
+                  No thanks, I'll skip this opportunity
+                </button>
+              </div>
             </div>
           </div>
         )}

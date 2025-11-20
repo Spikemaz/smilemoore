@@ -27,8 +27,19 @@ export async function POST(request: Request) {
     const tier = counter.getCurrentTier();
     const batchNumber = Math.floor(totalSignups / 90) + 1;
 
-    // Determine voucher code based on value
-    const voucherCode = tier.value > 0 ? `SMILE${tier.value}` : 'FREEDRAW';
+    // Generate unique alphanumeric voucher code
+    const customerId = totalSignups + 1;
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded I, O, 0, 1 for clarity
+    let code = '';
+    let num = customerId;
+
+    // Convert customer ID to base-32 alphanumeric (5 characters)
+    for (let i = 0; i < 5; i++) {
+      code = chars[num % chars.length] + code;
+      num = Math.floor(num / chars.length);
+    }
+
+    const voucherCode = `SMILE${code}`;
 
     // Add to Google Sheets
     const success = await addSignup({
@@ -49,9 +60,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // Get Customer ID for linking (it's totalSignups + 1, formatted)
-    const customerId = (totalSignups + 1).toString().padStart(5, '0');
 
     // Update visitor status to "Email Submitted" with time and scroll metrics
     await updateVisitorStatus(
