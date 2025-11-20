@@ -729,7 +729,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -758,7 +758,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -787,7 +787,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -825,7 +825,7 @@ export default function LandingPage() {
                         disabled={!surveyData.importantFactors.includes(option) && surveyData.importantFactors.length >= 3}
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -900,7 +900,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -931,7 +931,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -961,7 +961,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -990,7 +990,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1028,7 +1028,7 @@ export default function LandingPage() {
                         }}
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1058,7 +1058,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1089,7 +1089,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1120,7 +1120,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1150,7 +1150,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -1180,7 +1180,7 @@ export default function LandingPage() {
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base">{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
                     </label>
                   ))}
                 </div>
