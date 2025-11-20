@@ -329,9 +329,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Voucher Counter Header */}
-      <div className="text-white py-3 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7' }}>
+      <div className="py-3 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2">
           <span className="text-2xl animate-pulse">✨</span>
           <span>Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
@@ -341,17 +341,17 @@ export default function LandingPage() {
 
       {/* Progress Bar - Only show after step 1 */}
       {step > 1 && step <= 4 && (
-        <div className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="shadow-sm sticky top-0 z-50" style={{ backgroundColor: '#1f3a33' }}>
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex justify-end items-center mb-2">
-              <span className="text-sm font-semibold text-blue-600">
+              <span className="text-sm font-semibold" style={{ color: '#cfe8d7' }}>
                 {getProgress()}% Complete
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="w-full rounded-full h-3 overflow-hidden" style={{ backgroundColor: 'rgba(207, 232, 215, 0.3)' }}>
               <div
-                className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${getProgress()}%` }}
+                className="h-3 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${getProgress()}%`, backgroundColor: '#cfe8d7' }}
               />
             </div>
           </div>
@@ -364,20 +364,20 @@ export default function LandingPage() {
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-6">
-              <span className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold mb-4">
+              <span className="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                 ✓ LIMITED TIME OFFER
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Claim Your <span className="text-blue-600">£{voucherValue} Voucher</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+              Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl mb-8" style={{ color: '#666' }}>
               New patient special - Valid for dental treatments
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-left">
-                <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-3">
+                <label htmlFor="email" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   Enter your email to claim your voucher
                 </label>
                 <input
@@ -386,7 +386,8 @@ export default function LandingPage() {
                   value={formData.email}
                   onChange={(e) => updateField('email', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="your@email.com"
                   autoFocus
                 />
@@ -394,13 +395,14 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: '#1f3a33' }}
               >
                 Submit
               </button>
             </form>
 
-            <div className="mt-8 flex items-center justify-center gap-4 text-sm text-gray-500">
+            <div className="mt-8 flex items-center justify-center gap-4 text-sm" style={{ color: '#666' }}>
               <div className="flex items-center gap-1">
                 <span>🔒</span>
                 <span>Secure</span>
@@ -415,7 +417,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <p className="text-sm text-gray-500 mt-6">
+            <p className="text-sm mt-6" style={{ color: '#666' }}>
               🎁 Every voucher claim is automatically entered to win 1 year FREE dentistry (worth £2,000+)
             </p>
           </div>
@@ -425,20 +427,20 @@ export default function LandingPage() {
         {step === 2 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-8">
-              <div className="inline-block bg-green-100 p-4 rounded-full mb-4">
+              <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">✓</span>
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
                 Great! Your voucher is reserved
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg" style={{ color: '#666' }}>
                 Let's personalize your voucher...
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-left">
-                <label htmlFor="name" className="block text-lg font-semibold text-gray-700 mb-3">
+                <label htmlFor="name" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   What's your full name?
                 </label>
                 <input
@@ -447,7 +449,8 @@ export default function LandingPage() {
                   value={formData.name}
                   onChange={(e) => updateField('name', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="John Smith"
                   autoFocus
                 />
@@ -455,7 +458,8 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: '#1f3a33' }}
               >
                 Continue →
               </button>
@@ -467,17 +471,17 @@ export default function LandingPage() {
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
                 Thanks, {formData.name}!
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg" style={{ color: '#666' }}>
                 We'll send your voucher via SMS and email
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-left">
-                <label htmlFor="phone" className="block text-lg font-semibold text-gray-700 mb-3">
+                <label htmlFor="phone" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   What's your phone number?
                 </label>
                 <input
@@ -486,18 +490,20 @@ export default function LandingPage() {
                   value={formData.phone}
                   onChange={(e) => updateField('phone', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="07XXX XXXXXX"
                   autoFocus
                 />
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm mt-2" style={{ color: '#666' }}>
                   We'll text you the voucher code instantly
                 </p>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: '#1f3a33' }}
               >
                 Almost There →
               </button>
@@ -509,23 +515,23 @@ export default function LandingPage() {
         {step === 4 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-8">
-              <div className="inline-block bg-yellow-100 p-4 rounded-full mb-4">
+              <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">🎁</span>
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
                 Final Question - You're One Step Away!
               </h2>
-              <p className="text-lg text-gray-600 mb-2">
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Getting your £{voucherValue} voucher sent to you now...
               </p>
-              <p className="text-md text-gray-500">
+              <p className="text-md" style={{ color: '#666' }}>
                 Where should we send your welcome pack?
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-left">
-                <label htmlFor="address" className="block text-lg font-semibold text-gray-700 mb-3">
+                <label htmlFor="address" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   Your postcode
                 </label>
                 <input
@@ -534,18 +540,20 @@ export default function LandingPage() {
                   value={formData.address}
                   onChange={(e) => updateField('address', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
                   placeholder="SW1A 1AA"
                   autoFocus
                 />
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm mt-2" style={{ color: '#666' }}>
                   We'll mail you a physical voucher card
                 </p>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-5 rounded-xl text-xl font-bold hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 shadow-lg animate-pulse"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg animate-pulse"
+                style={{ backgroundColor: '#1f3a33' }}
               >
                 🎉 Claim My £{voucherValue} Voucher Now!
               </button>
@@ -557,9 +565,9 @@ export default function LandingPage() {
         {step === 5 && (
           <div className="space-y-8">
             {/* Success Message */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white">
+            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
               <div className="mb-6">
-                <div className="inline-block bg-white rounded-full p-6 mb-4 animate-bounce">
+                <div className="inline-block rounded-full p-6 mb-4 animate-bounce" style={{ backgroundColor: '#cfe8d7' }}>
                   <span className="text-6xl">🎉</span>
                 </div>
                 <h2 className="text-4xl font-bold mb-4">
@@ -568,7 +576,7 @@ export default function LandingPage() {
                 <p className="text-2xl mb-6">
                   Your £{voucherValue} voucher is confirmed!
                 </p>
-                <div className="bg-white/20 backdrop-blur rounded-xl p-6 inline-block">
+                <div className="rounded-xl p-6 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
                   <p className="text-lg mb-2">Check your phone for:</p>
                   <div className="text-3xl font-mono font-bold tracking-wider">
                     SMILE50
@@ -578,9 +586,9 @@ export default function LandingPage() {
             </div>
 
             {/* Bonus Questionnaire */}
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white">
+            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center" style={{ backgroundColor: '#1f3a33', color: 'white' }}>
               <div className="mb-6">
-                <span className="inline-block bg-yellow-400 text-purple-900 px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse">
+                <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                   ⭐ EXCLUSIVE BONUS OPPORTUNITY ⭐
                 </span>
               </div>
@@ -588,13 +596,13 @@ export default function LandingPage() {
                 Win 1 Year of FREE Dentistry!
               </h3>
               <p className="text-xl mb-2">
-                Worth over <span className="text-yellow-400 font-bold text-3xl">£2,000</span>
+                Worth over <span className="font-bold text-3xl" style={{ color: '#cfe8d7' }}>£2,000</span>
               </p>
               <p className="text-lg mb-8 opacity-90">
                 You're already qualified! Just answer 4 quick questions to enter the draw
               </p>
 
-              <div className="bg-white/20 backdrop-blur rounded-xl p-6 mb-8">
+              <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
                 <div className="flex items-center justify-center gap-4 text-lg">
                   <div className="flex items-center gap-2">
                     <span>✓</span>
@@ -609,7 +617,8 @@ export default function LandingPage() {
 
               <button
                 onClick={() => setStep(6)}
-                className="w-full bg-yellow-400 text-purple-900 px-8 py-5 rounded-xl text-xl font-bold hover:bg-yellow-300 transition-all transform hover:scale-105 shadow-lg mb-4"
+                className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
+                style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
               >
                 Yes! Enter Me in the Draw →
               </button>
