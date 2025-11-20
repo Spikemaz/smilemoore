@@ -194,8 +194,19 @@ export default function EarlyBirdPage() {
       try {
         const response = await fetch('/api/voucher-status');
         const data: VoucherStatus = await response.json();
-        setVouchersRemaining(data.initialDisplay);
+        const actualRemaining = data.initialDisplay;
+
+        // Start countdown from actual number
+        setVouchersRemaining(actualRemaining);
         setVoucherValue(data.currentTier.value);
+
+        // Animate countdown after 2 seconds
+        setTimeout(() => {
+          if (actualRemaining > 3) {
+            setVouchersRemaining(actualRemaining - 1);
+          }
+        }, 2000);
+
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching voucher status:', error);
@@ -354,12 +365,34 @@ export default function EarlyBirdPage() {
     setFormData({ ...formData, [field]: value });
   };
 
+  const getBannerMessage = () => {
+    if (vouchersRemaining <= 3) {
+      return (
+        <span className="text-lg md:text-xl">
+          Final <span className="text-white underline font-extrabold">{vouchersRemaining}</span> vouchers available last chance!
+        </span>
+      );
+    } else if (vouchersRemaining <= 100) {
+      return (
+        <span className="text-lg md:text-xl">
+          Due to popular demand only <span className="text-white underline font-extrabold">{vouchersRemaining}</span> more £{voucherValue} vouchers are available it's your final chance!
+        </span>
+      );
+    } else {
+      return (
+        <span className="text-lg md:text-xl">
+          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="text-white underline font-extrabold">{vouchersRemaining}</span> Are Taken.
+        </span>
+      );
+    }
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Voucher Counter Header */}
       <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#70d490', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto">
-          <span className="text-lg md:text-xl">You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final {vouchersRemaining} Are Taken.</span>
+          {getBannerMessage()}
         </div>
       </div>
 
@@ -439,7 +472,7 @@ export default function EarlyBirdPage() {
                 Great! Your voucher is reserved
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
-                Let's personalize your voucher...
+                Let's personalise your voucher...
               </p>
             </div>
 
