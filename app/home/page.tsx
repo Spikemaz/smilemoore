@@ -13,9 +13,9 @@ export default function HomePage() {
               </a>
             </div>
             <div className="hidden md:flex space-x-8">
-              <a href="/home#services" className="text-gray-700 transition-colors" style={{ ":hover": { color: '#1f3a33' } }} onMouseEnter={(e) => e.currentTarget.style.color = '#1f3a33'} onMouseLeave={(e) => e.currentTarget.style.color = ''}>Services</a>
-              <a href="/home#about" className="text-gray-700 transition-colors" onMouseEnter={(e) => e.currentTarget.style.color = '#1f3a33'} onMouseLeave={(e) => e.currentTarget.style.color = ''}>About</a>
-              <a href="/home#contact" className="text-gray-700 transition-colors" onMouseEnter={(e) => e.currentTarget.style.color = '#1f3a33'} onMouseLeave={(e) => e.currentTarget.style.color = ''}>Contact</a>
+              <a href="/home#services" className="text-gray-700 transition-colors hover:text-[#1f3a33]">Services</a>
+              <a href="/home#about" className="text-gray-700 transition-colors hover:text-[#1f3a33]">About</a>
+              <a href="/home#contact" className="text-gray-700 transition-colors hover:text-[#1f3a33]">Contact</a>
             </div>
             <a href="#book" className="text-white px-6 py-2 rounded-lg transition-colors" style={{ backgroundColor: '#1f3a33' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f3a33'}>
               Book Appointment
