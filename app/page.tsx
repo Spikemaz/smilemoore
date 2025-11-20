@@ -472,8 +472,8 @@ export default function LandingPage() {
                   value={formData.email}
                   onChange={(e) => updateField('email', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all placeholder-gray-500 text-center"
-                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="your@email.com"
                   autoFocus
                 />
