@@ -168,18 +168,22 @@ export async function initializeSheet(): Promise<boolean> {
       'Voucher Code',
       'Batch Number',
       'IP Address',
+      'Dental Care Type',
+      'Registration Timeline',
+      'Preferred Times',
+      'Important Factors',
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:K1',
+      range: 'Home!A1:O1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:K1',
+      range: 'Earlybird!A1:O1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });

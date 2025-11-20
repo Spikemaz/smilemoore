@@ -46,6 +46,12 @@ export default function LandingPage() {
   const [phoneSubmitTime, setPhoneSubmitTime] = useState<number>(0);
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [totalSignups, setTotalSignups] = useState<number>(0);
+  const [surveyData, setSurveyData] = useState({
+    dentalCare: '',
+    timeline: '',
+    appointmentTimes: '',
+    importantFactors: [] as string[],
+  });
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -665,21 +671,173 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 6: Bonus Questions (Placeholder) */}
+        {/* Step 6: Survey Questions */}
         {step === 6 && (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-            <h3 className="text-3xl font-bold text-gray-900 mb-6">
-              Bonus Questions Coming...
-            </h3>
-            <p className="text-lg text-gray-600 mb-8">
-              This will be your 4-question survey for the annual dentistry draw
-            </p>
-            <button
-              onClick={() => window.location.href = '/home'}
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700"
-            >
-              Continue to Website
-            </button>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div className="text-center mb-6">
+              <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
+                🔥 4 QUICK QUESTIONS
+              </span>
+              <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                Help Us Build Your Perfect Practice
+              </h3>
+              <p className="text-lg" style={{ color: '#666' }}>
+                Your answers enter you for 1 year of FREE dentistry worth £2,000!
+              </p>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              // Save survey responses
+              try {
+                await fetch('/api/save-survey', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.email,
+                    ...surveyData,
+                  }),
+                });
+                window.location.href = '/home';
+              } catch (error) {
+                console.error('Survey submission error:', error);
+                window.location.href = '/home';
+              }
+            }} className="space-y-8">
+              {/* Question 1 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  1. What type of dental care is most important to you?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Routine check-ups & hygiene',
+                    'Cosmetic improvements',
+                    'Family/children\'s dentistry',
+                    'Emergency/relief from pain',
+                    'Nervous-patient friendly care'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.dentalCare === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="dentalCare"
+                        value={option}
+                        checked={surveyData.dentalCare === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, dentalCare: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 2 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  2. How soon do you expect to register with or visit a dentist?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Immediately',
+                    'Within 1–3 months',
+                    'Within 3–6 months',
+                    'I\'m just browsing'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.timeline === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="timeline"
+                        value={option}
+                        checked={surveyData.timeline === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, timeline: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. What days/times work best for your dental appointments?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Weekdays',
+                    'Evenings',
+                    'Weekends',
+                    'Flexible'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.appointmentTimes === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="appointmentTimes"
+                        value={option}
+                        checked={surveyData.appointmentTimes === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, appointmentTimes: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 4 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  4. What matters most when choosing a new dental practice?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select up to 3)</span>
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Price & transparency',
+                    'Gentle, patient-focused care',
+                    'Availability of hygiene appointments',
+                    'Modern clinic & technology',
+                    'Convenience of location',
+                    'Short waiting lists'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.importantFactors.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={surveyData.importantFactors.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked && surveyData.importantFactors.length < 3) {
+                            setSurveyData({ ...surveyData, importantFactors: [...surveyData.importantFactors, value] });
+                          } else if (!e.target.checked) {
+                            setSurveyData({ ...surveyData, importantFactors: surveyData.importantFactors.filter(f => f !== value) });
+                          }
+                        }}
+                        disabled={!surveyData.importantFactors.includes(option) && surveyData.importantFactors.length >= 3}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                Submit & Enter Prize Draw →
+              </button>
+            </form>
           </div>
         )}
       </div>
