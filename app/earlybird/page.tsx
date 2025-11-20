@@ -91,26 +91,76 @@ export default function EarlyBirdPage() {
         const ttclid = urlParams.get('ttclid') || ''; // TikTok
         const li_fat_id = urlParams.get('li_fat_id') || ''; // LinkedIn
 
-        // Detect device type
-        const deviceType = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
-          ? 'Mobile'
-          : 'Desktop';
-
-        // Detect operating system
+        // Enhanced device detection
         const userAgent = navigator.userAgent;
+
+        // Detect device type and model
+        let deviceType = 'Desktop';
+        let deviceModel = 'Unknown';
+
+        if (/iPhone/.test(userAgent)) {
+          deviceType = 'Mobile';
+          // Detect iPhone model based on screen size and user agent
+          if (window.screen.height === 932 || window.screen.height === 852) deviceModel = 'iPhone 15 Pro Max / 14 Pro Max';
+          else if (window.screen.height === 844) deviceModel = 'iPhone 15 Pro / 14 Pro / 13 Pro / 12 Pro';
+          else if (window.screen.height === 896) deviceModel = 'iPhone 11 Pro Max / XS Max';
+          else if (window.screen.height === 812) deviceModel = 'iPhone 13 mini / 12 mini / X';
+          else if (window.screen.height === 736) deviceModel = 'iPhone 8 Plus / 7 Plus / 6s Plus';
+          else if (window.screen.height === 667) deviceModel = 'iPhone SE / 8 / 7 / 6s';
+          else deviceModel = 'iPhone';
+        } else if (/iPad/.test(userAgent)) {
+          deviceType = 'Tablet';
+          deviceModel = 'iPad';
+        } else if (/Android/.test(userAgent)) {
+          deviceType = 'Mobile';
+          // Try to extract Android device model from user agent
+          const androidMatch = userAgent.match(/Android.*;\s([^)]+)\)/);
+          deviceModel = androidMatch ? androidMatch[1] : 'Android Device';
+        } else if (/Mac/.test(userAgent) && !(/iPhone|iPad/.test(userAgent))) {
+          deviceModel = 'MacBook/iMac';
+        } else if (/Windows/.test(userAgent)) {
+          deviceModel = 'Windows PC';
+        }
+
+        // Detect operating system with version
         let os = 'Unknown';
-        if (userAgent.includes('Windows')) os = 'Windows';
-        else if (userAgent.includes('Mac')) os = 'MacOS';
-        else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) os = 'iOS';
-        else if (userAgent.includes('Android')) os = 'Android';
+        if (userAgent.includes('Windows NT 10.0')) os = 'Windows 11';
+        else if (userAgent.includes('Windows NT 6.3')) os = 'Windows 8.1';
+        else if (userAgent.includes('Windows NT 6.2')) os = 'Windows 8';
+        else if (userAgent.includes('Windows NT 6.1')) os = 'Windows 7';
+        else if (userAgent.includes('Windows')) os = 'Windows';
+        else if (userAgent.includes('Mac OS X')) {
+          const macVersion = userAgent.match(/Mac OS X (\d+[._]\d+)/);
+          os = macVersion ? `macOS ${macVersion[1].replace('_', '.')}` : 'macOS';
+        }
+        else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+          const iosVersion = userAgent.match(/OS (\d+_\d+)/);
+          os = iosVersion ? `iOS ${iosVersion[1].replace('_', '.')}` : 'iOS';
+        }
+        else if (userAgent.includes('Android')) {
+          const androidVersion = userAgent.match(/Android (\d+\.?\d*)/);
+          os = androidVersion ? `Android ${androidVersion[1]}` : 'Android';
+        }
         else if (userAgent.includes('Linux')) os = 'Linux';
 
-        // Detect browser
+        // Detect browser with version
         let browser = 'Unknown';
-        if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) browser = 'Chrome';
-        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) browser = 'Safari';
-        else if (userAgent.includes('Firefox')) browser = 'Firefox';
-        else if (userAgent.includes('Edg')) browser = 'Edge';
+        if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+          const chromeVersion = userAgent.match(/Chrome\/(\d+)/);
+          browser = chromeVersion ? `Chrome ${chromeVersion[1]}` : 'Chrome';
+        }
+        else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+          const safariVersion = userAgent.match(/Version\/(\d+)/);
+          browser = safariVersion ? `Safari ${safariVersion[1]}` : 'Safari';
+        }
+        else if (userAgent.includes('Firefox')) {
+          const firefoxVersion = userAgent.match(/Firefox\/(\d+)/);
+          browser = firefoxVersion ? `Firefox ${firefoxVersion[1]}` : 'Firefox';
+        }
+        else if (userAgent.includes('Edg')) {
+          const edgeVersion = userAgent.match(/Edg\/(\d+)/);
+          browser = edgeVersion ? `Edge ${edgeVersion[1]}` : 'Edge';
+        }
 
         // Get screen resolution
         const screenResolution = `${window.screen.width}x${window.screen.height}`;
@@ -118,6 +168,18 @@ export default function EarlyBirdPage() {
         // Get language and timezone
         const language = navigator.language || 'unknown';
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+
+        // Get retargeting cookies for Facebook and Google
+        const getCookie = (name: string) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+          return '';
+        };
+
+        const fbp = getCookie('_fbp'); // Facebook Browser ID
+        const fbc = getCookie('_fbc') || fbclid ? `fb.1.${Date.now()}.${fbclid}` : ''; // Facebook Click ID
+        const gaClientId = getCookie('_ga'); // Google Analytics Client ID
 
         // Get campaign source from URL path or UTM
         const campaignSource = window.location.pathname.slice(1) || utmSource || 'earlybird';
@@ -149,6 +211,7 @@ export default function EarlyBirdPage() {
           body: JSON.stringify({
             campaignSource,
             deviceType,
+            deviceModel,
             browser,
             userAgent,
             referrer: document.referrer || 'direct',
@@ -162,6 +225,9 @@ export default function EarlyBirdPage() {
             language,
             timezone,
             landingPage,
+            fbp,
+            fbc,
+            gaClientId,
             fbclid,
             gclid,
             msclkid,

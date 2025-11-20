@@ -48,6 +48,7 @@ export async function POST(request: Request) {
     const {
       campaignSource,
       deviceType,
+      deviceModel,
       browser,
       userAgent,
       referrer,
@@ -61,6 +62,9 @@ export async function POST(request: Request) {
       language,
       timezone,
       landingPage,
+      fbp,
+      fbc,
+      gaClientId,
       fbclid,
       gclid,
       msclkid,
@@ -85,47 +89,51 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Prepare row data with all tracking information (columns A-AH)
+    // Prepare row data with all tracking information (columns A-AL)
     const values = [[
       visitorId, // A
       timestamp, // B
       ip, // C
       campaignSource || 'direct', // D
       deviceType || 'unknown', // E
-      browser || 'unknown', // F
-      userAgent || 'unknown', // G
-      referrer || 'direct', // H
-      '', // I - Email (empty initially)
-      '', // J - Customer ID (empty initially)
-      'Visited', // K - Status
-      utmSource || '', // L
-      utmMedium || '', // M
-      utmCampaign || '', // N
-      utmTerm || '', // O
-      utmContent || '', // P
-      os || 'unknown', // Q
-      screenResolution || 'unknown', // R
-      language || 'unknown', // S
-      timezone || 'unknown', // T
-      landingPage || '', // U
-      fbclid || '', // V
-      gclid || '', // W
-      msclkid || '', // X
-      ttclid || '', // Y
-      li_fat_id || '', // Z
-      pageLoadTime || 0, // AA
-      isReturningVisitor ? 'Yes' : 'No', // AB
-      sessionCount || 1, // AC
-      firstVisitDate || '', // AD
-      dayOfWeek || '', // AE
-      hourOfDay || 0, // AF
-      '', // AG - Time to Email Submit (calculated later)
-      '', // AH - Max Scroll Depth % (updated later)
+      deviceModel || 'unknown', // F
+      browser || 'unknown', // G
+      userAgent || 'unknown', // H
+      referrer || 'direct', // I
+      '', // J - Email (empty initially)
+      '', // K - Customer ID (empty initially)
+      'Visited', // L - Status
+      utmSource || '', // M
+      utmMedium || '', // N
+      utmCampaign || '', // O
+      utmTerm || '', // P
+      utmContent || '', // Q
+      os || 'unknown', // R
+      screenResolution || 'unknown', // S
+      language || 'unknown', // T
+      timezone || 'unknown', // U
+      landingPage || '', // V
+      fbp || '', // W - Facebook Browser ID
+      fbc || '', // X - Facebook Click ID
+      gaClientId || '', // Y - Google Analytics Client ID
+      fbclid || '', // Z
+      gclid || '', // AA
+      msclkid || '', // AB
+      ttclid || '', // AC
+      li_fat_id || '', // AD
+      pageLoadTime || 0, // AE
+      isReturningVisitor ? 'Yes' : 'No', // AF
+      sessionCount || 1, // AG
+      firstVisitDate || '', // AH
+      dayOfWeek || '', // AI
+      hourOfDay || 0, // AJ
+      '', // AK - Time to Email Submit (calculated later)
+      '', // AL - Max Scroll Depth % (updated later)
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AH',
+      range: 'Visitors!A:AL',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

@@ -68,63 +68,63 @@ export async function updateVisitorStatus(
 
     if (email) {
       updates.push({
-        range: `Visitors!I${matchRowIndex}`, // Column I = Email
+        range: `Visitors!J${matchRowIndex}`, // Column J = Email
         values: [[email]],
       });
     }
 
     if (customerId) {
       updates.push({
-        range: `Visitors!J${matchRowIndex}`, // Column J = Customer ID
+        range: `Visitors!K${matchRowIndex}`, // Column K = Customer ID
         values: [[customerId]],
       });
     }
 
     if (status) {
       updates.push({
-        range: `Visitors!K${matchRowIndex}`, // Column K = Status
+        range: `Visitors!L${matchRowIndex}`, // Column L = Status
         values: [[status]],
       });
     }
 
     if (timeToEmailSubmit !== undefined) {
       updates.push({
-        range: `Visitors!AG${matchRowIndex}`, // Column AG = Time to Email Submit
+        range: `Visitors!AK${matchRowIndex}`, // Column AK = Time to Email Submit
         values: [[timeToEmailSubmit]],
       });
     }
 
     if (maxScrollDepth !== undefined) {
       updates.push({
-        range: `Visitors!AH${matchRowIndex}`, // Column AH = Max Scroll Depth
+        range: `Visitors!AL${matchRowIndex}`, // Column AL = Max Scroll Depth
         values: [[maxScrollDepth]],
       });
     }
 
     if (emailToName !== undefined) {
       updates.push({
-        range: `Visitors!AI${matchRowIndex}`, // Column AI = Email to Name time
+        range: `Visitors!AM${matchRowIndex}`, // Column AM = Email to Name time
         values: [[emailToName]],
       });
     }
 
     if (nameToPhone !== undefined) {
       updates.push({
-        range: `Visitors!AJ${matchRowIndex}`, // Column AJ = Name to Phone time
+        range: `Visitors!AN${matchRowIndex}`, // Column AN = Name to Phone time
         values: [[nameToPhone]],
       });
     }
 
     if (phoneToPostcode !== undefined) {
       updates.push({
-        range: `Visitors!AK${matchRowIndex}`, // Column AK = Phone to Postcode time
+        range: `Visitors!AO${matchRowIndex}`, // Column AO = Phone to Postcode time
         values: [[phoneToPostcode]],
       });
     }
 
     if (totalTime !== undefined) {
       updates.push({
-        range: `Visitors!AL${matchRowIndex}`, // Column AL = Total Time
+        range: `Visitors!AP${matchRowIndex}`, // Column AP = Total Time
         values: [[totalTime]],
       });
     }
