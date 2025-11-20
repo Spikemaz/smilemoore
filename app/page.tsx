@@ -360,7 +360,7 @@ export default function LandingPage() {
       <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#70d490', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
           <span className="text-3xl md:text-4xl animate-pulse">✨</span>
-          <span className="text-lg md:text-xl">Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
+          <span className="text-lg md:text-xl">Be Quick Only {vouchersRemaining} £{voucherValue} Vouchers Remaining!</span>
           <span className="text-3xl md:text-4xl animate-pulse">✨</span>
         </div>
       </div>
@@ -385,7 +385,7 @@ export default function LandingPage() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-4 py-4">
         {/* Step 1: Email */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
