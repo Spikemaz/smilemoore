@@ -19,7 +19,7 @@ export default function HomePage() {
               <a href="/home#about" className="text-gray-700 transition-colors hover:text-[#1f3a33]">About</a>
               <a href="/home#contact" className="text-gray-700 transition-colors hover:text-[#1f3a33]">Contact</a>
             </div>
-            <a href="#book" className="text-white px-6 py-2 rounded-lg transition-colors" style={{ backgroundColor: '#1f3a33' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f3a33'}>
+            <a href="#book" className="text-white px-6 py-2 rounded-lg transition-colors bg-[#1f3a33] hover:bg-[#70d490]">
               Book Appointment
             </a>
           </div>
@@ -44,10 +44,10 @@ export default function HomePage() {
             Professional dental care and cosmetic dentistry services to keep your smile healthy and beautiful
           </p>
           <div className="flex gap-4 justify-center">
-            <a href="#book" className="text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors" style={{ backgroundColor: '#1f3a33' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f3a33'}>
+            <a href="#book" className="text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors bg-[#1f3a33] hover:bg-[#70d490]">
               Book Now
             </a>
-            <a href="#services" className="px-8 py-3 rounded-lg text-lg font-semibold transition-colors" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#cfe8d7'}>
+            <a href="#services" className="px-8 py-3 rounded-lg text-lg font-semibold transition-colors bg-[#cfe8d7] text-[#1f3a33] hover:bg-[#70d490]">
               Our Services
             </a>
           </div>
@@ -59,15 +59,15 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-3xl font-bold text-center mb-12" style={{ color: '#1f3a33' }}>Our Services</h3>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2" style={{ borderColor: '#cfe8d7' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.borderColor = '#cfe8d7'}>
+            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2 border-[#cfe8d7] hover:border-[#70d490]">
               <h4 className="text-xl font-bold mb-4" style={{ color: '#1f3a33' }}>General Dentistry</h4>
               <p className="text-gray-600">Comprehensive dental care including check-ups, cleanings, and preventive treatments</p>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2" style={{ borderColor: '#cfe8d7' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.borderColor = '#cfe8d7'}>
+            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2 border-[#cfe8d7] hover:border-[#70d490]">
               <h4 className="text-xl font-bold mb-4" style={{ color: '#1f3a33' }}>Cosmetic Dentistry</h4>
               <p className="text-gray-600">Teeth whitening, veneers, and smile makeovers to enhance your appearance</p>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2" style={{ borderColor: '#cfe8d7' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = '#70d490'} onMouseLeave={(e) => e.currentTarget.style.borderColor = '#cfe8d7'}>
+            <div className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-all border-2 border-[#cfe8d7] hover:border-[#70d490]">
               <h4 className="text-xl font-bold mb-4" style={{ color: '#1f3a33' }}>Emergency Care</h4>
               <p className="text-gray-600">Prompt treatment for dental emergencies and urgent care needs</p>
             </div>
