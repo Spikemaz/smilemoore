@@ -402,18 +402,11 @@ export default function LandingPage() {
               </button>
             </form>
 
-            <div className="mt-8 flex items-center justify-center gap-4 text-sm" style={{ color: '#666' }}>
-              <div className="flex items-center gap-1">
-                <span>🔒</span>
-                <span>Secure</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>✓</span>
-                <span>No spam</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>⚡</span>
-                <span>Instant claim</span>
+            <div className="mt-8 flex items-center justify-center gap-6 text-sm" style={{ color: '#666' }}>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-xl">🔒</span>
+                <span className="font-semibold">Secure & Private</span>
+                <span className="text-xs">Your data is protected</span>
               </div>
             </div>
 
