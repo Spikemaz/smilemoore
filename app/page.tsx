@@ -663,23 +663,6 @@ export default function LandingPage() {
         )}
       </div>
 
-      {/* Trust Signals Footer */}
-      {step <= 4 && (
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="grid md:grid-cols-2 gap-6 text-center">
-            <div className="flex flex-col items-center">
-              <span className="text-3xl mb-2">⚡</span>
-              <p className="font-semibold text-gray-700">Instant Voucher</p>
-              <p className="text-sm text-gray-500">Receive code via SMS</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-3xl mb-2">⭐</span>
-              <p className="font-semibold text-gray-700">No Hidden Fees</p>
-              <p className="text-sm text-gray-500">Valid on any treatment</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
