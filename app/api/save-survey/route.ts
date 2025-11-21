@@ -118,16 +118,16 @@ export async function POST(request: Request) {
     });
     const rowData = dataResponse.data.values?.[0] || [];
 
-    const voucherTimestamp = rowData[0]; // Column B
-    const currentEntries = parseInt(rowData[30]) || 0; // Column AF
+    const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BA range)
+    const currentEntries = parseInt(rowData[30]) || 0; // Column AF (B=0, so AF=30)
 
-    // Follow-up tracking
-    const followup1Sent4Q = rowData[32]; // Column AH
-    const followup2Sent4Q = rowData[34]; // Column AJ
-    const followup3Sent4Q = rowData[36]; // Column AL
-    const followup1Sent10Q = rowData[38]; // Column AN
-    const followup2Sent10Q = rowData[40]; // Column AP
-    const followup3Sent10Q = rowData[42]; // Column AR
+    // Follow-up tracking (B:BA range, so subtract 1 from standard index)
+    const followup1Sent4Q = rowData[32]; // Column AH (33-1=32)
+    const followup2Sent4Q = rowData[34]; // Column AJ (35-1=34)
+    const followup3Sent4Q = rowData[36]; // Column AL (37-1=36)
+    const followup1Sent10Q = rowData[38]; // Column AN (39-1=38)
+    const followup2Sent10Q = rowData[40]; // Column AP (41-1=40)
+    const followup3Sent10Q = rowData[42]; // Column AR (43-1=42)
 
     const updates: any[] = [];
     let entriesToAdd = 0;
@@ -165,7 +165,7 @@ export async function POST(request: Request) {
 
       // Calculate time to complete 10Q from when they completed 4Q (column AY)
       // We'll use the current timestamp minus when they would have completed 4Q
-      const timeToComplete4Q = parseInt(rowData[49]) || 0; // Column AX
+      const timeToComplete4Q = parseInt(rowData[48]) || 0; // Column AX (49-1=48 in B:BA range)
       if (voucherTimestamp && timeToComplete4Q) {
         const fourQCompletionTime = new Date(voucherTimestamp).getTime() + (timeToComplete4Q * 60000);
         const nowTime = Date.now();
@@ -240,11 +240,11 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           type: notificationType,
           data: {
-            name: rowData[2] || 'Unknown', // Name from column D
+            name: rowData[2] || 'Unknown', // Name from column D (B:BA range, D=2)
             email,
             timeToComplete,
-            device: rowData[53] || 'Unknown', // Column BA
-            totalTime: (parseInt(rowData[49]) || 0) + (parseInt(rowData[50]) || 0), // AX + AY
+            device: rowData[51] || 'Unknown', // Column BA (52-1=51 in B:BA range)
+            totalTime: (parseInt(rowData[48]) || 0) + (parseInt(rowData[49]) || 0), // AX + AY (48 and 49 in B:BA range)
           },
         }),
       });

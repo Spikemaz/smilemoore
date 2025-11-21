@@ -139,10 +139,10 @@ export async function GET(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const sheets = getGoogleSheetsClient();
 
-    // Get all signups
+    // Get all signups (need up to column AS for 10Q follow-up tracking)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A:AT',
+      range: 'Home!A:AS',
     });
 
     const rows = response.data.values || [];
@@ -151,11 +151,11 @@ export async function GET(request: Request) {
     // Skip header row
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      const email = row[2]; // Column C
-      const name = row[3]; // Column D
-      const voucherValue = row[7]; // Column H
-      const entries = parseInt(row[31]) || 0; // Column AF - Total Draw Entries
-      const unsubscribed = row[45]; // Column AT - Unsubscribed from Follow-ups
+      const email = row[2]; // Column C (index 2)
+      const name = row[3]; // Column D (index 3)
+      const voucherValue = row[7]; // Column H (index 7)
+      const entries = parseInt(row[31]) || 0; // Column AF (index 31) - Total Draw Entries
+      const unsubscribed = row[44]; // Column AT (index 44) - Unsubscribed from Follow-ups
 
       if (!email || !name || unsubscribed) continue; // Skip if unsubscribed
 
@@ -163,11 +163,11 @@ export async function GET(request: Request) {
 
       // Check if needs 4-question follow-up (has 1 entry only)
       if (entries === 1) {
-        const followup1Sent = row[33]; // Column AH
-        const followup1Opened = row[34]; // Column AI
-        const followup2Sent = row[35]; // Column AJ
-        const followup2Opened = row[36]; // Column AK
-        const followup3Sent = row[37]; // Column AL
+        const followup1Sent = row[33]; // Column AH (index 33)
+        const followup1Opened = row[34]; // Column AI (index 34)
+        const followup2Sent = row[35]; // Column AJ (index 35)
+        const followup2Opened = row[36]; // Column AK (index 36)
+        const followup3Sent = row[37]; // Column AL (index 37)
 
         let variationIndex = -1;
         let columnToUpdate = '';
