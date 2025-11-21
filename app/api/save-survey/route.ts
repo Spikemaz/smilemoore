@@ -106,6 +106,38 @@ export async function POST(request: Request) {
       },
     });
 
+    // Award entries based on survey completion
+    // Check if this is the 4-question survey or extended survey
+    const isBasicSurvey = dentalCare && timeline && appointmentTimes && importantFactors;
+    const isExtendedSurvey = previousExperience || mostImportantFactor || smileConfidence;
+
+    // Get current entries
+    const entriesResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `Home!AF${rowIndex}`,
+    });
+    const currentEntries = parseInt(entriesResponse.data.values?.[0]?.[0]) || 0;
+
+    let entriesToAdd = 0;
+    if (isBasicSurvey && !isExtendedSurvey) {
+      // First 4 questions: +1 entry
+      entriesToAdd = 1;
+    } else if (isExtendedSurvey) {
+      // Extended 10 questions: +1 entry (total of 2 if they answered both sets)
+      entriesToAdd = 1;
+    }
+
+    if (entriesToAdd > 0) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!AF${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[currentEntries + entriesToAdd]],
+        },
+      });
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error saving survey:', error);

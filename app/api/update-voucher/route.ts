@@ -71,6 +71,21 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // If updating name, generate and store referral link
+    if (field === 'name' && value) {
+      const randomCode = Math.floor(100 + Math.random() * 900);
+      const referralLink = `https://smilemoore.co.uk/api/track-referral-click?email=${encodeURIComponent(email)}&ref=${encodeURIComponent(value)}-${randomCode}`;
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!AG${rowIndex + 1}`,
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[referralLink]],
+        },
+      });
+    }
+
     // Get IP for visitor tracking
     const ip = request.headers.get('x-forwarded-for') ||
                request.headers.get('x-real-ip') ||
@@ -113,6 +128,22 @@ export async function POST(request: NextRequest) {
         totalTime
       );
 
+      // Award +1 entry for claiming voucher (completing name/phone/postcode)
+      const entriesResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!AF${rowIndex + 1}`,
+      });
+      const currentEntries = parseInt(entriesResponse.data.values?.[0]?.[0]) || 0;
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!AF${rowIndex + 1}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[currentEntries + 1]],
+        },
+      });
+
       // Get all voucher details from the row to send confirmation email
       const voucherDetailsResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
@@ -130,7 +161,7 @@ export async function POST(request: NextRequest) {
           if (process.env.RESEND_API_KEY) {
             const resend = new Resend(process.env.RESEND_API_KEY);
 
-            await resend.emails.send({
+            const emailResult = await resend.emails.send({
               from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
               to: [emailAddr],
               replyTo: 'marcus@smilemoore.co.uk',
@@ -178,6 +209,7 @@ export async function POST(request: NextRequest) {
                                   <li>You'll receive updates throughout our practice fit-out</li>
                                   <li>Once we're ready to see our first patients, we'll send you a booking link</li>
                                   <li>Use your voucher code when booking to redeem your £${voucherValue} discount</li>
+                                  <li><strong>Bonus: Receive +100 prize draw entries when you redeem your voucher!</strong></li>
                                 </ul>
                                 <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                                   <tr>
@@ -197,7 +229,7 @@ export async function POST(request: NextRequest) {
                                     <td style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; border: 2px solid #cfe8d7;">
                                       <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR REFERRAL LINK</p>
                                       <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 14px; word-break: break-all;">
-                                        https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}
+                                        https://smilemoore.co.uk/api/track-referral-click?email=${encodeURIComponent(emailAddr)}&ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}
                                       </p>
                                       <p style="margin: 0; color: #666666; font-size: 13px; line-height: 20px;">
                                         Share this link and get <strong>+10 entries</strong> for every friend who claims their voucher!
@@ -218,6 +250,7 @@ export async function POST(request: NextRequest) {
                                 <p style="margin: 0; color: #999999; font-size: 12px;">
                                   This email was sent because you claimed a voucher on our website.
                                 </p>
+                                <img src="https://smilemoore.co.uk/api/track-email-open?email=${encodeURIComponent(emailAddr)}" width="1" height="1" alt="" style="display: block; border: 0;" />
                               </td>
                             </tr>
                           </table>
@@ -228,6 +261,18 @@ export async function POST(request: NextRequest) {
                 </html>
               `,
             });
+
+            // Mark email as sent in Google Sheets (column AB)
+            if (emailResult) {
+              await sheets.spreadsheets.values.update({
+                spreadsheetId: SPREADSHEET_ID,
+                range: `Home!AB${rowIndex + 1}`,
+                valueInputOption: 'USER_ENTERED',
+                requestBody: {
+                  values: [[new Date().toISOString()]],
+                },
+              });
+            }
           }
         } catch (emailError) {
           console.error('Failed to send confirmation email:', emailError);

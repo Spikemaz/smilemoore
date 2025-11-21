@@ -89,51 +89,53 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Prepare row data with all tracking information (columns A-AL)
+    // Prepare row data matching Visitors sheet headers (columns A-AP)
     const values = [[
-      visitorId, // A
-      timestamp, // B
-      ip, // C
-      campaignSource || 'direct', // D
-      deviceType || 'unknown', // E
-      deviceModel || 'unknown', // F
-      browser || 'unknown', // G
-      userAgent || 'unknown', // H
-      referrer || 'direct', // I
+      visitorId, // A - Visitor ID
+      timestamp, // B - Timestamp
+      ip, // C - IP Address
+      campaignSource || 'direct', // D - Campaign Source
+      deviceType || 'unknown', // E - Device Type
+      deviceModel || 'unknown', // F - Device Model
+      browser || 'unknown', // G - Browser
+      userAgent || 'unknown', // H - User Agent
+      referrer || 'direct', // I - Referrer
       '', // J - Email (empty initially)
       '', // K - Customer ID (empty initially)
       'Visited', // L - Status
-      utmSource || '', // M
-      utmMedium || '', // N
-      utmCampaign || '', // O
-      utmTerm || '', // P
-      utmContent || '', // Q
-      os || 'unknown', // R
-      screenResolution || 'unknown', // S
-      language || 'unknown', // T
-      timezone || 'unknown', // U
-      landingPage || '', // V
+      utmSource || '', // M - UTM Source
+      utmMedium || '', // N - UTM Medium
+      utmCampaign || '', // O - UTM Campaign
+      utmTerm || '', // P - UTM Term
+      utmContent || '', // Q - UTM Content
+      os || 'unknown', // R - Operating System
+      screenResolution || 'unknown', // S - Screen Resolution
+      language || 'unknown', // T - Language
+      timezone || 'unknown', // U - Timezone
+      landingPage || '', // V - Landing Page
       fbp || '', // W - Facebook Browser ID
-      fbc || '', // X - Facebook Click ID
-      gaClientId || '', // Y - Google Analytics Client ID
-      fbclid || '', // Z
-      gclid || '', // AA
-      msclkid || '', // AB
-      ttclid || '', // AC
-      li_fat_id || '', // AD
-      pageLoadTime || 0, // AE
-      isReturningVisitor ? 'Yes' : 'No', // AF
-      sessionCount || 1, // AG
-      firstVisitDate || '', // AH
-      dayOfWeek || '', // AI
-      hourOfDay || 0, // AJ
-      '', // AK - Time to Email Submit (calculated later)
-      '', // AL - Max Scroll Depth % (updated later)
+      fbc || fbclid || '', // X - Facebook Click ID
+      gclid || '', // Y - Google Click ID
+      msclkid || '', // Z - Microsoft Click ID
+      ttclid || '', // AA - TikTok Click ID
+      li_fat_id || '', // AB - LinkedIn Click ID
+      pageLoadTime || 0, // AC - Page Load Time
+      isReturningVisitor ? 'Yes' : 'No', // AD - Returning Visitor
+      sessionCount || 1, // AE - Session Count
+      firstVisitDate || '', // AF - Date
+      dayOfWeek || '', // AG - Day of Week
+      hourOfDay || 0, // AH - Hour of Day
+      '', // AI - Time to Email Submit (calculated later)
+      '', // AJ - Max Scroll Depth % (updated later)
+      '', // AK - Time Email → Name (seconds) (calculated later)
+      '', // AL - Time Name → Phone (seconds) (calculated later)
+      '', // AM - Time Phone → Postcode (seconds) (calculated later)
+      '', // AN - Total Time - Load → Complete (seconds) (calculated later)
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AL',
+      range: 'Visitors!A:AN',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

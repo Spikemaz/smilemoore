@@ -10,5 +10,11 @@
   ],
   "env": {
     "GTM_ENABLED": "true"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/send-follow-ups",
+      "schedule": "0 10 * * *"
+    }
+  ]
 }

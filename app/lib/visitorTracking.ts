@@ -39,7 +39,7 @@ export async function updateVisitorStatus(
     // Find the visitor row by IP address (most recent within last 30 minutes)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AL',
+      range: 'Visitors!A:AN',
     });
 
     const rows = response.data.values;
@@ -89,42 +89,42 @@ export async function updateVisitorStatus(
 
     if (timeToEmailSubmit !== undefined) {
       updates.push({
-        range: `Visitors!AK${matchRowIndex}`, // Column AK = Time to Email Submit
+        range: `Visitors!AI${matchRowIndex}`, // Column AI = Time to Email Submit
         values: [[timeToEmailSubmit]],
       });
     }
 
     if (maxScrollDepth !== undefined) {
       updates.push({
-        range: `Visitors!AL${matchRowIndex}`, // Column AL = Max Scroll Depth
+        range: `Visitors!AJ${matchRowIndex}`, // Column AJ = Max Scroll Depth
         values: [[maxScrollDepth]],
       });
     }
 
     if (emailToName !== undefined) {
       updates.push({
-        range: `Visitors!AM${matchRowIndex}`, // Column AM = Email to Name time
+        range: `Visitors!AK${matchRowIndex}`, // Column AK = Email to Name time
         values: [[emailToName]],
       });
     }
 
     if (nameToPhone !== undefined) {
       updates.push({
-        range: `Visitors!AN${matchRowIndex}`, // Column AN = Name to Phone time
+        range: `Visitors!AL${matchRowIndex}`, // Column AL = Name to Phone time
         values: [[nameToPhone]],
       });
     }
 
     if (phoneToPostcode !== undefined) {
       updates.push({
-        range: `Visitors!AO${matchRowIndex}`, // Column AO = Phone to Postcode time
+        range: `Visitors!AM${matchRowIndex}`, // Column AM = Phone to Postcode time
         values: [[phoneToPostcode]],
       });
     }
 
     if (totalTime !== undefined) {
       updates.push({
-        range: `Visitors!AP${matchRowIndex}`, // Column AP = Total Time
+        range: `Visitors!AN${matchRowIndex}`, // Column AN = Total Time
         values: [[totalTime]],
       });
     }

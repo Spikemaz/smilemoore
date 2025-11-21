@@ -97,7 +97,7 @@ export async function addSignup(data: {
     // All signups go to Home tab, but with different source labels
     const sourceLabel = data.campaignSource === 'earlybird-qr' ? 'QR Scan' : 'Home';
 
-    // Prepare row data
+    // Prepare row data (A-L for basic info, initialize AE-AF with 0 referrals and 3 base entries)
     const values = [[
       customerId,
       timestamp,
@@ -115,9 +115,24 @@ export async function addSignup(data: {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A:AA',
+      range: 'Home!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
+    });
+
+    // Initialize Total Referrals (0) and Total Draw Entries (0 - earned through milestones)
+    const rowNumber = (await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!A:A',
+    })).data.values?.length || 1;
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `Home!AE${rowNumber}:AF${rowNumber}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[0, 0]], // 0 referrals, 0 entries (earned through milestones)
+      },
     });
 
     return true;
@@ -157,47 +172,66 @@ export async function initializeSheet(): Promise<boolean> {
       });
     }
 
-    // Add headers to Home and Earlybird sheets
+    // Add headers to Home and Earlybird sheets - comprehensive data capture
     const headers = [[
-      'Customer ID',
-      'Timestamp',
-      'Email',
-      'Name',
-      'Phone',
-      'Postcode',
-      'Campaign Source',
-      'Voucher Value',
-      'Voucher Code',
-      'Batch Number',
-      'IP Address',
-      'Referred By',
-      'Dental Care Type',
-      'Registration Timeline',
-      'Preferred Times',
-      'Important Factors',
-      'Previous Experience',
-      'Most Important Factor',
-      'Smile Confidence',
-      'Same Clinician',
-      'Needed Treatments',
-      'Before Appointment',
-      'Stay Long Term',
-      'Preventing Visits',
-      'Cosmetic Importance',
-      'Preferred Contact',
-      'Additional Feedback',
+      'Customer ID', // A
+      'Timestamp', // B
+      'Email', // C
+      'Name', // D
+      'Phone', // E
+      'Postcode', // F
+      'Campaign Source', // G
+      'Voucher Value', // H
+      'Voucher Code', // I
+      'Batch Number', // J
+      'IP Address', // K
+      'Referred By', // L
+      'Question 1 - Dental Care Type', // M
+      'Question 2 - Registration Timeline', // N
+      'Question 3 - Preferred Appointment Times', // O
+      'Question 4 - Important Factors', // P
+      'Question 5 - Previous Dental Experience', // Q
+      'Question 6 - Most Important Factor', // R
+      'Question 7 - Smile Confidence', // S
+      'Question 8 - Same Clinician Preference', // T
+      'Question 9 - Needed Treatments', // U
+      'Question 10 - Before Appointment Preference', // V
+      'Question 11 - Stay Long Term', // W
+      'Question 12 - Preventing Visits', // X
+      'Question 13 - Cosmetic Importance', // Y
+      'Question 14 - Preferred Contact Method', // Z
+      'Additional Feedback', // AA
+      'Email Sent', // AB
+      'Email Opened', // AC
+      'Referral Link Clicked', // AD
+      'Total Referrals', // AE
+      'Total Draw Entries', // AF
+      'Referral Link', // AG
+      'Follow-up 1 Sent (4Q)', // AH - Timestamp of first follow-up for 4 questions
+      'Follow-up 1 Opened (4Q)', // AI - Timestamp when opened
+      'Follow-up 2 Sent (4Q)', // AJ
+      'Follow-up 2 Opened (4Q)', // AK
+      'Follow-up 3 Sent (4Q)', // AL
+      'Follow-up 3 Opened (4Q)', // AM
+      'Follow-up 1 Sent (10Q)', // AN - Timestamp of first follow-up for 10 questions
+      'Follow-up 1 Opened (10Q)', // AO
+      'Follow-up 2 Sent (10Q)', // AP
+      'Follow-up 2 Opened (10Q)', // AQ
+      'Follow-up 3 Sent (10Q)', // AR
+      'Follow-up 3 Opened (10Q)', // AS
+      'Unsubscribed from Follow-ups', // AT - Timestamp when unsubscribed
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:AA1',
+      range: 'Home!A1:AT1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:AA1',
+      range: 'Earlybird!A1:AT1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });

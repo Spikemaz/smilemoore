@@ -711,13 +711,18 @@ export default function LandingPage() {
                 <p className="text-2xl mb-6">
                   Your £{voucherValue} voucher is confirmed!
                 </p>
-                <div className="rounded-xl p-6 mb-6 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
+                <div className="rounded-xl p-6 mb-4 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
                   <p className="text-lg mb-2">Check your email and phone for:</p>
                   <div className="text-3xl font-mono font-bold tracking-wider mb-3">
                     {voucherCode}
                   </div>
                   <p className="text-sm" style={{ color: '#cfe8d7' }}>
                     Keep this code safe you will need it to claim your voucher
+                  </p>
+                </div>
+                <div className="rounded-xl p-4 mb-2 inline-block" style={{ backgroundColor: 'rgba(255, 215, 0, 0.2)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
+                  <p className="text-lg font-bold" style={{ color: '#cfe8d7' }}>
+                    🎟️ You've earned 1 entry in the £2,000 prize draw!
                   </p>
                 </div>
               </div>
@@ -736,7 +741,7 @@ export default function LandingPage() {
                   Join {totalSignups} other voucher holders competing for this prize!
                 </p>
                 <p className="text-base mb-6 opacity-90">
-                  Answer 4 quick questions to enter the draw
+                  Answer 4 quick questions to earn +1 entry (2 entries total)
                 </p>
 
                 <button
@@ -768,8 +773,11 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Help Us Build Your Perfect Practice
               </h3>
-              <p className="text-lg" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Your answers enter you for 1 year of FREE dentistry worth £2,000!
+              </p>
+              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
+                Complete to earn +1 entry (2 entries total) 🎟️
               </p>
             </div>
 
@@ -926,8 +934,11 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Can we ask for a little more feedback?
               </h3>
-              <p className="text-lg" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 It takes 20 seconds and it will really shape your dental experience.
+              </p>
+              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
+                Complete to earn +1 entry (3 entries total) 🎟️
               </p>
             </div>
 
@@ -1301,9 +1312,16 @@ export default function LandingPage() {
               <p className="text-2xl mb-4" style={{ color: '#70d490' }}>
                 You're Now Eligible for Your £{voucherValue} Voucher!
               </p>
-              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
-                Plus, you've received <span className="font-bold">3 entries</span> into the draw to win 1 Year of FREE Dentistry worth £2,000!
-              </p>
+              <div className="rounded-xl p-4 mb-4 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You have 3 entries in the £2,000 prize draw!
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 4 questions<br/>
+                  • 1 entry for completing extended survey
+                </p>
+              </div>
               <p className="text-base mb-8" style={{ color: '#666' }}>
                 Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
               </p>
