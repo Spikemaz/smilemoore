@@ -98,22 +98,25 @@ export async function POST(request: Request) {
       try {
         const sheets = getGoogleSheetsClient();
 
-        // Find referrer by matching their referral link pattern
+        // Find referrer by matching their name in the referral code (format: Name-XXX)
+        // Extract the name portion from referredBy (e.g., "John-123" -> "John")
+        const referrerName = referredBy.split('-')[0];
+        console.log(`Looking for referrer with name: ${referrerName}`);
+
         const response = await sheets.spreadsheets.values.get({
           spreadsheetId: SPREADSHEET_ID,
-          range: 'Home!AG:AG', // Referral Link column
+          range: 'Home!D:D', // Name column
         });
 
-        const links = response.data.values || [];
+        const names = response.data.values || [];
         let referrerRowIndex = -1;
 
-        // Match the referral code to find the referrer
-        console.log(`Looking for referral: ${referredBy}`);
-        for (let i = 1; i < links.length; i++) {
-          const link = links[i][0];
-          if (link && link.includes(`ref=${encodeURIComponent(referredBy)}`)) {
+        // Match the name to find the referrer
+        for (let i = 1; i < names.length; i++) {
+          const name = names[i][0];
+          if (name && name.toLowerCase() === referrerName.toLowerCase()) {
             referrerRowIndex = i + 1; // 1-indexed
-            console.log(`Found referrer at row ${referrerRowIndex}`);
+            console.log(`Found referrer "${name}" at row ${referrerRowIndex}`);
             break;
           }
         }
@@ -166,8 +169,8 @@ export async function POST(request: Request) {
             console.error('Failed to send referral notification:', notifError);
           }
         } else {
-          console.log(`Referrer not found for: ${referredBy}`);
-          console.log(`Total links in sheet: ${links.length - 1}`);
+          console.log(`Referrer not found for: ${referredBy} (name: ${referrerName})`);
+          console.log(`Total names in sheet: ${names.length - 1}`);
         }
       } catch (error) {
         console.error('Error updating referrer stats:', error);
