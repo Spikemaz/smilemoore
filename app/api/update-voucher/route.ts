@@ -147,12 +147,13 @@ export async function POST(request: NextRequest) {
       // Get all voucher details from the row to send confirmation email
       const voucherDetailsResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!C${rowIndex + 1}:I${rowIndex + 1}`, // Email, Name, Phone, Postcode, Source, Value, Code
+        range: `Home!C${rowIndex + 1}:AG${rowIndex + 1}`, // Email through Referral Link
       });
 
       const voucherDetails = voucherDetailsResponse.data.values?.[0];
       if (voucherDetails) {
-        const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode] = voucherDetails;
+        const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
+        const referralLink = voucherDetails[30]; // Column AG (index 30 from C)
 
         // Send confirmation email using Resend directly
         try {
@@ -229,7 +230,7 @@ export async function POST(request: NextRequest) {
                                     <td style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; border: 2px solid #cfe8d7;">
                                       <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR REFERRAL LINK</p>
                                       <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 14px; word-break: break-all;">
-                                        https://smilemoore.co.uk/api/track-referral-click?email=${encodeURIComponent(emailAddr)}&ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}
+                                        ${referralLink || `https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}`}
                                       </p>
                                       <p style="margin: 0; color: #666666; font-size: 13px; line-height: 20px;">
                                         Share this link and get <strong>+10 entries</strong> for every friend who claims their voucher!

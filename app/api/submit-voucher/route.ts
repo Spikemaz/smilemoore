@@ -136,11 +136,56 @@ export async function POST(request: Request) {
               values: [[currentReferrals + 1, currentEntries + 10]],
             },
           });
+
+          // Send referral conversion notification
+          try {
+            // Get referrer's name
+            const referrerDataResponse = await sheets.spreadsheets.values.get({
+              spreadsheetId: SPREADSHEET_ID,
+              range: `Home!D${referrerRowIndex}`,
+            });
+            const referrerName = referrerDataResponse.data.values?.[0]?.[0] || 'Unknown';
+
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'referral_conversion',
+                data: {
+                  referrerName,
+                  newEmail: email,
+                  totalReferrals: currentReferrals + 1,
+                  totalEntries: currentEntries + 10,
+                },
+              }),
+            });
+          } catch (notifError) {
+            console.error('Failed to send referral notification:', notifError);
+          }
         }
       } catch (error) {
         console.error('Error updating referrer stats:', error);
         // Don't fail the signup if referral tracking fails
       }
+    }
+
+    // Send real-time notification
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'email_submitted',
+          data: {
+            email,
+            voucherValue: tier.value,
+            voucherCode,
+            totalSignups: totalSignups + 1,
+          },
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to send notification:', error);
     }
 
     // Check if we should announce new batch

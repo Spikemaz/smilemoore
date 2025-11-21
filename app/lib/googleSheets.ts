@@ -220,18 +220,27 @@ export async function initializeSheet(): Promise<boolean> {
       'Follow-up 3 Sent (10Q)', // AR
       'Follow-up 3 Opened (10Q)', // AS
       'Unsubscribed from Follow-ups', // AT - Timestamp when unsubscribed
+      'Email Bounce', // AU - Timestamp if email bounced
+      'Best Performing Subject (4Q)', // AV - Which variation got them to complete
+      'Best Performing Subject (10Q)', // AW - Which variation got them to complete
+      'Time to Complete 4Q (minutes)', // AX - Time between voucher claim and 4Q completion
+      'Time to Complete 10Q (minutes)', // AY - Time between 4Q and 10Q completion
+      'Form Drop-off Stage', // AZ - Last step they reached before abandoning
+      'Device Converted', // BA - Device type that completed full survey
+      'WhatsApp Follow-up Sent', // BB - Timestamp for WhatsApp message
+      'SMS Follow-up Sent', // BC - Timestamp for SMS
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:AT1',
+      range: 'Home!A1:BC1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:AT1',
+      range: 'Earlybird!A1:BC1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
