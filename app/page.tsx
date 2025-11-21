@@ -279,6 +279,45 @@ export default function LandingPage() {
           sessionStorage.setItem('visitorId', data.visitorId);
           // Store in localStorage for return visitor tracking
           localStorage.setItem('smilemoore_visitor_id', data.visitorId);
+
+          // CRITICAL FIX: Capture cookies AGAIN after 10 seconds and update the visitor row
+          // This ensures Facebook Pixel and GA4 have fully loaded
+          setTimeout(async () => {
+            const getCookie = (name: string) => {
+              const value = `; ${document.cookie}`;
+              const parts = value.split(`; ${name}=`);
+              if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+              return '';
+            };
+
+            const delayedFbp = getCookie('_fbp');
+            const delayedGa = getCookie('_ga');
+
+            console.log('🔄 Updating visitor with delayed cookies:', {
+              visitorId: data.visitorId,
+              fbp: delayedFbp,
+              ga: delayedGa,
+              allCookies: document.cookie
+            });
+
+            // Update the visitor row with the cookies
+            if (delayedFbp || delayedGa) {
+              try {
+                await fetch('/api/update-visitor-cookies', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    visitorId: data.visitorId,
+                    fbp: delayedFbp,
+                    gaClientId: delayedGa,
+                  }),
+                });
+                console.log('✅ Visitor cookies updated successfully!');
+              } catch (err) {
+                console.error('❌ Failed to update visitor cookies:', err);
+              }
+            }
+          }, 10000); // Wait 10 seconds after initial tracking
         }
       } catch (error) {
         console.error('Error tracking visitor:', error);
