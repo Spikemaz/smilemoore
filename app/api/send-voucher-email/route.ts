@@ -25,8 +25,9 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'Smile Moore <onboarding@resend.dev>', // Using Resend's default domain
+      from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
       to: [email],
+      replyTo: 'marcus@smilemoore.co.uk',
       subject: `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,
       html: `
         <!DOCTYPE html>
