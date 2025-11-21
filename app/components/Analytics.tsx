@@ -29,6 +29,31 @@ export default function Analytics() {
           gtag('config', 'G-F6CLY0PVY0');
         `}
       </Script>
+
+      {/* Facebook Pixel - Load ONLY if GTM hasn't loaded it yet */}
+      <Script id="facebook-pixel-conditional" strategy="lazyOnload">
+        {`
+          // Wait 3 seconds to let GTM load Facebook Pixel first
+          setTimeout(function() {
+            // Only initialize if GTM hasn't already loaded fbq
+            if (typeof fbq === 'undefined') {
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '2396693024117840');
+              fbq('track', 'PageView');
+              console.log('✅ Facebook Pixel loaded directly (GTM not detected)');
+            } else {
+              console.log('✅ Facebook Pixel already loaded by GTM');
+            }
+          }, 3000);
+        `}
+      </Script>
     </>
   );
 }
