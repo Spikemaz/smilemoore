@@ -349,6 +349,7 @@ export default function LandingPage() {
             campaignSource: 'direct',
             timeToSubmit,
             scrollDepth: maxScrollDepth,
+            referredBy,
           }),
         });
 

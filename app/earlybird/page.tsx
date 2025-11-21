@@ -46,6 +46,7 @@ export default function EarlyBirdPage() {
   const [phoneSubmitTime, setPhoneSubmitTime] = useState<number>(0);
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [totalSignups, setTotalSignups] = useState<number>(0);
+  const [referredBy, setReferredBy] = useState<string>('');
   const [surveyData, setSurveyData] = useState({
     dentalCare: '',
     timeline: '',
@@ -83,6 +84,13 @@ export default function EarlyBirdPage() {
         const utmCampaign = urlParams.get('utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || '';
         const utmContent = urlParams.get('utm_content') || '';
+
+        // Extract referral parameter
+        const ref = urlParams.get('ref') || '';
+        if (ref) {
+          // Store the referrer's name
+          setReferredBy(ref);
+        }
 
         // Extract click IDs for ad platforms
         const fbclid = urlParams.get('fbclid') || '';
@@ -337,9 +345,10 @@ export default function EarlyBirdPage() {
             name: '',
             phone: '',
             address: '',
-            campaignSource: 'earlybird',
+            campaignSource: 'earlybird-qr',
             timeToSubmit,
             scrollDepth: maxScrollDepth,
+            referredBy,
           }),
         });
 
