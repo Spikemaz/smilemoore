@@ -108,15 +108,18 @@ export async function POST(request: Request) {
         let referrerRowIndex = -1;
 
         // Match the referral code to find the referrer
+        console.log(`Looking for referral: ${referredBy}`);
         for (let i = 1; i < links.length; i++) {
           const link = links[i][0];
           if (link && link.includes(`ref=${encodeURIComponent(referredBy)}`)) {
             referrerRowIndex = i + 1; // 1-indexed
+            console.log(`Found referrer at row ${referrerRowIndex}`);
             break;
           }
         }
 
         if (referrerRowIndex !== -1) {
+          console.log(`Updating referrer at row ${referrerRowIndex}`);
           // Get current totals
           const totalsResponse = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
@@ -162,6 +165,9 @@ export async function POST(request: Request) {
           } catch (notifError) {
             console.error('Failed to send referral notification:', notifError);
           }
+        } else {
+          console.log(`Referrer not found for: ${referredBy}`);
+          console.log(`Total links in sheet: ${links.length - 1}`);
         }
       } catch (error) {
         console.error('Error updating referrer stats:', error);

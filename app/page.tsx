@@ -731,7 +731,7 @@ export default function LandingPage() {
               <div className="border-t pt-6" style={{ borderColor: 'rgba(207, 232, 215, 0.3)' }}>
                 <div className="mb-4">
                   <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                    ⭐ BONUS OPPORTUNITY ⭐
+                    👉 CLICK HERE - Collect Your £{voucherValue} Voucher! 👈
                   </span>
                 </div>
                 <h3 className="text-2xl font-bold mb-3">
