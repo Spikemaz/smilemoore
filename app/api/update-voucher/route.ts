@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!AG${rowIndex + 1}`,
+        range: `Home!AH${rowIndex + 1}`, // Column AH = Referal Link
         valueInputOption: 'RAW',
         requestBody: {
           values: [[referralLink]],
@@ -131,13 +131,13 @@ export async function POST(request: NextRequest) {
       // Award +1 entry for claiming voucher (completing name/phone/postcode)
       const entriesResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!AF${rowIndex + 1}`,
+        range: `Home!AG${rowIndex + 1}`, // Column AG = Total Draw Entries
       });
       const currentEntries = parseInt(entriesResponse.data.values?.[0]?.[0]) || 0;
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!AF${rowIndex + 1}`,
+        range: `Home!AG${rowIndex + 1}`, // Column AG = Total Draw Entries
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [[currentEntries + 1]],
@@ -147,13 +147,13 @@ export async function POST(request: NextRequest) {
       // Get all voucher details from the row to send confirmation email
       const voucherDetailsResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!C${rowIndex + 1}:AG${rowIndex + 1}`, // Email through Referral Link
+        range: `Home!C${rowIndex + 1}:AH${rowIndex + 1}`, // Email through Referal Link
       });
 
       const voucherDetails = voucherDetailsResponse.data.values?.[0];
       if (voucherDetails) {
         const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
-        const referralLink = voucherDetails[30]; // Column AG (index 30 from C)
+        const referralLink = voucherDetails[31]; // Column AH (index 31 from C)
 
         // Send Discord notification for voucher claim completion
         try {

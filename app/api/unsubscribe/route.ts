@@ -74,10 +74,10 @@ export async function GET(request: NextRequest) {
     if (rowIndex !== -1) {
       const actualRowIndex = rowIndex + 1; // 1-indexed
 
-      // Mark as unsubscribed in column AT
+      // Mark as unsubscribed in column AV
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!AT${actualRowIndex}`,
+        range: `Home!AV${actualRowIndex}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [[new Date().toISOString()]],

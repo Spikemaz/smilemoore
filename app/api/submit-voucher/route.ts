@@ -123,10 +123,10 @@ export async function POST(request: Request) {
 
         if (referrerRowIndex !== -1) {
           console.log(`Updating referrer at row ${referrerRowIndex}`);
-          // Get current totals
+          // Get current totals (AF=Total Referrals, AG=Total Draw Entries)
           const totalsResponse = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `Home!AE${referrerRowIndex}:AF${referrerRowIndex}`,
+            range: `Home!AF${referrerRowIndex}:AG${referrerRowIndex}`,
           });
 
           const currentTotals = totalsResponse.data.values?.[0] || [];
@@ -136,7 +136,7 @@ export async function POST(request: Request) {
           // Update: +1 referral, +10 draw entries
           await sheets.spreadsheets.values.update({
             spreadsheetId: SPREADSHEET_ID,
-            range: `Home!AE${referrerRowIndex}:AF${referrerRowIndex}`,
+            range: `Home!AF${referrerRowIndex}:AG${referrerRowIndex}`,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
               values: [[currentReferrals + 1, currentEntries + 10]],

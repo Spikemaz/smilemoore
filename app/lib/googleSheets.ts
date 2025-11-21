@@ -128,7 +128,7 @@ export async function addSignup(data: {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!AE${rowNumber}:AF${rowNumber}`,
+      range: `Home!AF${rowNumber}:AG${rowNumber}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[0, 0]], // 0 referrals, 0 entries (earned through milestones)
@@ -186,61 +186,62 @@ export async function initializeSheet(): Promise<boolean> {
       'Batch Number', // J
       'IP Address', // K
       'Referred By', // L
-      'Question 1 - Dental Care Type', // M
-      'Question 2 - Registration Timeline', // N
-      'Question 3 - Preferred Appointment Times', // O
-      'Question 4 - Important Factors', // P
-      'Question 5 - Previous Dental Experience', // Q
-      'Question 6 - Most Important Factor', // R
-      'Question 7 - Smile Confidence', // S
-      'Question 8 - Same Clinician Preference', // T
-      'Question 9 - Needed Treatments', // U
-      'Question 10 - Before Appointment Preference', // V
-      'Question 11 - Stay Long Term', // W
-      'Question 12 - Preventing Visits', // X
-      'Question 13 - Cosmetic Importance', // Y
-      'Question 14 - Preferred Contact Method', // Z
-      'Additional Feedback', // AA
-      'Email Sent', // AB
-      'Email Opened', // AC
-      'Referral Link Clicked', // AD
-      'Total Referrals', // AE
-      'Total Draw Entries', // AF
-      'Referral Link', // AG
-      'Follow-up 1 Sent (4Q)', // AH - Timestamp of first follow-up for 4 questions
-      'Follow-up 1 Opened (4Q)', // AI - Timestamp when opened
-      'Follow-up 2 Sent (4Q)', // AJ
-      'Follow-up 2 Opened (4Q)', // AK
-      'Follow-up 3 Sent (4Q)', // AL
-      'Follow-up 3 Opened (4Q)', // AM
-      'Follow-up 1 Sent (10Q)', // AN - Timestamp of first follow-up for 10 questions
-      'Follow-up 1 Opened (10Q)', // AO
-      'Follow-up 2 Sent (10Q)', // AP
-      'Follow-up 2 Opened (10Q)', // AQ
-      'Follow-up 3 Sent (10Q)', // AR
-      'Follow-up 3 Opened (10Q)', // AS
-      'Unsubscribed from Follow-ups', // AT - Timestamp when unsubscribed
-      'Email Bounce', // AU - Timestamp if email bounced
-      'Best Performing Subject (4Q)', // AV - Which variation got them to complete
-      'Best Performing Subject (10Q)', // AW - Which variation got them to complete
-      'Time to Complete 4Q (minutes)', // AX - Time between voucher claim and 4Q completion
-      'Time to Complete 10Q (minutes)', // AY - Time between 4Q and 10Q completion
-      'Form Drop-off Stage', // AZ - Last step they reached before abandoning
-      'Device Converted', // BA - Device type that completed full survey
-      'WhatsApp Follow-up Sent', // BB - Timestamp for WhatsApp message
-      'SMS Follow-up Sent', // BC - Timestamp for SMS
+      'Question 1', // M
+      'Question 2', // N
+      'Question 3', // O
+      'Question 4', // P
+      'Question 5', // Q
+      'Question 6', // R
+      'Question 7', // S
+      'Question 8', // T
+      'Question 9', // U
+      'Question 10', // V
+      'Question 11', // W
+      'Question 12', // X
+      'Question 13', // Y
+      'Question 14', // Z
+      'Question 15', // AA
+      'Additional Feedback', // AB
+      'Email Sent', // AC
+      'Email Opened', // AD
+      'Referral Link Clicked', // AE
+      'Total Referrals', // AF
+      'Total Draw Entries', // AG
+      'Referal Link', // AH (note: typo in your sheet - missing second 'r')
+      'Follow-up 1 Sent (4Q)', // AI
+      'Follow-up 1 Opened (4Q)', // AJ
+      'Follow-up 2 Sent (4Q)', // AK
+      'Follow-up 2 Opened (4Q)', // AL
+      'Follow-up 3 Sent (4Q)', // AM
+      'Follow-up 3 Opened (4Q)', // AN
+      'Follow-up 1 Sent (10Q)', // AO
+      'Follow-up 1 Opened (10Q)', // AP
+      'Follow-up 2 Sent (10Q)', // AQ
+      'Follow-up 2 Opened (10Q)', // AR
+      'Follow-up 3 Sent (10Q)', // AS
+      'Follow-up 3 Opened (10Q)', // AT
+      'Email Bounce Back', // AU
+      'Unsubscribed from Follow-ups', // AV
+      'Best Performing Subject (4Q)', // AW
+      'Best Performing Subject (10Q)', // AX
+      'Time to Complete 4Q (minutes)', // AY
+      'Time to Complete 10Q (minutes)', // AZ
+      'Form Drop-off Stage', // BA
+      'Device Converted', // BB
+      'WhatsApp Follow-up Sent', // BC
+      'SMS Follow-up Sent', // BD
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:BC1',
+      range: 'Home!A1:BD1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:BC1',
+      range: 'Earlybird!A1:BD1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });

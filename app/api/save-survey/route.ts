@@ -118,20 +118,20 @@ export async function POST(request: Request) {
     // Get current entries and timestamps
     const dataResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!B${rowIndex}:BA${rowIndex}`,
+      range: `Home!B${rowIndex}:BB${rowIndex}`,
     });
     const rowData = dataResponse.data.values?.[0] || [];
 
-    const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BA range)
-    const currentEntries = parseInt(rowData[30]) || 0; // Column AF (B=0, so AF=30)
+    const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BB range)
+    const currentEntries = parseInt(rowData[31]) || 0; // Column AG (B=0, so AG=31)
 
-    // Follow-up tracking (B:BA range, so subtract 1 from standard index)
-    const followup1Sent4Q = rowData[32]; // Column AH (33-1=32)
-    const followup2Sent4Q = rowData[34]; // Column AJ (35-1=34)
-    const followup3Sent4Q = rowData[36]; // Column AL (37-1=36)
-    const followup1Sent10Q = rowData[38]; // Column AN (39-1=38)
-    const followup2Sent10Q = rowData[40]; // Column AP (41-1=40)
-    const followup3Sent10Q = rowData[42]; // Column AR (43-1=42)
+    // Follow-up tracking (B:BB range, so subtract 1 from standard index)
+    const followup1Sent4Q = rowData[33]; // Column AI (34-1=33)
+    const followup2Sent4Q = rowData[35]; // Column AK (36-1=35)
+    const followup3Sent4Q = rowData[37]; // Column AM (38-1=37)
+    const followup1Sent10Q = rowData[39]; // Column AO (40-1=39)
+    const followup2Sent10Q = rowData[41]; // Column AQ (42-1=41)
+    const followup3Sent10Q = rowData[43]; // Column AS (44-1=43)
 
     const updates: any[] = [];
     let entriesToAdd = 0;
@@ -140,40 +140,11 @@ export async function POST(request: Request) {
       // First 5 questions: +1 entry
       entriesToAdd = 1;
 
-      // Calculate time to complete 5Q (column AX)
+      // Calculate time to complete 5Q (column AY = Time to Complete 4Q)
       if (voucherTimestamp) {
         const voucherTime = new Date(voucherTimestamp).getTime();
         const nowTime = Date.now();
         const minutesToComplete = Math.round((nowTime - voucherTime) / 60000);
-
-        updates.push({
-          range: `Home!AX${rowIndex}`,
-          values: [[minutesToComplete]],
-        });
-      }
-
-      // Track which follow-up variation converted them (column AV)
-      let winningVariation = 'Organic';
-      if (followup3Sent4Q) winningVariation = 'Variation 3';
-      else if (followup2Sent4Q) winningVariation = 'Variation 2';
-      else if (followup1Sent4Q) winningVariation = 'Variation 1';
-
-      updates.push({
-        range: `Home!AV${rowIndex}`,
-        values: [[winningVariation]],
-      });
-
-    } else if (isExtendedSurvey) {
-      // Extended 10 questions: +1 entry
-      entriesToAdd = 1;
-
-      // Calculate time to complete 10Q from when they completed 4Q (column AY)
-      // We'll use the current timestamp minus when they would have completed 4Q
-      const timeToComplete4Q = parseInt(rowData[48]) || 0; // Column AX (49-1=48 in B:BA range)
-      if (voucherTimestamp && timeToComplete4Q) {
-        const fourQCompletionTime = new Date(voucherTimestamp).getTime() + (timeToComplete4Q * 60000);
-        const nowTime = Date.now();
-        const minutesToComplete = Math.round((nowTime - fourQCompletionTime) / 60000);
 
         updates.push({
           range: `Home!AY${rowIndex}`,
@@ -181,18 +152,47 @@ export async function POST(request: Request) {
         });
       }
 
-      // Track which follow-up variation converted them (column AW)
+      // Track which follow-up variation converted them (column AW = Best Performing Subject 4Q)
       let winningVariation = 'Organic';
-      if (followup3Sent10Q) winningVariation = 'Variation 3';
-      else if (followup2Sent10Q) winningVariation = 'Variation 2';
-      else if (followup1Sent10Q) winningVariation = 'Variation 1';
+      if (followup3Sent4Q) winningVariation = 'Variation 3';
+      else if (followup2Sent4Q) winningVariation = 'Variation 2';
+      else if (followup1Sent4Q) winningVariation = 'Variation 1';
 
       updates.push({
         range: `Home!AW${rowIndex}`,
         values: [[winningVariation]],
       });
 
-      // Mark device that completed full survey (column BA)
+    } else if (isExtendedSurvey) {
+      // Extended 10 questions: +1 entry
+      entriesToAdd = 1;
+
+      // Calculate time to complete 10Q from when they completed 4Q (column AZ = Time to Complete 10Q)
+      // We'll use the current timestamp minus when they would have completed 4Q
+      const timeToComplete4Q = parseInt(rowData[49]) || 0; // Column AY (50-1=49 in B:BB range)
+      if (voucherTimestamp && timeToComplete4Q) {
+        const fourQCompletionTime = new Date(voucherTimestamp).getTime() + (timeToComplete4Q * 60000);
+        const nowTime = Date.now();
+        const minutesToComplete = Math.round((nowTime - fourQCompletionTime) / 60000);
+
+        updates.push({
+          range: `Home!AZ${rowIndex}`,
+          values: [[minutesToComplete]],
+        });
+      }
+
+      // Track which follow-up variation converted them (column AX = Best Performing Subject 10Q)
+      let winningVariation = 'Organic';
+      if (followup3Sent10Q) winningVariation = 'Variation 3';
+      else if (followup2Sent10Q) winningVariation = 'Variation 2';
+      else if (followup1Sent10Q) winningVariation = 'Variation 1';
+
+      updates.push({
+        range: `Home!AX${rowIndex}`,
+        values: [[winningVariation]],
+      });
+
+      // Mark device that completed full survey (column BB = Device Converted)
       // Get device from Visitors sheet by matching email
       try {
         const visitorsResponse = await sheets.spreadsheets.values.get({
@@ -203,7 +203,7 @@ export async function POST(request: Request) {
         const visitorRow = visitors.find(row => row[0] === email);
         if (visitorRow && visitorRow[5]) {
           updates.push({
-            range: `Home!BA${rowIndex}`,
+            range: `Home!BB${rowIndex}`,
             values: [[visitorRow[5]]], // Device Type from Visitors
           });
         }
@@ -212,10 +212,10 @@ export async function POST(request: Request) {
       }
     }
 
-    // Update entries
+    // Update entries (column AG = Total Draw Entries)
     if (entriesToAdd > 0) {
       updates.push({
-        range: `Home!AF${rowIndex}`,
+        range: `Home!AG${rowIndex}`,
         values: [[currentEntries + entriesToAdd]],
       });
     }

@@ -139,10 +139,10 @@ export async function GET(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const sheets = getGoogleSheetsClient();
 
-    // Get all signups (need up to column AS for 10Q follow-up tracking)
+    // Get all signups (need up to column AV for unsubscribe tracking)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A:AS',
+      range: 'Home!A:AV',
     });
 
     const rows = response.data.values || [];
@@ -154,8 +154,8 @@ export async function GET(request: Request) {
       const email = row[2]; // Column C (index 2)
       const name = row[3]; // Column D (index 3)
       const voucherValue = row[7]; // Column H (index 7)
-      const entries = parseInt(row[31]) || 0; // Column AF (index 31) - Total Draw Entries
-      const unsubscribed = row[44]; // Column AT (index 44) - Unsubscribed from Follow-ups
+      const entries = parseInt(row[32]) || 0; // Column AG (index 32) - Total Draw Entries
+      const unsubscribed = row[46]; // Column AV (index 46) - Unsubscribed from Follow-ups
 
       if (!email || !name || unsubscribed) continue; // Skip if unsubscribed
 
@@ -163,11 +163,11 @@ export async function GET(request: Request) {
 
       // Check if needs 4-question follow-up (has 1 entry only)
       if (entries === 1) {
-        const followup1Sent = row[33]; // Column AH (index 33)
-        const followup1Opened = row[34]; // Column AI (index 34)
-        const followup2Sent = row[35]; // Column AJ (index 35)
-        const followup2Opened = row[36]; // Column AK (index 36)
-        const followup3Sent = row[37]; // Column AL (index 37)
+        const followup1Sent = row[34]; // Column AI (index 34)
+        const followup1Opened = row[35]; // Column AJ (index 35)
+        const followup2Sent = row[36]; // Column AK (index 36)
+        const followup2Opened = row[37]; // Column AL (index 37)
+        const followup3Sent = row[38]; // Column AM (index 38)
 
         let variationIndex = -1;
         let columnToUpdate = '';
@@ -175,14 +175,14 @@ export async function GET(request: Request) {
         // Determine which follow-up to send
         if (!followup1Sent) {
           variationIndex = 0;
-          columnToUpdate = 'AH';
+          columnToUpdate = 'AI';
         } else if (followup1Sent && !followup1Opened && !followup2Sent) {
           // Wait 48 hours before sending variation 2
           const sentDate = new Date(followup1Sent);
           const now = new Date();
           if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
             variationIndex = 1;
-            columnToUpdate = 'AJ';
+            columnToUpdate = 'AK';
           }
         } else if (followup2Sent && !followup2Opened && !followup3Sent) {
           // Wait 48 hours before sending variation 3
@@ -190,7 +190,7 @@ export async function GET(request: Request) {
           const now = new Date();
           if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
             variationIndex = 2;
-            columnToUpdate = 'AL';
+            columnToUpdate = 'AM';
           }
         }
 
@@ -241,31 +241,31 @@ export async function GET(request: Request) {
 
       // Check if needs 10-question follow-up (has 2 entries only)
       if (entries === 2) {
-        const followup1Sent = row[39]; // Column AN
-        const followup1Opened = row[40]; // Column AO
-        const followup2Sent = row[41]; // Column AP
-        const followup2Opened = row[42]; // Column AQ
-        const followup3Sent = row[43]; // Column AR
+        const followup1Sent = row[40]; // Column AO (index 40)
+        const followup1Opened = row[41]; // Column AP (index 41)
+        const followup2Sent = row[42]; // Column AQ (index 42)
+        const followup2Opened = row[43]; // Column AR (index 43)
+        const followup3Sent = row[44]; // Column AS (index 44)
 
         let variationIndex = -1;
         let columnToUpdate = '';
 
         if (!followup1Sent) {
           variationIndex = 0;
-          columnToUpdate = 'AN';
+          columnToUpdate = 'AO';
         } else if (followup1Sent && !followup1Opened && !followup2Sent) {
           const sentDate = new Date(followup1Sent);
           const now = new Date();
           if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
             variationIndex = 1;
-            columnToUpdate = 'AP';
+            columnToUpdate = 'AQ';
           }
         } else if (followup2Sent && !followup2Opened && !followup3Sent) {
           const sentDate = new Date(followup2Sent);
           const now = new Date();
           if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
             variationIndex = 2;
-            columnToUpdate = 'AR';
+            columnToUpdate = 'AS';
           }
         }
 
