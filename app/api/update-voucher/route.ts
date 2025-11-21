@@ -155,6 +155,27 @@ export async function POST(request: NextRequest) {
         const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
         const referralLink = voucherDetails[30]; // Column AG (index 30 from C)
 
+        // Send Discord notification for voucher claim completion
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'voucher_claimed',
+              data: {
+                name,
+                email: emailAddr,
+                postcode,
+                voucherCode,
+                voucherValue,
+                entries: currentEntries + 1,
+              },
+            }),
+          });
+        } catch (notifError) {
+          console.error('Failed to send voucher claim notification:', notifError);
+        }
+
         // Send confirmation email using Resend directly
         try {
           const { Resend } = await import('resend');

@@ -20,6 +20,11 @@ export async function POST(request: Request) {
         color = 0x1f3a33;
         break;
 
+      case 'voucher_claimed':
+        message = `✅ Voucher Claimed!\n\nName: ${data.name}\nEmail: ${data.email}\nPostcode: ${data.postcode}\nVoucher: ${data.voucherCode} (£${data.voucherValue})\nDraw Entries: ${data.entries}`;
+        color = 0x70d490;
+        break;
+
       case 'survey_4q_completed':
         message = `📋 4 Questions Completed!\n\nName: ${data.name}\nEmail: ${data.email}\nEntries: 2\nTime to complete: ${data.timeToComplete} minutes`;
         color = 0x70d490;
@@ -73,6 +78,7 @@ export async function POST(request: Request) {
 function getTitle(type: string): string {
   const titles: Record<string, string> = {
     'email_submitted': '📧 New Email Signup',
+    'voucher_claimed': '✅ Voucher Claimed',
     'survey_4q_completed': '📋 Survey Progress',
     'survey_10q_completed': '✅ Full Survey Complete',
     'referral_conversion': '🎁 Referral Success',
