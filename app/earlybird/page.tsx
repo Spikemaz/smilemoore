@@ -185,9 +185,14 @@ export default function EarlyBirdPage() {
           return '';
         };
 
+        // Wait for GTM to set cookies (give it 2 seconds)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         const fbp = getCookie('_fbp'); // Facebook Browser ID
         const fbc = getCookie('_fbc') || fbclid ? `fb.1.${Date.now()}.${fbclid}` : ''; // Facebook Click ID
         const gaClientId = getCookie('_ga'); // Google Analytics Client ID
+
+        console.log('Tracking cookies captured:', { fbp, fbc, gaClientId });
 
         // Get campaign source from URL path or UTM
         const campaignSource = window.location.pathname.slice(1) || utmSource || 'earlybird';
