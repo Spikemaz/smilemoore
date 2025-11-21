@@ -185,14 +185,30 @@ export default function EarlyBirdPage() {
           return '';
         };
 
-        // Wait for GTM to set cookies (give it 2 seconds)
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for GTM and pixels to set cookies (try multiple times with increasing delays)
+        let fbp = '';
+        let fbc = '';
+        let gaClientId = '';
 
-        const fbp = getCookie('_fbp'); // Facebook Browser ID
-        const fbc = getCookie('_fbc') || fbclid ? `fb.1.${Date.now()}.${fbclid}` : ''; // Facebook Click ID
-        const gaClientId = getCookie('_ga'); // Google Analytics Client ID
+        // Try to get cookies, retry up to 5 times over 5 seconds
+        for (let attempt = 0; attempt < 5; attempt++) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
 
-        console.log('Tracking cookies captured:', { fbp, fbc, gaClientId });
+          fbp = getCookie('_fbp');
+          fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
+          gaClientId = getCookie('_ga');
+
+          console.log(`Attempt ${attempt + 1}: Cookies:`, { fbp, fbc, gaClientId, allCookies: document.cookie });
+
+          // If we have both cookies, stop trying
+          if (fbp && gaClientId) {
+            console.log('✅ All tracking cookies found!');
+            break;
+          }
+        }
+
+        if (!fbp) console.warn('⚠️ Facebook _fbp cookie not found after 5 seconds');
+        if (!gaClientId) console.warn('⚠️ Google _ga cookie not found after 5 seconds');
 
         // Get campaign source from URL path or UTM
         const campaignSource = window.location.pathname.slice(1) || utmSource || 'earlybird';
