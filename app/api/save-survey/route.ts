@@ -78,7 +78,9 @@ export async function POST(request: Request) {
     }
 
     // Update the row with all survey data (columns M through AA)
-    const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : '';
+    const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
+    const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
+    const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : importantFactors;
     const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
 
     await sheets.spreadsheets.values.update({
@@ -87,9 +89,9 @@ export async function POST(request: Request) {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          dentalCare,
+          dentalCareString,
           timeline,
-          appointmentTimes,
+          appointmentTimesString,
           factorsString,
           previousExperience || '',
           mostImportantFactor || '',
@@ -107,9 +109,11 @@ export async function POST(request: Request) {
     });
 
     // Award entries based on survey completion
-    // Check if this is the 4-question survey or extended survey
-    const isBasicSurvey = dentalCare && timeline && appointmentTimes && importantFactors;
-    const isExtendedSurvey = previousExperience || mostImportantFactor || smileConfidence;
+    // Check if this is the 5-question survey or extended survey
+    const dentalCareArray = Array.isArray(dentalCare) ? dentalCare : [dentalCare];
+    const appointmentTimesArray = Array.isArray(appointmentTimes) ? appointmentTimes : [appointmentTimes];
+    const isBasicSurvey = dentalCareArray.length > 0 && timeline && appointmentTimesArray.length > 0 && importantFactors && previousExperience;
+    const isExtendedSurvey = mostImportantFactor || smileConfidence || sameClinician;
 
     // Get current entries and timestamps
     const dataResponse = await sheets.spreadsheets.values.get({
@@ -133,10 +137,10 @@ export async function POST(request: Request) {
     let entriesToAdd = 0;
 
     if (isBasicSurvey && !isExtendedSurvey) {
-      // First 4 questions: +1 entry
+      // First 5 questions: +1 entry
       entriesToAdd = 1;
 
-      // Calculate time to complete 4Q (column AX)
+      // Calculate time to complete 5Q (column AX)
       if (voucherTimestamp) {
         const voucherTime = new Date(voucherTimestamp).getTime();
         const nowTime = Date.now();

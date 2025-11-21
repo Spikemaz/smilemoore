@@ -48,10 +48,11 @@ export default function LandingPage() {
   const [totalSignups, setTotalSignups] = useState<number>(0);
   const [referredBy, setReferredBy] = useState<string>('');
   const [surveyData, setSurveyData] = useState({
-    dentalCare: '',
-    timeline: '',
-    appointmentTimes: '',
-    importantFactors: [] as string[],
+    dentalCare: [] as string[], // Q1: Multiple choice
+    appointmentTimes: [] as string[], // Q2: Multiple choice
+    timeline: '', // Q3: Single choice
+    importantFactors: '', // Q4: Single choice (how they feel about dentist)
+    previousExperience: '', // Q5: Single choice (reason for new dentist)
   });
   const [extendedSurvey, setExtendedSurvey] = useState({
     previousExperience: '',
@@ -741,7 +742,7 @@ export default function LandingPage() {
                   Join {totalSignups} other voucher holders competing for this prize!
                 </p>
                 <p className="text-base mb-6 opacity-90">
-                  Answer 4 quick questions to earn +1 entry (2 entries total)
+                  Answer 5 quick questions to earn +1 entry (2 entries total)
                 </p>
 
                 <button
@@ -768,7 +769,7 @@ export default function LandingPage() {
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                🔥 4 QUICK QUESTIONS
+                🔥 5 QUICK QUESTIONS
               </span>
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Help Us Build Your Perfect Practice
@@ -783,32 +784,48 @@ export default function LandingPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
+              // Validate at least one option selected for multiple choice questions
+              if (surveyData.dentalCare.length === 0) {
+                alert('Please select at least one type of dental care you\'re interested in.');
+                return;
+              }
+              if (surveyData.appointmentTimes.length === 0) {
+                alert('Please select at least one preferred appointment time.');
+                return;
+              }
               // Move to extended survey (step 7)
               setStep(7);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
-              {/* Question 1 */}
+              {/* Question 1: Multiple choice */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  1. What type of dental care is most important to you?
+                  1. What type of dental care are you most interested in?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Routine check-ups & hygiene',
-                    'Cosmetic improvements',
-                    'Family/children\'s dentistry',
-                    'Emergency/relief from pain',
-                    'Nervous-patient friendly care'
+                    'Routine check-ups and cleanings',
+                    'Cosmetic dentistry (e.g., whitening, veneers)',
+                    'Orthodontics (e.g., braces, Invisalign)',
+                    'Restorative work (e.g., fillings, crowns)',
+                    'Emergency dental care',
+                    'Specialist treatments (e.g., implants, root canals)'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.dentalCare === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: surveyData.dentalCare.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
                       <input
-                        type="radio"
-                        name="dentalCare"
+                        type="checkbox"
                         value={option}
-                        checked={surveyData.dentalCare === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, dentalCare: e.target.value })}
-                        required
+                        checked={surveyData.dentalCare.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setSurveyData({ ...surveyData, dentalCare: [...surveyData.dentalCare, value] });
+                          } else {
+                            setSurveyData({ ...surveyData, dentalCare: surveyData.dentalCare.filter(c => c !== value) });
+                          }
+                        }}
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
@@ -817,17 +834,54 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 2 */}
+              {/* Question 2: Multiple choice */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  2. How soon do you expect to register with or visit a dentist?
+                  2. When do you usually prefer appointments?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Immediately',
-                    'Within 1–3 months',
-                    'Within 3–6 months',
-                    'I\'m just browsing'
+                    'Weekday mornings',
+                    'Weekday afternoons',
+                    'Weekday evenings (after 5pm)',
+                    'Saturdays',
+                    'Sundays'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.appointmentTimes.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={surveyData.appointmentTimes.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setSurveyData({ ...surveyData, appointmentTimes: [...surveyData.appointmentTimes, value] });
+                          } else {
+                            setSurveyData({ ...surveyData, appointmentTimes: surveyData.appointmentTimes.filter(t => t !== value) });
+                          }
+                        }}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3: Single choice */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. When was your most recent appointment?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Within the last 6 months',
+                    '6 months to 1 year ago',
+                    '1-2 years ago',
+                    'More than 2 years ago',
+                    'I\'ve never been to the dentist'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
                       style={{ borderColor: surveyData.timeline === option ? '#1f3a33' : '#cfe8d7' }}>
@@ -846,26 +900,26 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 3 */}
+              {/* Question 4: Single choice */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  3. What days/times work best for your dental appointments?
+                  4. How do you feel about visiting the dentist?
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Weekdays',
-                    'Evenings',
-                    'Weekends',
-                    'Flexible'
+                    'I feel comfortable and relaxed',
+                    'I feel slightly anxious',
+                    'I feel very nervous or anxious',
+                    'I avoid it due to fear or bad experiences'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.appointmentTimes === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: surveyData.importantFactors === option ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="radio"
-                        name="appointmentTimes"
+                        name="importantFactors"
                         value={option}
-                        checked={surveyData.appointmentTimes === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, appointmentTimes: e.target.value })}
+                        checked={surveyData.importantFactors === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, importantFactors: e.target.value })}
                         required
                         className="mr-3 w-5 h-5"
                       />
@@ -875,36 +929,29 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 4 */}
+              {/* Question 5: Single choice */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  4. What matters most when choosing a new dental practice?
-                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select up to 3)</span>
+                  5. What's the main reason for looking for a new dentist?
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Price & transparency',
-                    'Gentle, patient-focused care',
-                    'Availability of hygiene appointments',
-                    'Modern clinic & technology',
-                    'Convenience of location',
-                    'Short waiting lists'
+                    'I\'m new to the area',
+                    'Dissatisfied with my current dentist',
+                    'Looking for better prices or payment plans',
+                    'Need a specific treatment or specialist',
+                    'My previous practice closed or stopped taking NHS patients',
+                    'Other'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.importantFactors.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: surveyData.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
                       <input
-                        type="checkbox"
+                        type="radio"
+                        name="previousExperience"
                         value={option}
-                        checked={surveyData.importantFactors.includes(option)}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (e.target.checked && surveyData.importantFactors.length < 3) {
-                            setSurveyData({ ...surveyData, importantFactors: [...surveyData.importantFactors, value] });
-                          } else if (!e.target.checked) {
-                            setSurveyData({ ...surveyData, importantFactors: surveyData.importantFactors.filter(f => f !== value) });
-                          }
-                        }}
-                        disabled={!surveyData.importantFactors.includes(option) && surveyData.importantFactors.length >= 3}
+                        checked={surveyData.previousExperience === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, previousExperience: e.target.value })}
+                        required
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
