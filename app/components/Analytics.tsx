@@ -16,31 +16,66 @@ export default function Analytics() {
         `}
       </Script>
 
-      {/* Manual _fbp cookie creator (fallback if Facebook Pixel doesn't create it) */}
-      <Script id="fbp-cookie-fallback" strategy="afterInteractive">
+      {/* Multi-Platform Tracking Cookie Creators */}
+      <Script id="tracking-cookies-fallback" strategy="afterInteractive">
         {`
-          // Wait 2 seconds for Facebook Pixel to create _fbp cookie
+          // Wait 2 seconds for pixels to load
           setTimeout(function() {
-            // Check if _fbp cookie exists
-            var hasFbp = document.cookie.split(';').some(function(c) {
-              return c.trim().startsWith('_fbp=');
-            });
+            var timestamp = Date.now();
+            var expires = new Date();
+            expires.setTime(expires.getTime() + (90 * 24 * 60 * 60 * 1000)); // 90 days
+            var cookieDomain = ';path=/;domain=.' + window.location.hostname + ';SameSite=Lax';
 
-            // If Facebook Pixel didn't create it, create it manually
-            if (!hasFbp) {
-              var timestamp = Date.now();
-              var randomNum = Math.floor(Math.random() * 10000000000);
-              var fbpValue = 'fb.1.' + timestamp + '.' + randomNum;
-
-              // Set cookie for 90 days (same as Facebook's default)
-              var expires = new Date();
-              expires.setTime(expires.getTime() + (90 * 24 * 60 * 60 * 1000));
-              document.cookie = '_fbp=' + fbpValue + ';expires=' + expires.toUTCString() + ';path=/;domain=.' + window.location.hostname + ';SameSite=Lax';
-
-              console.log('✅ Manually created _fbp cookie:', fbpValue);
-            } else {
-              console.log('✅ Facebook Pixel created _fbp cookie automatically');
+            // Helper function to check if cookie exists
+            function hasCookie(name) {
+              return document.cookie.split(';').some(function(c) {
+                return c.trim().startsWith(name + '=');
+              });
             }
+
+            // Facebook _fbp cookie
+            if (!hasCookie('_fbp')) {
+              var fbpValue = 'fb.1.' + timestamp + '.' + Math.floor(Math.random() * 10000000000);
+              document.cookie = '_fbp=' + fbpValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created Facebook _fbp:', fbpValue);
+            }
+
+            // TikTok _ttp cookie
+            if (!hasCookie('_ttp')) {
+              var ttpValue = timestamp.toString(36) + Math.random().toString(36).substr(2);
+              document.cookie = '_ttp=' + ttpValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created TikTok _ttp:', ttpValue);
+            }
+
+            // TikTok _tta cookie (TikTok Attribution)
+            if (!hasCookie('_tta')) {
+              var ttaValue = 'tta.' + timestamp + '.' + Math.random().toString(36).substr(2, 10);
+              document.cookie = '_tta=' + ttaValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created TikTok _tta:', ttaValue);
+            }
+
+            // LinkedIn li_fat_id cookie
+            if (!hasCookie('li_fat_id')) {
+              var liFatValue = timestamp.toString(16) + '-' + Math.random().toString(16).substr(2, 8);
+              document.cookie = 'li_fat_id=' + liFatValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created LinkedIn li_fat_id:', liFatValue);
+            }
+
+            // Microsoft/Bing MUID cookie
+            if (!hasCookie('MUID')) {
+              var muidValue = 'MUID' + timestamp.toString(16).toUpperCase();
+              document.cookie = 'MUID=' + muidValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created Microsoft MUID:', muidValue);
+            }
+
+            // Twitter/X muc_ads cookie
+            if (!hasCookie('muc_ads')) {
+              var mucValue = timestamp.toString(36) + '-' + Math.random().toString(36).substr(2, 16);
+              document.cookie = 'muc_ads=' + mucValue + ';expires=' + expires.toUTCString() + cookieDomain;
+              console.log('✅ Created Twitter/X muc_ads:', mucValue);
+            }
+
+            console.log('🎯 All tracking cookies initialized for retargeting!');
           }, 2000);
         `}
       </Script>
