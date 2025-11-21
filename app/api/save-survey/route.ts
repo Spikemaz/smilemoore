@@ -123,6 +123,8 @@ export async function POST(request: Request) {
     const rowData = dataResponse.data.values?.[0] || [];
 
     const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BB range)
+    const campaignSource = rowData[5] || ''; // Column G (B=0, so G=5) - Campaign Source
+    const referredBy = rowData[10] || ''; // Column L (B=0, so L=10) - Referred By
     const currentEntries = parseInt(rowData[31]) || 0; // Column AG (B=0, so AG=31)
 
     // Follow-up tracking (B:BB range, so subtract 1 from standard index)
@@ -154,9 +156,23 @@ export async function POST(request: Request) {
 
       // Track which follow-up variation converted them (column AW = Best Performing Subject 4Q)
       let winningVariation = 'Organic';
-      if (followup3Sent4Q) winningVariation = 'Variation 3';
-      else if (followup2Sent4Q) winningVariation = 'Variation 2';
-      else if (followup1Sent4Q) winningVariation = 'Variation 1';
+
+      // Check if they came from a referral
+      if (referredBy) {
+        winningVariation = 'Referral';
+      }
+      // Check if they came from QR code
+      else if (campaignSource === 'QR Scan') {
+        winningVariation = 'QR';
+      }
+      // Check follow-up emails
+      else if (followup3Sent4Q) {
+        winningVariation = 'Variation 3';
+      } else if (followup2Sent4Q) {
+        winningVariation = 'Variation 2';
+      } else if (followup1Sent4Q) {
+        winningVariation = 'Variation 1';
+      }
 
       updates.push({
         range: `Home!AW${rowIndex}`,
@@ -183,9 +199,23 @@ export async function POST(request: Request) {
 
       // Track which follow-up variation converted them (column AX = Best Performing Subject 10Q)
       let winningVariation = 'Organic';
-      if (followup3Sent10Q) winningVariation = 'Variation 3';
-      else if (followup2Sent10Q) winningVariation = 'Variation 2';
-      else if (followup1Sent10Q) winningVariation = 'Variation 1';
+
+      // Check if they came from a referral
+      if (referredBy) {
+        winningVariation = 'Referral';
+      }
+      // Check if they came from QR code
+      else if (campaignSource === 'QR Scan') {
+        winningVariation = 'QR';
+      }
+      // Check follow-up emails
+      else if (followup3Sent10Q) {
+        winningVariation = 'Variation 3';
+      } else if (followup2Sent10Q) {
+        winningVariation = 'Variation 2';
+      } else if (followup1Sent10Q) {
+        winningVariation = 'Variation 1';
+      }
 
       updates.push({
         range: `Home!AX${rowIndex}`,
