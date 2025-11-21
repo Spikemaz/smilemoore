@@ -687,7 +687,7 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg animate-pulse"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg"
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 🎉 Claim My £{voucherValue} Voucher Now!
