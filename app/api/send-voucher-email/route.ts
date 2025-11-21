@@ -72,32 +72,49 @@ export async function POST(request: Request) {
                         </table>
 
                         <p style="margin: 20px 0; color: #333333; font-size: 16px; line-height: 24px;">
-                          <strong>What's Next?</strong>
+                          <strong>What Happens Next?</strong>
                         </p>
 
                         <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #333333; font-size: 16px; line-height: 28px;">
-                          <li>Keep this voucher code safe</li>
-                          <li>Present this code when you book your appointment</li>
-                          <li>Your £${voucherValue} will be applied to your treatment</li>
+                          <li>Keep this voucher code safe - you'll need it when we open!</li>
+                          <li>We'll keep you updated as we complete our CQC approval process</li>
+                          <li>You'll receive updates throughout our practice fit-out</li>
+                          <li>Once we're ready to see our first patients, we'll send you a booking link</li>
+                          <li>Use your voucher code when booking to redeem your £${voucherValue} discount</li>
                         </ul>
 
-                        <p style="margin: 20px 0; color: #333333; font-size: 16px; line-height: 24px;">
-                          Plus, you've been entered into our draw to win <strong>1 Year of FREE Dentistry worth £2,000!</strong>
-                        </p>
-
-                        <!-- CTA Button -->
+                        <!-- Prize Draw Section -->
                         <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                           <tr>
-                            <td align="center">
-                              <a href="https://smilemoore.co.uk/home#book" style="display: inline-block; background-color: #1f3a33; color: #ffffff; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-size: 16px; font-weight: bold;">
-                                Book Your Appointment
-                              </a>
+                            <td style="background-color: #cfe8d7; border-radius: 8px; padding: 25px; text-align: center;">
+                              <h3 style="margin: 0 0 15px 0; color: #1f3a33; font-size: 20px;">🎁 You're Entered to Win!</h3>
+                              <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
+                                You have <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth £2,000!</strong>
+                              </p>
+                              <p style="margin: 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
+                                Want <strong>+10 bonus entries?</strong> Share your unique referral link with friends!
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- Referral Link Box -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                          <tr>
+                            <td style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; border: 2px solid #cfe8d7;">
+                              <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR REFERRAL LINK</p>
+                              <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 14px; word-break: break-all;">
+                                https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}
+                              </p>
+                              <p style="margin: 0; color: #666666; font-size: 13px; line-height: 20px;">
+                                Share this link and get <strong>+10 entries</strong> for every friend who claims their voucher!
+                              </p>
                             </td>
                           </tr>
                         </table>
 
                         <p style="margin: 20px 0 0 0; color: #666666; font-size: 14px; line-height: 20px;">
-                          If you have any questions, please don't hesitate to contact us.
+                          If you have any questions, please reply to this email and we'll be happy to help.
                         </p>
                       </td>
                     </tr>
