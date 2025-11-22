@@ -28,41 +28,15 @@ export default function Analytics() {
         `}
       </Script>
 
-      {/* LinkedIn Insight Tag */}
-      <Script id="linkedin-insight" strategy="afterInteractive">
-        {`
-          _linkedin_partner_id = "YOUR_LINKEDIN_PARTNER_ID";
-          window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-          window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-          (function(l) {
-            if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-            window.lintrk.q=[]}
-            var s = document.getElementsByTagName("script")[0];
-            var b = document.createElement("script");
-            b.type = "text/javascript";b.async = true;
-            b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-            s.parentNode.insertBefore(b, s);
-          })(window.lintrk);
-        `}
-      </Script>
-
       {/* Microsoft UET Tag */}
       <Script id="microsoft-uet" strategy="afterInteractive">
         {`
-          (function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"YOUR_MICROSOFT_UET_TAG_ID"};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");
+          (function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"187223299", enableAutoSpaTracking: true};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");
         `}
       </Script>
 
-      {/* Twitter/X Pixel */}
-      <Script id="twitter-pixel" strategy="afterInteractive">
-        {`
-          !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
-          },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
-          a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
-          // Replace with your Twitter Pixel ID when available
-          // twq('config','YOUR_TWITTER_PIXEL_ID');
-        `}
-      </Script>
+      {/* Twitter/X Pixel - DISABLED (Events Manager not accessible yet) */}
+      {/* To enable: Add payment method to Twitter Ads, then get Pixel ID from Events Manager */}
 
       {/* FALLBACK COOKIES DISABLED - Only capturing REAL platform pixels for retargeting */}
       {/* To enable retargeting, add real Pixel IDs above for TikTok, LinkedIn, Microsoft, Twitter */}
