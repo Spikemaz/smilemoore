@@ -65,11 +65,17 @@ export async function POST(request: Request) {
       fbp,
       fbc,
       gaClientId,
+      gid,
       fbclid,
       gclid,
       msclkid,
       ttclid,
       li_fat_id,
+      muid,
+      ttp,
+      tta,
+      mucAds,
+      smUniversalId,
       pageLoadTime,
       isReturningVisitor,
       sessionCount,
@@ -89,7 +95,18 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Prepare row data matching Visitors sheet headers (columns A-AP)
+    // Calculate cookie quality score (how many real platform IDs we captured)
+    let cookieQualityScore = 0;
+    if (fbp) cookieQualityScore++;
+    if (gaClientId) cookieQualityScore++;
+    if (muid) cookieQualityScore++;
+    if (ttp) cookieQualityScore++;
+    if (li_fat_id) cookieQualityScore++;
+    if (mucAds) cookieQualityScore++;
+
+    const allCookiesCaptured = cookieQualityScore === 6 ? 'Yes' : 'No';
+
+    // Prepare row data matching Visitors sheet headers (columns A-AR)
     const values = [[
       visitorId, // A - Visitor ID
       timestamp, // B - Timestamp
@@ -113,29 +130,35 @@ export async function POST(request: Request) {
       language || 'unknown', // T - Language
       timezone || 'unknown', // U - Timezone
       landingPage || '', // V - Landing Page
-      fbp || '', // W - Facebook Browser ID
-      fbc || fbclid || '', // X - Facebook Click ID
-      gclid || '', // Y - Google Click ID
-      msclkid || '', // Z - Microsoft Click ID
-      ttclid || '', // AA - TikTok Click ID
-      li_fat_id || '', // AB - LinkedIn Click ID
-      pageLoadTime || 0, // AC - Page Load Time
-      isReturningVisitor ? 'Yes' : 'No', // AD - Returning Visitor
-      sessionCount || 1, // AE - Session Count
-      firstVisitDate || '', // AF - Date
-      dayOfWeek || '', // AG - Day of Week
-      hourOfDay || 0, // AH - Hour of Day
-      '', // AI - Time to Email Submit (calculated later)
-      '', // AJ - Max Scroll Depth % (updated later)
-      '', // AK - Time Email → Name (seconds) (calculated later)
-      '', // AL - Time Name → Phone (seconds) (calculated later)
-      '', // AM - Time Phone → Postcode (seconds) (calculated later)
-      '', // AN - Total Time - Load → Complete (seconds) (calculated later)
+      fbp || '', // W - Facebook Browser ID (_fbp)
+      fbc || fbclid || '', // X - Facebook Click ID (_fbc / fbclid)
+      gaClientId || '', // Y - Google Client ID (_ga)
+      gclid || '', // Z - Google Click ID (gclid)
+      muid || '', // AA - Microsoft User ID (MUID)
+      msclkid || '', // AB - Microsoft Click ID (msclkid)
+      ttp || '', // AC - TikTok Browser ID (_ttp)
+      ttclid || '', // AD - TikTok Click ID (ttclid)
+      li_fat_id || '', // AE - LinkedIn ID (li_fat_id)
+      pageLoadTime || 0, // AF - Page Load Time
+      isReturningVisitor ? 'Yes' : 'No', // AG - Returning Visitor
+      sessionCount || 1, // AH - Session Count
+      firstVisitDate || '', // AI - Date
+      dayOfWeek || '', // AJ - Day of Week
+      hourOfDay || 0, // AK - Hour of Day
+      '', // AL - Time to Email Submit (calculated later)
+      '', // AM - Max Scroll Depth % (updated later)
+      '', // AN - Time Email → Name (seconds) (calculated later)
+      '', // AO - Time Name → Phone (seconds) (calculated later)
+      '', // AP - Time Phone → Postcode (seconds) (calculated later)
+      '', // AQ - Total Time - Load → Complete (seconds) (calculated later)
+      smUniversalId || '', // AR - SmileMoore Universal ID
+      cookieQualityScore, // AS - Cookie Quality Score
+      allCookiesCaptured, // AT - All Cookies Captured
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AN',
+      range: 'Visitors!A:AT',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });

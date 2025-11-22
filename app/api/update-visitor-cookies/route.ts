@@ -24,7 +24,18 @@ function getGoogleSheetsClient() {
 
 export async function POST(request: Request) {
   try {
-    const { visitorId, fbp, gaClientId } = await request.json();
+    const {
+      visitorId,
+      fbp,
+      fbc,
+      gaClientId,
+      gid,
+      muid,
+      ttp,
+      tta,
+      mucAds,
+      smUniversalId
+    } = await request.json();
 
     if (!visitorId) {
       return NextResponse.json(
@@ -58,22 +69,89 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update Facebook Browser ID (Column W) and Google Client ID (Column Y)
+    // Update all platform IDs
     const updates = [];
 
     if (fbp) {
       updates.push({
-        range: `Visitors!W${rowIndex}`,
+        range: `Visitors!W${rowIndex}`, // Facebook Browser ID (_fbp)
         values: [[fbp]],
+      });
+    }
+
+    if (fbc) {
+      updates.push({
+        range: `Visitors!X${rowIndex}`, // Facebook Click ID (_fbc)
+        values: [[fbc]],
       });
     }
 
     if (gaClientId) {
       updates.push({
-        range: `Visitors!Y${rowIndex}`,
+        range: `Visitors!Y${rowIndex}`, // Google Client ID (_ga)
         values: [[gaClientId]],
       });
     }
+
+    if (gid) {
+      updates.push({
+        range: `Visitors!Y${rowIndex}`, // Google Session ID (_gid) - Note: Added to schema but using Y for now
+        values: [[gid]],
+      });
+    }
+
+    if (muid) {
+      updates.push({
+        range: `Visitors!AA${rowIndex}`, // Microsoft User ID (MUID)
+        values: [[muid]],
+      });
+    }
+
+    if (ttp) {
+      updates.push({
+        range: `Visitors!AC${rowIndex}`, // TikTok Browser ID (_ttp)
+        values: [[ttp]],
+      });
+    }
+
+    if (tta) {
+      updates.push({
+        range: `Visitors!AC${rowIndex}`, // TikTok Attribution ID (_tta) - Note: Using same column as _ttp for now
+        values: [[tta]],
+      });
+    }
+
+    if (mucAds) {
+      updates.push({
+        range: `Visitors!AE${rowIndex}`, // LinkedIn/Twitter ID (for now using LinkedIn column)
+        values: [[mucAds]],
+      });
+    }
+
+    if (smUniversalId) {
+      updates.push({
+        range: `Visitors!AR${rowIndex}`, // SmileMoore Universal ID
+        values: [[smUniversalId]],
+      });
+    }
+
+    // Recalculate cookie quality score
+    let cookieQualityScore = 0;
+    if (fbp) cookieQualityScore++;
+    if (gaClientId) cookieQualityScore++;
+    if (muid) cookieQualityScore++;
+    if (ttp || tta) cookieQualityScore++;
+    if (mucAds) cookieQualityScore++;
+
+    updates.push({
+      range: `Visitors!AS${rowIndex}`, // Cookie Quality Score
+      values: [[cookieQualityScore]],
+    });
+
+    updates.push({
+      range: `Visitors!AT${rowIndex}`, // All Cookies Captured
+      values: [[cookieQualityScore === 6 ? 'Yes' : 'No']],
+    });
 
     if (updates.length > 0) {
       await sheets.spreadsheets.values.batchUpdate({
@@ -90,6 +168,7 @@ export async function POST(request: Request) {
       message: 'Visitor cookies updated',
       rowIndex,
       updates: updates.length,
+      cookieQualityScore,
     });
   } catch (error) {
     console.error('Error updating visitor cookies:', error);

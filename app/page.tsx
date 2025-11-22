@@ -72,6 +72,16 @@ export default function LandingPage() {
   useEffect(() => {
     async function trackVisitor() {
       try {
+        // Generate or retrieve SmileMoore Universal ID
+        let smUniversalId = localStorage.getItem('sm_universal_id');
+        if (!smUniversalId) {
+          smUniversalId = `SM-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          localStorage.setItem('sm_universal_id', smUniversalId);
+          console.log('🆔 Generated SmileMoore Universal ID:', smUniversalId);
+        } else {
+          console.log('🆔 Retrieved existing SmileMoore Universal ID:', smUniversalId);
+        }
+
         // Calculate page load time
         const loadTime = performance.now();
         setPageLoadTime(loadTime);
@@ -190,6 +200,11 @@ export default function LandingPage() {
         let fbp = '';
         let fbc = '';
         let gaClientId = '';
+        let gid = '';
+        let muid = '';
+        let ttp = '';
+        let tta = '';
+        let mucAds = '';
 
         // Try to get cookies, retry up to 5 times over 5 seconds
         for (let attempt = 0; attempt < 5; attempt++) {
@@ -198,18 +213,45 @@ export default function LandingPage() {
           fbp = getCookie('_fbp');
           fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
           gaClientId = getCookie('_ga');
+          gid = getCookie('_gid');
+          muid = getCookie('MUID');
+          ttp = getCookie('_ttp');
+          tta = getCookie('_tta');
+          mucAds = getCookie('muc_ads');
 
-          console.log(`Attempt ${attempt + 1}: Cookies:`, { fbp, fbc, gaClientId, allCookies: document.cookie });
+          console.log(`Attempt ${attempt + 1}: Cookies:`, {
+            fbp,
+            fbc,
+            gaClientId,
+            gid,
+            muid,
+            ttp,
+            tta,
+            mucAds,
+            allCookies: document.cookie
+          });
 
-          // If we have both cookies, stop trying
-          if (fbp && gaClientId) {
-            console.log('✅ All tracking cookies found!');
+          // Count how many platform cookies we have
+          let platformCount = 0;
+          if (fbp) platformCount++;
+          if (gaClientId) platformCount++;
+          if (muid) platformCount++;
+          if (ttp || tta) platformCount++;
+          if (mucAds) platformCount++;
+
+          // If we have most cookies (4+), stop trying
+          if (platformCount >= 4) {
+            console.log(`✅ Found ${platformCount}/6 platform tracking cookies!`);
             break;
           }
         }
 
+        // Log warnings for missing cookies
         if (!fbp) console.warn('⚠️ Facebook _fbp cookie not found after 5 seconds');
         if (!gaClientId) console.warn('⚠️ Google _ga cookie not found after 5 seconds');
+        if (!muid) console.warn('⚠️ Microsoft MUID cookie not found after 5 seconds');
+        if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
+        if (!mucAds) console.warn('⚠️ Twitter/X muc_ads cookie not found after 5 seconds');
 
         // Get campaign source from URL path or UTM
         const campaignSource = window.location.pathname.slice(1) || utmSource || 'direct';
@@ -258,11 +300,17 @@ export default function LandingPage() {
             fbp,
             fbc,
             gaClientId,
+            gid,
             fbclid,
             gclid,
             msclkid,
             ttclid,
             li_fat_id,
+            muid,
+            ttp,
+            tta,
+            mucAds,
+            smUniversalId,
             pageLoadTime: Math.round(loadTime),
             isReturningVisitor,
             sessionCount,
@@ -281,7 +329,7 @@ export default function LandingPage() {
           localStorage.setItem('smilemoore_visitor_id', data.visitorId);
 
           // CRITICAL FIX: Capture cookies AGAIN after 10 seconds and update the visitor row
-          // This ensures Facebook Pixel and GA4 have fully loaded
+          // This ensures all platform pixels have fully loaded
           setTimeout(async () => {
             const getCookie = (name: string) => {
               const value = `; ${document.cookie}`;
@@ -291,17 +339,30 @@ export default function LandingPage() {
             };
 
             const delayedFbp = getCookie('_fbp');
+            const delayedFbc = getCookie('_fbc');
             const delayedGa = getCookie('_ga');
+            const delayedGid = getCookie('_gid');
+            const delayedMuid = getCookie('MUID');
+            const delayedTtp = getCookie('_ttp');
+            const delayedTta = getCookie('_tta');
+            const delayedMucAds = getCookie('muc_ads');
 
             console.log('🔄 Updating visitor with delayed cookies:', {
               visitorId: data.visitorId,
               fbp: delayedFbp,
+              fbc: delayedFbc,
               ga: delayedGa,
+              gid: delayedGid,
+              muid: delayedMuid,
+              ttp: delayedTtp,
+              tta: delayedTta,
+              mucAds: delayedMucAds,
+              smUniversalId,
               allCookies: document.cookie
             });
 
-            // Update the visitor row with the cookies
-            if (delayedFbp || delayedGa) {
+            // Update the visitor row with all cookies
+            if (delayedFbp || delayedGa || delayedMuid || delayedTtp || delayedMucAds) {
               try {
                 await fetch('/api/update-visitor-cookies', {
                   method: 'POST',
@@ -309,10 +370,17 @@ export default function LandingPage() {
                   body: JSON.stringify({
                     visitorId: data.visitorId,
                     fbp: delayedFbp,
+                    fbc: delayedFbc,
                     gaClientId: delayedGa,
+                    gid: delayedGid,
+                    muid: delayedMuid,
+                    ttp: delayedTtp,
+                    tta: delayedTta,
+                    mucAds: delayedMucAds,
+                    smUniversalId,
                   }),
                 });
-                console.log('✅ Visitor cookies updated successfully!');
+                console.log('✅ All visitor cookies updated successfully!');
               } catch (err) {
                 console.error('❌ Failed to update visitor cookies:', err);
               }
