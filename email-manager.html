@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile Moore - Email Template Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(to right, #1f3a33, #70d490);
+            color: white;
+            padding: 30px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .nav {
+            display: flex;
+            background: #1f3a33;
+            overflow-x: auto;
+        }
+
+        .nav button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav button.active {
+            border-bottom-color: #70d490;
+            background: rgba(112, 212, 144, 0.1);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .email-card {
+            display: none;
+        }
+
+        .email-card.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .editor-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .editor-panel h3 {
+            color: #1f3a33;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .preview-panel {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .preview-controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .preview-controls button {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .preview-controls button.active {
+            background: #1f3a33;
+            color: white;
+            border-color: #1f3a33;
+        }
+
+        .preview-controls button:hover:not(.active) {
+            border-color: #1f3a33;
+        }
+
+        .preview-viewport {
+            padding: 20px;
+            min-height: 500px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .preview-viewport.mobile {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+        }
+
+        .preview-viewport.desktop {
+            max-width: 100%;
+        }
+
+        .email-preview {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .email-header {
+            background: linear-gradient(to right, #1f3a33, #70d490);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .email-header h2 {
+            color: white;
+            font-size: 28px;
+        }
+
+        .email-body {
+            padding: 30px;
+        }
+
+        .email-body h3 {
+            color: #1f3a33;
+            margin-bottom: 15px;
+        }
+
+        .email-body p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .voucher-code {
+            background: #cfe8d7;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .voucher-code-text {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1f3a33;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .prize-box {
+            background: #cfe8d7;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .prize-box h4 {
+            color: #1f3a33;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1f3a33;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #70d490;
+        }
+
+        .form-group textarea {
+            min-height: 250px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #1f3a33;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d5449;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert.show {
+            display: flex;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #70d490;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #1f3a33;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-location {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 15px 0;
+        }
+
+        .code-location strong {
+            color: #61afef;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tag-trigger {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag-timing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .tag-entries {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .family-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .family-table th {
+            background: #1f3a33;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .family-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .family-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1f3a33, #2d5449);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Email Template Manager</h1>
+            <p>Edit, preview, and deploy email templates in real-time</p>
+        </div>
+
+        <div class="nav">
+            <button class="active" onclick="showTab('overview')">📊 Overview</button>
+            <button onclick="showTab('voucher-single')">✉️ Voucher (Single)</button>
+            <button onclick="showTab('voucher-family')">👨‍👩‍👧 Voucher (Family)</button>
+            <button onclick="showTab('4q-1')">📬 4Q #1</button>
+            <button onclick="showTab('4q-2')">📬 4Q #2</button>
+            <button onclick="showTab('4q-3')">📬 4Q #3</button>
+            <button onclick="showTab('10q-1')">📮 10Q #1</button>
+            <button onclick="showTab('10q-2')">📮 10Q #2</button>
+            <button onclick="showTab('10q-3')">📮 10Q #3</button>
+            <button onclick="showTab('christmas')">🎄 Christmas</button>
+        </div>
+
+        <div class="content">
+            <div id="alert" class="alert"></div>
+
+            <!-- OVERVIEW TAB -->
+            <div id="overview" class="email-card active">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">Email System Overview</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number">10</div>
+                        <div class="label">Total Email Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">4</div>
+                        <div class="label">Email Types</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">✓</div>
+                        <div class="label">Live Editing Enabled</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>✏️ How to Edit Templates</h3>
+                    <p>1. Click on any email template tab above<br>
+                       2. Edit the subject or body text in the left panel<br>
+                       3. Preview changes in real-time (Mobile/Desktop)<br>
+                       4. Click "Save & Deploy" to update live site<br>
+                       5. Changes go live immediately!</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🎯 Email Deduplication System</h3>
+                    <p><strong>For families using the same email:</strong> Only ONE consolidated email is sent per email address, regardless of how many family members sign up. This prevents inbox spam and maintains a professional reputation.</p>
+                </div>
+
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">📨 Email Flow</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; font-family: monospace; font-size: 13px; line-height: 1.8;">
+1. Voucher Claimed → ✉️ Confirmation (instant)
+2. At 1 entry → 📬 4Q Follow-up #1 (instant)
+   └─> Not opened → 📬 4Q #2 (48hrs) → 📬 4Q #3 (48hrs)
+3. At 2 entries → 📮 10Q Follow-up #1 (instant)
+   └─> Not opened → 📮 10Q #2 (48hrs) → 📮 10Q #3 (48hrs)
+4. At 3 entries → 🎄 Christmas Sharing (instant)
+                </div>
+            </div>
+
+            <!-- 4Q FOLLOW-UP #1 TAB -->
+            <div id="4q-1" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">4-Question Follow-up #1</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: 1 entry</span>
+                    <span class="tag tag-timing">Send: Immediate</span>
+                    <span class="tag tag-entries">Goal: 2 entries</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="4q-1-subject"
+                                   value="🎁 Quick reminder: Boost your prize draw entries!"
+                                   oninput="updatePreview('4q-1')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="4q-1-body" oninput="updatePreview('4q-1')">Hi [Name],
+
+We noticed you claimed your £50 voucher but haven't entered the prize draw yet!
+
+It only takes 1 minute to answer 4 quick questions and you'll receive +1 bonus entry.
+
+Click here to complete: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('4q', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('4q-1')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 27-42<br>
+                            <strong>Array:</strong> fourQuestionVariations[0]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('4q-1', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('4q-1', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="4q-1-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="4q-1-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            🎁 Quick reminder: Boost your prize draw entries!
+                                        </div>
+                                        <div id="4q-1-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+We noticed you claimed your £50 voucher but haven't entered the prize draw yet!
+
+It only takes 1 minute to answer 4 quick questions and you'll receive +1 bonus entry.
+
+Click here to complete: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4Q FOLLOW-UP #2 TAB -->
+            <div id="4q-2" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">4-Question Follow-up #2</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: #1 not opened</span>
+                    <span class="tag tag-timing">Send: 48hrs after #1</span>
+                    <span class="tag tag-entries">User has: 1 entry</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="4q-2-subject"
+                                   value="Don't miss out on winning up to £5,000 of free dentistry!"
+                                   oninput="updatePreview('4q-2')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="4q-2-body" oninput="updatePreview('4q-2')">Hi [Name],
+
+You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth up to £5,000.
+
+Plus, you'll earn another entry bringing your total to 2 entries.
+
+Complete now: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('4q', 1)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('4q-2')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 43-57<br>
+                            <strong>Array:</strong> fourQuestionVariations[1]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('4q-2', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('4q-2', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="4q-2-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="4q-2-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            Don't miss out on winning up to £5,000 of free dentistry!
+                                        </div>
+                                        <div id="4q-2-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth up to £5,000.
+
+Plus, you'll earn another entry bringing your total to 2 entries.
+
+Complete now: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4Q FOLLOW-UP #3 TAB -->
+            <div id="4q-3" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">4-Question Follow-up #3 (Final)</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: #2 not opened</span>
+                    <span class="tag tag-timing">Send: 48hrs after #2</span>
+                    <span class="tag tag-entries">Final reminder</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="4q-3-subject"
+                                   value="Final chance: Enter the prize draw"
+                                   oninput="updatePreview('4q-3')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="4q-3-body" oninput="updatePreview('4q-3')">Hi [Name],
+
+This is your last reminder to enter the prize draw worth up to £5,000!
+
+4 quick questions = +1 entry in the draw
+Takes less than 60 seconds
+
+Complete your entry: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('4q', 2)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('4q-3')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 58-73<br>
+                            <strong>Array:</strong> fourQuestionVariations[2]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('4q-3', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('4q-3', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="4q-3-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="4q-3-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            Final chance: Enter the prize draw
+                                        </div>
+                                        <div id="4q-3-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+This is your last reminder to enter the prize draw worth up to £5,000!
+
+4 quick questions = +1 entry in the draw
+Takes less than 60 seconds
+
+Complete your entry: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10Q FOLLOW-UP #1 TAB -->
+            <div id="10q-1" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">10-Question Follow-up #1</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: 2 entries</span>
+                    <span class="tag tag-timing">Send: Immediate</span>
+                    <span class="tag tag-entries">Goal: 3 entries</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="10q-1-subject"
+                                   value="🌟 One more step to maximize your prize entries!"
+                                   oninput="updatePreview('10q-1')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="10q-1-body" oninput="updatePreview('10q-1')">Hi [Name],
+
+Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
+
+Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
+
+Continue here: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('10q', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('10q-1')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 103-117<br>
+                            <strong>Array:</strong> tenQuestionVariations[0]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('10q-1', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('10q-1', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="10q-1-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="10q-1-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            🌟 One more step to maximize your prize entries!
+                                        </div>
+                                        <div id="10q-1-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
+
+Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
+
+Continue here: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10Q FOLLOW-UP #2 TAB -->
+            <div id="10q-2" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">10-Question Follow-up #2</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: #1 not opened</span>
+                    <span class="tag tag-timing">Send: 48hrs after #1</span>
+                    <span class="tag tag-entries">User has: 2 entries</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="10q-2-subject"
+                                   value="Help us build your perfect dental practice"
+                                   oninput="updatePreview('10q-2')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="10q-2-body" oninput="updatePreview('10q-2')">Hi [Name],
+
+Your feedback is incredibly valuable! We'd love to hear more about your dental preferences.
+
+Complete 10 additional questions and you'll receive:
+• +1 bonus entry in the prize draw (3 total)
+• Help shape your perfect dental experience
+
+Share your thoughts: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('10q', 1)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('10q-2')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 118-134<br>
+                            <strong>Array:</strong> tenQuestionVariations[1]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('10q-2', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('10q-2', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="10q-2-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="10q-2-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            Help us build your perfect dental practice
+                                        </div>
+                                        <div id="10q-2-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+Your feedback is incredibly valuable! We'd love to hear more about your dental preferences.
+
+Complete 10 additional questions and you'll receive:
+• +1 bonus entry in the prize draw (3 total)
+• Help shape your perfect dental experience
+
+Share your thoughts: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10Q FOLLOW-UP #3 TAB -->
+            <div id="10q-3" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">10-Question Follow-up #3 (Final)</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: #2 not opened</span>
+                    <span class="tag tag-timing">Send: 48hrs after #2</span>
+                    <span class="tag tag-entries">Final reminder</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="10q-3-subject"
+                                   value="Last call: Get your 3rd prize draw entry"
+                                   oninput="updatePreview('10q-3')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="10q-3-body" oninput="updatePreview('10q-3')">Hi [Name],
+
+This is your final reminder to maximize your prize draw entries!
+
+You currently have 2 entries. Complete the extended survey to earn your 3rd entry.
+
+It takes just 2 minutes: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('10q', 2)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('10q-3')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 135-150<br>
+                            <strong>Array:</strong> tenQuestionVariations[2]
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('10q-3', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('10q-3', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="10q-3-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="10q-3-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            Last call: Get your 3rd prize draw entry
+                                        </div>
+                                        <div id="10q-3-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+This is your final reminder to maximize your prize draw entries!
+
+You currently have 2 entries. Complete the extended survey to earn your 3rd entry.
+
+It takes just 2 minutes: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHRISTMAS TAB -->
+            <div id="christmas" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">Christmas Sharing Email</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: 3 entries</span>
+                    <span class="tag tag-timing">Send: Immediate</span>
+                    <span class="tag tag-entries">Referral incentive</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="christmas-subject"
+                                   value="🎄 Spread Christmas Joy - Share Your £50 Voucher!"
+                                   oninput="updatePreview('christmas')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="christmas-body" style="min-height: 350px;" oninput="updatePreview('christmas')">Hi [Name],
+
+The festive season is here! 🎄✨
+
+We noticed you claimed your £50 voucher - why not spread some Christmas joy to your family and friends?
+
+🎁 Give the Gift of a Healthy Smile This Christmas
+
+Who else do you know who may also want this? Share your unique referral link and:
+• Help your loved ones save £50 on dental care
+• Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
+• Perfect timing before the Christmas period!
+
+Your Referral Link: https://smilemoore.co.uk?ref=[Name]-[Code]
+
+The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
+
+Wishing you a wonderful festive season,
+Smile Moore Team 🎅</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('christmas', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('christmas')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/send-follow-ups/route.ts<br>
+                            <strong>Lines:</strong> 76-100<br>
+                            <strong>Variable:</strong> christmasSharingEmail
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('christmas', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('christmas', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="christmas-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="christmas-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            🎄 Spread Christmas Joy - Share Your £50 Voucher!
+                                        </div>
+                                        <div id="christmas-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+The festive season is here! 🎄✨
+
+We noticed you claimed your £50 voucher - why not spread some Christmas joy to your family and friends?
+
+🎁 Give the Gift of a Healthy Smile This Christmas
+
+Who else do you know who may also want this? Share your unique referral link and:
+• Help your loved ones save £50 on dental care
+• Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
+• Perfect timing before the Christmas period!
+
+Your Referral Link: https://smilemoore.co.uk?ref=John-123
+
+The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
+
+Wishing you a wonderful festive season,
+Smile Moore Team 🎅</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOUCHER SINGLE TAB (Read-only) -->
+            <div id="voucher-single" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">Voucher Confirmation (Single Signup)</h2>
+
+                <div class="info-box">
+                    <h3>ℹ️ Note</h3>
+                    <p>This is the automated voucher confirmation email sent when a user completes the form. Subject and content are dynamically generated based on number of signups. This template is in the voucher route and requires manual code editing.</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: Postcode submitted</span>
+                    <span class="tag tag-timing">Send: Immediate</span>
+                    <span class="tag tag-entries">User has: 1 entry</span>
+                </div>
+
+                <div class="code-location">
+                    <strong>File:</strong> app/api/update-voucher/route.ts<br>
+                    <strong>Lines:</strong> ~240-385<br>
+                    <strong>Note:</strong> Complex HTML template - edit with caution
+                </div>
+
+                <div class="preview-panel" style="margin-top: 20px;">
+                    <div class="preview-controls">
+                        <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Preview (Read-only)</span>
+                        <button onclick="setPreviewMode('voucher-single', 'mobile')">📱 Mobile</button>
+                        <button class="active" onclick="setPreviewMode('voucher-single', 'desktop')">💻 Desktop</button>
+                    </div>
+                    <div id="voucher-single-preview" class="preview-viewport desktop">
+                        <div class="email-preview">
+                            <div class="email-header">
+                                <h2>Smile Moore</h2>
+                            </div>
+                            <div class="email-body">
+                                <h3>Congratulations, John! 🎉</h3>
+                                <p>Thank you for claiming your voucher! Your £50 voucher is confirmed and ready to use.</p>
+
+                                <div class="voucher-code">
+                                    <p style="margin-bottom: 10px; font-size: 14px; color: #1f3a33; font-weight: bold;">YOUR VOUCHER CODE</p>
+                                    <div class="voucher-code-text">SMILEABC123</div>
+                                </div>
+
+                                <h3>What Happens Next?</h3>
+                                <ul style="line-height: 1.8; color: #333;">
+                                    <li>Keep this voucher code safe - you'll need it when we open!</li>
+                                    <li>We'll keep you updated as we complete our CQC approval process</li>
+                                    <li>You'll receive updates throughout our practice fit-out</li>
+                                    <li>Once we're ready to see our first patients, we'll send you a booking link</li>
+                                    <li>Use your voucher code when booking to redeem your £50 discount</li>
+                                    <li>Bonus: Receive +100 prize draw entries when you redeem your voucher!</li>
+                                </ul>
+
+                                <div class="prize-box">
+                                    <h4>🎁 You're Entered to Win!</h4>
+                                    <p>You have <strong>3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</p>
+                                    <p>Want <strong>+10 bonus entries?</strong> Share your unique referral link with friends!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOUCHER FAMILY TAB (Read-only) -->
+            <div id="voucher-family" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">Voucher Confirmation (Family - Multiple Signups)</h2>
+
+                <div class="info-box">
+                    <h3>🛡️ Inbox Protection</h3>
+                    <p><strong>Only ONE email is sent</strong> when multiple family members use the same email address. The system automatically detects duplicate emails and consolidates all voucher codes into a single, organized email.</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: Same email multiple times</span>
+                    <span class="tag tag-timing">Send: On completion</span>
+                    <span class="tag tag-entries">Deduplication: Active</span>
+                </div>
+
+                <div class="code-location">
+                    <strong>File:</strong> app/api/update-voucher/route.ts<br>
+                    <strong>Lines:</strong> ~240-385<br>
+                    <strong>Logic:</strong> isMultiple = true (when sameEmailSignups.length > 1)
+                </div>
+
+                <div class="preview-panel" style="margin-top: 20px;">
+                    <div class="preview-controls">
+                        <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Preview (Read-only)</span>
+                        <button onclick="setPreviewMode('voucher-family', 'mobile')">📱 Mobile</button>
+                        <button class="active" onclick="setPreviewMode('voucher-family', 'desktop')">💻 Desktop</button>
+                    </div>
+                    <div id="voucher-family-preview" class="preview-viewport desktop">
+                        <div class="email-preview">
+                            <div class="email-header">
+                                <h2>Smile Moore</h2>
+                            </div>
+                            <div class="email-body">
+                                <h3>Congratulations! 🎉</h3>
+                                <p>Thank you for claiming vouchers for your family! You've registered 3 people with a total value of £150.</p>
+
+                                <table class="family-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Family Member</th>
+                                            <th>Voucher Code</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>John Smith</td>
+                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEABC123</td>
+                                            <td style="color: #70d490; font-weight: bold;">£50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jane Smith</td>
+                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEDEF456</td>
+                                            <td style="color: #70d490; font-weight: bold;">£50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tom Smith</td>
+                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEGHI789</td>
+                                            <td style="color: #70d490; font-weight: bold;">£50</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="prize-box">
+                                    <h4>🎁 You're Entered to Win!</h4>
+                                    <p>Each family member has <strong>3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Store original templates
+        const originalTemplates = {
+            '4q-1': {
+                subject: '🎁 Quick reminder: Boost your prize draw entries!',
+                body: `Hi [Name],
+
+We noticed you claimed your £50 voucher but haven't entered the prize draw yet!
+
+It only takes 1 minute to answer 4 quick questions and you'll receive +1 bonus entry.
+
+Click here to complete: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team`
+            },
+            '4q-2': {
+                subject: 'Don\'t miss out on winning up to £5,000 of free dentistry!',
+                body: `Hi [Name],
+
+You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth up to £5,000.
+
+Plus, you'll earn another entry bringing your total to 2 entries.
+
+Complete now: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team`
+            },
+            '4q-3': {
+                subject: 'Final chance: Enter the prize draw',
+                body: `Hi [Name],
+
+This is your last reminder to enter the prize draw worth up to £5,000!
+
+4 quick questions = +1 entry in the draw
+Takes less than 60 seconds
+
+Complete your entry: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team`
+            },
+            '10q-1': {
+                subject: '🌟 One more step to maximize your prize entries!',
+                body: `Hi [Name],
+
+Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
+
+Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
+
+Continue here: https://smilemoore.co.uk
+
+Thank you!
+Smile Moore Team`
+            },
+            '10q-2': {
+                subject: 'Help us build your perfect dental practice',
+                body: `Hi [Name],
+
+Your feedback is incredibly valuable! We'd love to hear more about your dental preferences.
+
+Complete 10 additional questions and you'll receive:
+• +1 bonus entry in the prize draw (3 total)
+• Help shape your perfect dental experience
+
+Share your thoughts: https://smilemoore.co.uk
+
+Best regards,
+Smile Moore Team`
+            },
+            '10q-3': {
+                subject: 'Last call: Get your 3rd prize draw entry',
+                body: `Hi [Name],
+
+This is your final reminder to maximize your prize draw entries!
+
+You currently have 2 entries. Complete the extended survey to earn your 3rd entry.
+
+It takes just 2 minutes: https://smilemoore.co.uk
+
+Thank you,
+Smile Moore Team`
+            },
+            'christmas': {
+                subject: '🎄 Spread Christmas Joy - Share Your £50 Voucher!',
+                body: `Hi [Name],
+
+The festive season is here! 🎄✨
+
+We noticed you claimed your £50 voucher - why not spread some Christmas joy to your family and friends?
+
+🎁 Give the Gift of a Healthy Smile This Christmas
+
+Who else do you know who may also want this? Share your unique referral link and:
+• Help your loved ones save £50 on dental care
+• Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
+• Perfect timing before the Christmas period!
+
+Your Referral Link: https://smilemoore.co.uk?ref=[Name]-[Code]
+
+The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
+
+Wishing you a wonderful festive season,
+Smile Moore Team 🎅`
+            }
+        };
+
+        function showTab(tabId) {
+            document.querySelectorAll('.email-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            document.querySelectorAll('.nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+
+            // Initialize preview if it has one
+            if (document.getElementById(tabId + '-preview')) {
+                updatePreview(tabId);
+            }
+        }
+
+        function updatePreview(templateId) {
+            const subjectInput = document.getElementById(templateId + '-subject');
+            const bodyInput = document.getElementById(templateId + '-body');
+            const subjectPreview = document.getElementById(templateId + '-preview-subject');
+            const bodyPreview = document.getElementById(templateId + '-preview-body');
+
+            if (subjectInput && subjectPreview) {
+                subjectPreview.textContent = subjectInput.value;
+            }
+
+            if (bodyInput && bodyPreview) {
+                // Replace [Name] with sample name for preview
+                let previewText = bodyInput.value.replace(/\[Name\]/g, 'John');
+                previewText = previewText.replace(/\[Code\]/g, '123');
+                bodyPreview.textContent = previewText;
+            }
+        }
+
+        function setPreviewMode(templateId, mode) {
+            const preview = document.getElementById(templateId + '-preview');
+            const buttons = preview.previousElementSibling.querySelectorAll('button');
+
+            preview.className = 'preview-viewport ' + mode;
+
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(mode === 'mobile' ? '📱' : '💻')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function resetTemplate(templateId) {
+            if (originalTemplates[templateId]) {
+                const subjectInput = document.getElementById(templateId + '-subject');
+                const bodyInput = document.getElementById(templateId + '-body');
+
+                if (subjectInput) subjectInput.value = originalTemplates[templateId].subject;
+                if (bodyInput) bodyInput.value = originalTemplates[templateId].body;
+
+                updatePreview(templateId);
+                showAlert('Template reset to original', 'info');
+            }
+        }
+
+        async function saveTemplate(templateType, variation) {
+            const templateId = templateType + '-' + (variation + 1);
+            const subjectInput = document.getElementById(templateId + '-subject');
+            const bodyInput = document.getElementById(templateId + '-body');
+
+            if (!subjectInput || !bodyInput) {
+                showAlert('Error: Template inputs not found', 'error');
+                return;
+            }
+
+            const subject = subjectInput.value;
+            const body = bodyInput.value;
+
+            // Show loading state
+            event.target.disabled = true;
+            event.target.innerHTML = '<span class="loading"></span> Saving...';
+
+            try {
+                // Save subject
+                const subjectResponse = await fetch('http://localhost:3000/api/update-email-template', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        templateType,
+                        variation: variation.toString(),
+                        field: 'subject',
+                        value: subject
+                    })
+                });
+
+                if (!subjectResponse.ok) {
+                    const error = await subjectResponse.json();
+                    throw new Error(error.error || 'Failed to save subject');
+                }
+
+                // Save body
+                const bodyResponse = await fetch('http://localhost:3000/api/update-email-template', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        templateType,
+                        variation: variation.toString(),
+                        field: 'body',
+                        value: body
+                    })
+                });
+
+                if (!bodyResponse.ok) {
+                    const error = await bodyResponse.json();
+                    throw new Error(error.error || 'Failed to save body');
+                }
+
+                showAlert('✓ Template saved and deployed successfully!', 'success');
+
+                // Update original template
+                originalTemplates[templateId] = { subject, body };
+
+            } catch (error) {
+                showAlert('✗ Save failed: ' + error.message, 'error');
+                console.error('Save error:', error);
+            } finally {
+                event.target.disabled = false;
+                event.target.innerHTML = '💾 Save & Deploy';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📧 Email Template Manager with Live Editing loaded');
+            console.log('✏️ Edit any template and click Save & Deploy to update live site');
+        });
+    </script>
+</body>
+</html>
