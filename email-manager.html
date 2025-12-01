@@ -525,28 +525,166 @@
         <div class="content">
             <div id="alert" class="alert"></div>
 
-            <!-- OVERVIEW TAB -->
+            <!-- OVERVIEW TAB - ANALYTICS DASHBOARD -->
             <div id="overview" class="email-card active">
-                <h2 style="color: #1f3a33; margin-bottom: 20px;">Email System Overview</h2>
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">📊 Marketing Analytics Dashboard</h2>
 
+                <div class="info-box">
+                    <h3>📈 Track Performance Across All Channels</h3>
+                    <p>Monitor open rates, click-through rates, conversions, and engagement metrics for Email, WhatsApp, SMS, and Funnel pages.</p>
+                </div>
+
+                <!-- Channel Performance Overview -->
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">📧 Email Performance</h3>
                 <div class="stats">
                     <div class="stat-card">
-                        <div class="number">11</div>
-                        <div class="label">Email Templates</div>
+                        <div class="number" id="email-sent-count">0</div>
+                        <div class="label">Emails Sent</div>
                     </div>
                     <div class="stat-card">
-                        <div class="number">3</div>
-                        <div class="label">Communication Channels</div>
+                        <div class="number" id="email-open-rate">0%</div>
+                        <div class="label">Open Rate</div>
                     </div>
                     <div class="stat-card">
-                        <div class="number">✓</div>
-                        <div class="label">Multi-Channel Automation</div>
+                        <div class="number" id="email-click-rate">0%</div>
+                        <div class="label">Click Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="email-conversion-rate">0%</div>
+                        <div class="label">Conversion Rate</div>
                     </div>
                 </div>
 
+                <!-- Email Template Breakdown -->
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">📬 Email Template Performance</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #1f3a33; color: white;">
+                                <th style="padding: 12px; text-align: left;">Template</th>
+                                <th style="padding: 12px; text-align: center;">Sent</th>
+                                <th style="padding: 12px; text-align: center;">Opened</th>
+                                <th style="padding: 12px; text-align: center;">Clicked</th>
+                                <th style="padding: 12px; text-align: center;">Open %</th>
+                                <th style="padding: 12px; text-align: center;">Click %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="email-template-stats">
+                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                <td style="padding: 12px;">✉️ Voucher (Single)</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                <td style="padding: 12px;">👨‍👩‍👧 Voucher (Family)</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                <td style="padding: 12px;">📬 4Q Follow-up #1</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                <td style="padding: 12px;">📬 4Q Follow-up #2</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                <td style="padding: 12px;">📬 4Q Follow-up #3</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                                <td style="padding: 12px; text-align: center;">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- WhatsApp Performance -->
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">💬 WhatsApp Performance</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="whatsapp-sent-count">0</div>
+                        <div class="label">Messages Sent</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="whatsapp-read-rate">0%</div>
+                        <div class="label">Read Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="whatsapp-reply-rate">0%</div>
+                        <div class="label">Reply Rate</div>
+                    </div>
+                </div>
+
+                <!-- SMS Performance -->
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">📱 SMS Performance</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="sms-sent-count">0</div>
+                        <div class="label">SMS Sent</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="sms-delivery-rate">0%</div>
+                        <div class="label">Delivery Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="sms-click-rate">0%</div>
+                        <div class="label">Click Rate</div>
+                    </div>
+                </div>
+
+                <!-- Funnel Performance -->
+                <h3 style="color: #1f3a33; margin: 30px 0 15px;">🎯 Funnel Performance</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="funnel-visitors">0</div>
+                        <div class="label">Total Visitors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="funnel-form-starts">0</div>
+                        <div class="label">Form Starts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="funnel-completions">0</div>
+                        <div class="label">Completions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="funnel-conversion-rate">0%</div>
+                        <div class="label">Conversion Rate</div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h3>🔄 Data Refresh</h3>
+                    <p>Analytics data updates every 5 minutes. Last updated: <span id="last-updated">Loading...</span></p>
+                    <button class="btn btn-primary" onclick="refreshAnalytics()" style="margin-top: 10px;">
+                        🔄 Refresh Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- EMAIL OVERVIEW (shown when Email tab is selected) -->
+            <div id="email-overview" class="email-card" style="display: none;">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">📧 Email System Overview</h2>
+
                 <div class="info-box">
                     <h3>✏️ How to Edit Templates</h3>
-                    <p>1. Click on any email template tab above<br>
+                    <p>1. Click on any email template in the sub-menu above<br>
                        2. Edit the subject or body text in the left panel<br>
                        3. Preview changes in real-time (Mobile/Desktop)<br>
                        4. Click "Save & Deploy" to update live site<br>
@@ -2299,14 +2437,11 @@ Smile Moore Team`
 
             // Show appropriate section
             if (section === 'email') {
-                // Show email subnav and first email template
+                // Show email subnav and email overview
                 document.getElementById('email-subnav').style.display = 'flex';
-                const firstEmailTemplate = document.getElementById('voucher-single');
-                if (firstEmailTemplate) {
-                    firstEmailTemplate.classList.add('active');
-                    // Activate first button in subnav
-                    const firstSubnavBtn = document.querySelector('#email-subnav button');
-                    if (firstSubnavBtn) firstSubnavBtn.classList.add('active');
+                const emailOverview = document.getElementById('email-overview');
+                if (emailOverview) {
+                    emailOverview.classList.add('active');
                 }
             } else {
                 // Show the section directly
@@ -2314,6 +2449,34 @@ Smile Moore Team`
                 if (sectionElement) {
                     sectionElement.classList.add('active');
                 }
+            }
+        }
+
+        // Refresh analytics data
+        async function refreshAnalytics() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Loading...';
+
+            try {
+                // TODO: Implement API call to fetch analytics
+                // const response = await fetch('/api/get-analytics');
+                // const data = await response.json();
+
+                // Mock data for now
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Update timestamp
+                document.getElementById('last-updated').textContent = new Date().toLocaleString();
+
+                showAlert('✓ Analytics refreshed successfully!', 'success');
+
+            } catch (error) {
+                showAlert('✗ Refresh failed: ' + error.message, 'error');
+                console.error('Analytics refresh error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Refresh Now';
             }
         }
 
