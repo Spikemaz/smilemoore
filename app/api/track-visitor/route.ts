@@ -26,14 +26,28 @@ async function getNextVisitorId(): Promise<string> {
   try {
     const sheets = getGoogleSheetsClient();
 
-    // Read current visitor count from Visitors sheet
+    // Read current visitor IDs from Visitors sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Visitors!A:A',
     });
 
-    const rows = response.data.values?.length || 1; // 1 for header
-    const nextId = rows; // Next visitor number
+    const rows = response.data.values || [];
+
+    // Filter out empty rows and header row, extract visitor numbers
+    let maxVisitorNum = 0;
+    for (const row of rows) {
+      if (row && row[0] && typeof row[0] === 'string' && row[0].startsWith('V-')) {
+        const numStr = row[0].replace('V-', '');
+        const num = parseInt(numStr, 10);
+        if (!isNaN(num) && num > maxVisitorNum) {
+          maxVisitorNum = num;
+        }
+      }
+    }
+
+    // Next ID is max + 1
+    const nextId = maxVisitorNum + 1;
 
     // Format as V-00001, V-00002, etc.
     return `V-${nextId.toString().padStart(5, '0')}`;
