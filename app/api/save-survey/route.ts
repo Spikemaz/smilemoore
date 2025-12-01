@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the row with all survey data (columns M through AA)
+    // Update the row with all survey data (columns M through AB)
     // CRITICAL: Column order must match the form question order
     const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
     const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
@@ -88,25 +88,26 @@ export async function POST(request: Request) {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!M${rowIndex}:AA${rowIndex}`,
+      range: `Home!M${rowIndex}:AB${rowIndex}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          appointmentTimesString,  // Q1: When do you prefer appointments?
-          timeline,                 // Q2: When was your most recent appointment?
-          dentalCareString,        // Q3: What type of dental care?
-          factorsString,           // Q4: How do you feel about visiting?
-          previousExperience || '', // Q5: Main reason for looking?
-          mostImportantFactor || '',
-          smileConfidence || '',
-          sameClinician || '',
-          treatmentsString,
-          beforeAppointment || '',
-          stayLongTerm || '',
-          preventingVisits || '',
-          cosmeticImportance || '',
-          preferredContact || '',
-          additionalFeedback || '',
+          appointmentTimesString,  // M - Q1: When do you prefer appointments?
+          timeline,                 // N - Q2: When was your most recent appointment?
+          dentalCareString,        // O - Q3: What type of dental care?
+          factorsString,           // P - Q4: How do you feel about visiting?
+          previousExperience || '', // Q - Q5: Main reason for looking?
+          mostImportantFactor || '', // R - Q6: Factor that matters most?
+          smileConfidence || '',     // S - Q7: Smile confidence?
+          sameClinician || '',       // T - Q8: Same clinician important?
+          treatmentsString,          // U - Q9: Treatments needed?
+          beforeAppointment || '',   // V - Q10: Feel before appointment?
+          stayLongTerm || '',        // W - Q11: Stay long-term?
+          preventingVisits || '',    // X - Q12: What prevents visits?
+          cosmeticImportance || '',  // Y - Q13: Cosmetic importance?
+          preferredContact || '',    // Z - Q14: Preferred contact?
+          '',                        // AA - Q15: (placeholder for future question)
+          additionalFeedback || '',  // AB - Additional Feedback
         ]],
       },
     });
