@@ -31,7 +31,11 @@
       "Bash(git log:*)",
       "Bash(timeout:*)",
       "Bash(npx tsc:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(awk:*)",
+      "Read(//c/**)",
+      "Bash(cd:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

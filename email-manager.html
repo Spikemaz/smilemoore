@@ -505,7 +505,7 @@
             <button onclick="showMainSection('email')">📧 Email</button>
             <button onclick="showMainSection('whatsapp')">💬 WhatsApp</button>
             <button onclick="showMainSection('sms')">📱 SMS</button>
-            <button onclick="showMainSection('website')">🌐 Website</button>
+            <button onclick="showMainSection('funnel')">🎯 Funnel</button>
         </div>
 
         <!-- Email Sub-Navigation -->
@@ -1707,16 +1707,36 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
                 </div>
             </div>
 
-            <!-- WEBSITE CONTENT TAB -->
-            <div id="website" class="email-card">
-                <h2 style="color: #1f3a33; margin-bottom: 20px;">🌐 Website Content Editor</h2>
+            <!-- FUNNEL CONTENT TAB -->
+            <div id="funnel" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">🎯 Funnel Content Editor</h2>
 
                 <div class="info-box">
-                    <h3>📝 Edit Website Copy</h3>
-                    <p>Manage headlines, descriptions, and call-to-action text across your website pages.</p>
+                    <h3>📝 Edit Funnel Pages</h3>
+                    <p>Manage headlines, descriptions, and call-to-action text for both funnel pages: Main (/) and Early Bird (/earlybird).</p>
                 </div>
 
-                <div style="display: grid; gap: 30px; margin-top: 30px;">
+                <!-- Funnel Selector & Actions -->
+                <div style="display: flex; gap: 15px; align-items: center; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <label style="font-weight: 600; color: #1f3a33; margin-bottom: 8px; display: block;">Select Funnel:</label>
+                        <select id="funnel-selector" onchange="switchFunnel()" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-weight: 600;">
+                            <option value="main">🏠 Main Funnel (/)</option>
+                            <option value="earlybird">🐦 Early Bird Funnel (/earlybird)</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveAndPushFunnel()" style="white-space: nowrap;">
+                            🚀 Save & Push Live
+                        </button>
+                        <button class="btn btn-secondary" onclick="syncFunnels()" style="white-space: nowrap; background: #70d490; color: white; border: none;">
+                            🔄 Sync Both Funnels
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Funnel Editor -->
+                <div id="funnel-main-editor" style="display: grid; gap: 30px;">
 
                     <!-- Homepage Hero Section -->
                     <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
@@ -1724,20 +1744,20 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
 
                         <div class="form-group">
                             <label>Main Headline</label>
-                            <input type="text" id="website-hero-headline"
+                            <input type="text" id="funnel-main-hero-headline"
                                    value="Claim Your £50 Voucher Today!"
                                    style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
                         </div>
 
                         <div class="form-group">
                             <label>Subheadline</label>
-                            <textarea id="website-hero-subheadline"
+                            <textarea id="funnel-main-hero-subheadline"
                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 80px;">Join hundreds of local families who have already claimed their voucher. Plus, enter our prize draw to win 1 Year of FREE Dentistry worth up to £5,000!</textarea>
                         </div>
 
                         <div class="form-group">
                             <label>CTA Button Text</label>
-                            <input type="text" id="website-hero-cta"
+                            <input type="text" id="funnel-main-hero-cta"
                                    value="Claim My £50 Voucher"
                                    style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px;">
                         </div>
@@ -1758,14 +1778,14 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
 
                         <div class="form-group">
                             <label>Section Headline</label>
-                            <input type="text" id="website-prize-headline"
+                            <input type="text" id="funnel-main-prize-headline"
                                    value="Win 1 Year of FREE Dentistry!"
                                    style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
                         </div>
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea id="website-prize-description"
+                            <textarea id="funnel-main-prize-description"
                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Enter our exclusive prize draw for a chance to win 1 Year of FREE Dentistry worth up to £5,000! Simply claim your voucher and answer a few quick questions to earn entries.</textarea>
                         </div>
 
@@ -1785,14 +1805,14 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
 
                         <div class="form-group">
                             <label>Section Headline</label>
-                            <input type="text" id="website-referral-headline"
+                            <input type="text" id="funnel-main-referral-headline"
                                    value="Share & Earn Bonus Entries!"
                                    style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
                         </div>
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea id="website-referral-description"
+                            <textarea id="funnel-main-referral-description"
                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Earn +10 bonus entries for every friend or family member who claims their voucher using your unique referral link. The more you share, the better your chances of winning!</textarea>
                         </div>
 
@@ -1808,12 +1828,78 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
 
                 </div>
 
+                <!-- Early Bird Funnel Editor -->
+                <div id="funnel-earlybird-editor" style="display: none; gap: 30px;">
+                    <!-- Hero Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🏠 Hero Section</h3>
+
+                        <div class="form-group">
+                            <label>Main Headline</label>
+                            <input type="text" id="funnel-earlybird-hero-headline"
+                                   value="Claim Your £50 Voucher Today!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Subheadline</label>
+                            <textarea id="funnel-earlybird-hero-subheadline"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 80px;">Join hundreds of local families who have already claimed their voucher. Plus, enter our prize draw to win 1 Year of FREE Dentistry worth up to £5,000!</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>CTA Button Text</label>
+                            <input type="text" id="funnel-earlybird-hero-cta"
+                                   value="Claim My £50 Voucher"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <!-- Prize Draw Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🎁 Prize Draw Section</h3>
+
+                        <div class="form-group">
+                            <label>Section Headline</label>
+                            <input type="text" id="funnel-earlybird-prize-headline"
+                                   value="Win 1 Year of FREE Dentistry!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="funnel-earlybird-prize-description"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Enter our exclusive prize draw for a chance to win 1 Year of FREE Dentistry worth up to £5,000! Simply claim your voucher and answer a few quick questions to earn entries.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Referral Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🔗 Referral Section</h3>
+
+                        <div class="form-group">
+                            <label>Section Headline</label>
+                            <input type="text" id="funnel-earlybird-referral-headline"
+                                   value="Share & Earn Bonus Entries!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="funnel-earlybird-referral-description"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Earn +10 bonus entries for every friend or family member who claims their voucher using your unique referral link. The more you share, the better your chances of winning!</textarea>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="info-box" style="margin-top: 30px;">
-                    <h3>🛠️ Implementation Note</h3>
-                    <p>Website content updates require integration with your CMS or Next.js content files. Currently configured to update:<br>
-                    • Homepage: app/page.tsx<br>
-                    • Earlybird page: app/earlybird/page.tsx<br>
-                    Changes will be deployed automatically after saving.</p>
+                    <h3>🛠️ Funnel Updates</h3>
+                    <p><strong>🚀 Save & Push Live:</strong> Saves the current funnel and deploys to production immediately.<br>
+                    <strong>🔄 Sync Both Funnels:</strong> Copies content from Main (/) to Early Bird (/earlybird) and saves both.<br>
+                    <br>
+                    Files updated:<br>
+                    • Main Funnel: app/page.tsx<br>
+                    • Early Bird Funnel: app/earlybird/page.tsx</p>
                 </div>
             </div>
 
@@ -2231,63 +2317,126 @@ Smile Moore Team`
             }
         }
 
-        // Website content functions
-        async function saveWebsiteContent(section) {
-            event.target.disabled = true;
-            event.target.innerHTML = '<span class="loading"></span> Saving...';
+        // Funnel switching
+        function switchFunnel() {
+            const funnel = document.getElementById('funnel-selector').value;
+            const mainEditor = document.getElementById('funnel-main-editor');
+            const earlybirdEditor = document.getElementById('funnel-earlybird-editor');
 
-            try {
-                let content = {};
-
-                if (section === 'hero') {
-                    content = {
-                        headline: document.getElementById('website-hero-headline').value,
-                        subheadline: document.getElementById('website-hero-subheadline').value,
-                        cta: document.getElementById('website-hero-cta').value
-                    };
-                } else if (section === 'prize') {
-                    content = {
-                        headline: document.getElementById('website-prize-headline').value,
-                        description: document.getElementById('website-prize-description').value
-                    };
-                } else if (section === 'referral') {
-                    content = {
-                        headline: document.getElementById('website-referral-headline').value,
-                        description: document.getElementById('website-referral-description').value
-                    };
-                }
-
-                // TODO: Implement API call to update website content
-                // const response = await fetch('/api/update-website-content', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ section, content })
-                // });
-
-                showAlert('✓ Website content saved successfully! (Implementation pending)', 'info');
-
-            } catch (error) {
-                showAlert('✗ Save failed: ' + error.message, 'error');
-                console.error('Save error:', error);
-            } finally {
-                event.target.disabled = false;
-                event.target.innerHTML = '💾 Save & Update Website';
+            if (funnel === 'main') {
+                mainEditor.style.display = 'grid';
+                earlybirdEditor.style.display = 'none';
+            } else {
+                mainEditor.style.display = 'none';
+                earlybirdEditor.style.display = 'grid';
             }
         }
 
-        function resetWebsiteContent(section) {
-            if (section === 'hero') {
-                document.getElementById('website-hero-headline').value = 'Claim Your £50 Voucher Today!';
-                document.getElementById('website-hero-subheadline').value = 'Join hundreds of local families who have already claimed their voucher. Plus, enter our prize draw to win 1 Year of FREE Dentistry worth up to £5,000!';
-                document.getElementById('website-hero-cta').value = 'Claim My £50 Voucher';
-            } else if (section === 'prize') {
-                document.getElementById('website-prize-headline').value = 'Win 1 Year of FREE Dentistry!';
-                document.getElementById('website-prize-description').value = 'Enter our exclusive prize draw for a chance to win 1 Year of FREE Dentistry worth up to £5,000! Simply claim your voucher and answer a few quick questions to earn entries.';
-            } else if (section === 'referral') {
-                document.getElementById('website-referral-headline').value = 'Share & Earn Bonus Entries!';
-                document.getElementById('website-referral-description').value = 'Earn +10 bonus entries for every friend or family member who claims their voucher using your unique referral link. The more you share, the better your chances of winning!';
+        // Save and push funnel to live
+        async function saveAndPushFunnel() {
+            const funnel = document.getElementById('funnel-selector').value;
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Pushing Live...';
+
+            try {
+                const content = {
+                    hero: {
+                        headline: document.getElementById(`funnel-${funnel}-hero-headline`).value,
+                        subheadline: document.getElementById(`funnel-${funnel}-hero-subheadline`).value,
+                        cta: document.getElementById(`funnel-${funnel}-hero-cta`).value
+                    },
+                    prize: {
+                        headline: document.getElementById(`funnel-${funnel}-prize-headline`).value,
+                        description: document.getElementById(`funnel-${funnel}-prize-description`).value
+                    },
+                    referral: {
+                        headline: document.getElementById(`funnel-${funnel}-referral-headline`).value,
+                        description: document.getElementById(`funnel-${funnel}-referral-description`).value
+                    }
+                };
+
+                const response = await fetch('http://localhost:3000/api/update-funnel-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ funnel, content })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update funnel');
+                }
+
+                showAlert(`✓ ${funnel === 'main' ? 'Main' : 'Early Bird'} funnel pushed live successfully!`, 'success');
+
+            } catch (error) {
+                showAlert('✗ Push failed: ' + error.message, 'error');
+                console.error('Push error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Save & Push Live';
             }
-            showAlert('Website content reset to defaults', 'info');
+        }
+
+        // Sync both funnels
+        async function syncFunnels() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Syncing...';
+
+            try {
+                // Get content from main funnel
+                const mainContent = {
+                    hero: {
+                        headline: document.getElementById('funnel-main-hero-headline').value,
+                        subheadline: document.getElementById('funnel-main-hero-subheadline').value,
+                        cta: document.getElementById('funnel-main-hero-cta').value
+                    },
+                    prize: {
+                        headline: document.getElementById('funnel-main-prize-headline').value,
+                        description: document.getElementById('funnel-main-prize-description').value
+                    },
+                    referral: {
+                        headline: document.getElementById('funnel-main-referral-headline').value,
+                        description: document.getElementById('funnel-main-referral-description').value
+                    }
+                };
+
+                // Copy to earlybird fields
+                document.getElementById('funnel-earlybird-hero-headline').value = mainContent.hero.headline;
+                document.getElementById('funnel-earlybird-hero-subheadline').value = mainContent.hero.subheadline;
+                document.getElementById('funnel-earlybird-hero-cta').value = mainContent.hero.cta;
+                document.getElementById('funnel-earlybird-prize-headline').value = mainContent.prize.headline;
+                document.getElementById('funnel-earlybird-prize-description').value = mainContent.prize.description;
+                document.getElementById('funnel-earlybird-referral-headline').value = mainContent.referral.headline;
+                document.getElementById('funnel-earlybird-referral-description').value = mainContent.referral.description;
+
+                // Save both funnels
+                const mainResponse = await fetch('http://localhost:3000/api/update-funnel-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ funnel: 'main', content: mainContent })
+                });
+
+                const earlybirdResponse = await fetch('http://localhost:3000/api/update-funnel-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ funnel: 'earlybird', content: mainContent })
+                });
+
+                if (!mainResponse.ok || !earlybirdResponse.ok) {
+                    throw new Error('Failed to sync funnels');
+                }
+
+                showAlert('✓ Both funnels synced and pushed live successfully!', 'success');
+
+            } catch (error) {
+                showAlert('✗ Sync failed: ' + error.message, 'error');
+                console.error('Sync error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Sync Both Funnels';
+            }
         }
 
         // Initialize on load
