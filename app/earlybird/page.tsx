@@ -47,6 +47,7 @@ export default function EarlyBirdPage() {
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [totalSignups, setTotalSignups] = useState<number>(0);
   const [referredBy, setReferredBy] = useState<string>('');
+  const [campaignSource, setCampaignSource] = useState<string>('QR Scan');
   const [surveyData, setSurveyData] = useState({
     dentalCare: [] as string[], // Q1: Multiple choice
     appointmentTimes: [] as string[], // Q2: Multiple choice
@@ -253,8 +254,14 @@ export default function EarlyBirdPage() {
         if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
         if (!mucAds) console.warn('⚠️ Twitter/X muc_ads cookie not found after 5 seconds');
 
-        // Get campaign source from URL path or UTM
-        const campaignSource = window.location.pathname.slice(1) || utmSource || 'earlybird';
+        // Get campaign source - prioritize referral, then UTM, then default to QR Scan
+        let sourceName = 'QR Scan';
+        if (ref) {
+          sourceName = 'Referral';
+        } else if (utmSource) {
+          sourceName = utmSource;
+        }
+        setCampaignSource(sourceName);
 
         // Get full landing page URL
         const landingPage = window.location.href;
@@ -281,7 +288,7 @@ export default function EarlyBirdPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            campaignSource,
+            campaignSource: sourceName,
             deviceType,
             deviceModel,
             browser,
@@ -473,7 +480,7 @@ export default function EarlyBirdPage() {
             name: '',
             phone: '',
             address: '',
-            campaignSource: 'earlybird-qr',
+            campaignSource,
             timeToSubmit,
             scrollDepth: maxScrollDepth,
             referredBy,
@@ -518,7 +525,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'name',
             value: formData.name,
-            campaignSource: 'earlybird',
+            campaignSource,
             emailToName,
           }),
         });
@@ -544,7 +551,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'phone',
             value: formData.phone,
-            campaignSource: 'earlybird',
+            campaignSource,
             nameToPhone: nameToFinal,
           }),
         });
@@ -558,7 +565,7 @@ export default function EarlyBirdPage() {
             email: formData.email,
             field: 'address',
             value: formData.address,
-            campaignSource: 'earlybird',
+            campaignSource,
             phoneToPostcode: 0,
             totalTime,
           }),
