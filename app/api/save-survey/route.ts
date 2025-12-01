@@ -62,10 +62,12 @@ export async function POST(request: Request) {
     const emailColumnIndex = 2; // Column C (0-indexed)
     let rowIndex = -1;
 
-    // Find the row containing this email
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i][emailColumnIndex] === email) {
+    // CRITICAL: Find the LAST (most recent) row with this email
+    // This prevents overwriting earlier family members who share the same email
+    for (let i = rows.length - 1; i >= 1; i--) {
+      if (rows[i] && rows[i][emailColumnIndex] === email) {
         rowIndex = i + 1; // +1 because sheets are 1-indexed
+        console.log('✅ Found email at row:', rowIndex, 'Email:', email);
         break;
       }
     }
