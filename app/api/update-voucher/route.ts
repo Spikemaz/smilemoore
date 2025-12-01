@@ -50,17 +50,12 @@ export async function POST(request: NextRequest) {
       console.log('📊 Total rows in A:A:', rows.length);
       console.log('📊 First 5 rows:', rows.slice(0, 5).map(r => `[${r[0]}] type: ${typeof r[0]}`));
 
-      rowIndex = rows.findIndex((row) => {
-        const matches = row[0] === paddedCustomerId;
-        if (!matches && row[0] && row[0].toString().includes(paddedCustomerId.slice(-2))) {
-          console.log(`❌ Near miss: row[0]="${row[0]}" vs paddedCustomerId="${paddedCustomerId}"`);
-        }
-        return matches;
-      });
+      rowIndex = rows.findIndex((row) => row[0] === paddedCustomerId);
       console.log('📍 Found at rowIndex:', rowIndex, 'Will update row:', rowIndex + 1);
 
       if (rowIndex === -1) {
-        console.log('❌ Customer ID not found. All IDs in sheet:', rows.slice(0, 10).map(r => r[0]));
+        // Not found - log all Customer IDs for debugging
+        console.log('❌ Customer ID not found. All IDs in sheet:', rows.slice(0, 20).map(r => r[0]));
       }
     } else {
       // Fall back to email search (legacy support)
