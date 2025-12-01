@@ -89,7 +89,7 @@ export async function POST(request: Request) {
                             <td style="background-color: #cfe8d7; border-radius: 8px; padding: 25px; text-align: center;">
                               <h3 style="margin: 0 0 15px 0; color: #1f3a33; font-size: 20px;">🎁 You're Entered to Win!</h3>
                               <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
-                                You have <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth £2,000!</strong>
+                                You have <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth up to £5,000!</strong>
                               </p>
                               <p style="margin: 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
                                 Want <strong>+10 bonus entries?</strong> Share your unique referral link with friends!

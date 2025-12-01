@@ -30,7 +30,7 @@ const fourQuestionVariations = [
     body: (name: string, voucherValue: number) => `
       Hi ${name},
 
-      We noticed you claimed your £${voucherValue} voucher but haven't entered the £2,000 prize draw yet!
+      We noticed you claimed your £${voucherValue} voucher but haven't entered the prize draw yet!
 
       It only takes 1 minute to answer 4 quick questions and you'll receive +1 bonus entry.
 
@@ -41,11 +41,11 @@ const fourQuestionVariations = [
     `
   },
   {
-    subject: "Don't miss out on winning £2,000 of free dentistry!",
+    subject: "Don't miss out on winning up to £5,000 of free dentistry!",
     body: (name: string, voucherValue: number) => `
       Hi ${name},
 
-      You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth £2,000.
+      You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth up to £5,000.
 
       Plus, you'll earn another entry bringing your total to 2 entries.
 
@@ -56,11 +56,11 @@ const fourQuestionVariations = [
     `
   },
   {
-    subject: "Final chance: Enter the £2,000 prize draw",
+    subject: "Final chance: Enter the prize draw",
     body: (name: string, voucherValue: number) => `
       Hi ${name},
 
-      This is your last reminder to enter the £2,000 prize draw!
+      This is your last reminder to enter the prize draw worth up to £5,000!
 
       4 quick questions = +1 entry in the draw
       Takes less than 60 seconds
@@ -87,12 +87,12 @@ const christmasSharingEmail = {
 
     Who else do you know who may also want this? Share your unique referral link and:
     • Help your loved ones save £${voucherValue} on dental care
-    • Earn +10 bonus entries in the £2,000 prize draw for EACH friend who claims their voucher
+    • Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
     • Perfect timing before the Christmas period!
 
     Your Referral Link: https://smilemoore.co.uk?ref=${encodeURIComponent(name)}
 
-    The more you share, the better your chances of winning 1 Year of FREE Dentistry worth £2,000!
+    The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
 
     Wishing you a wonderful festive season,
     Smile Moore Team 🎅
@@ -106,7 +106,7 @@ const tenQuestionVariations = [
     body: (name: string) => `
       Hi ${name},
 
-      Great job completing the first questions! You now have 2 entries in the £2,000 prize draw.
+      Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
 
       Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
 

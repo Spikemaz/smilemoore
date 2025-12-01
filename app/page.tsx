@@ -847,10 +847,7 @@ export default function LandingPage() {
                 We Want to Get to Know You
               </h3>
               <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Help us build your perfect dental practice - your answers enter you for 1 year of FREE dentistry worth £2,000!
-              </p>
-              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
-                Complete 5 quick questions to earn +1 entry (2 entries total) 🎟️
+                Help us build your perfect dental practice - your answers enter you for 1 year of FREE dentistry worth up to £5,000!
               </p>
             </div>
 
@@ -1433,7 +1430,7 @@ export default function LandingPage() {
               </p>
               <div className="rounded-xl p-4 mb-4 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
                 <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                  🎟️ You have 3 entries in the £2,000 prize draw!
+                  🎟️ You have 3 entries in the prize draw worth up to £5,000!
                 </p>
                 <p className="text-sm" style={{ color: '#666' }}>
                   • 1 entry for claiming your voucher<br/>

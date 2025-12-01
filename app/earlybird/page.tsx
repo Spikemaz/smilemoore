@@ -796,7 +796,7 @@ export default function EarlyBirdPage() {
                 Help Us Build Your Perfect Practice
               </h3>
               <p className="text-lg" style={{ color: '#666' }}>
-                Your answers enter you for 1 year of FREE dentistry worth £2,000!
+                Your answers enter you for 1 year of FREE dentistry worth up to £5,000!
               </p>
             </div>
 
@@ -1329,7 +1329,7 @@ export default function EarlyBirdPage() {
                 You're Now Eligible for Your £{voucherValue} Voucher!
               </p>
               <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
-                Plus, you've received <span className="font-bold">3 entries</span> into the draw to win 1 Year of FREE Dentistry worth £2,000!
+                Plus, you've received <span className="font-bold">3 entries</span> into the draw to win 1 Year of FREE Dentistry worth up to £5,000!
               </p>
               <p className="text-base mb-8" style={{ color: '#666' }}>
                 Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
