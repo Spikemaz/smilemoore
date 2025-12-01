@@ -168,6 +168,48 @@ export async function POST(request: NextRequest) {
         const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
         const referralLink = voucherDetails[31]; // Column AH (index 31 from C)
 
+        // Check if this email has multiple signups - if so, group them
+        const allRowsResponse = await sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: 'Home!C:I', // Email through Voucher Code columns
+        });
+        const allRows = allRowsResponse.data.values || [];
+        const sameEmailSignups = allRows
+          .map((row, idx) => ({ row, index: idx }))
+          .filter(({ row }) => row[0] === emailAddr && row[1]) // Has email and name
+          .map(({ row, index }) => ({
+            name: row[1],
+            phone: row[2],
+            postcode: row[3],
+            voucherValue: row[5],
+            voucherCode: row[6],
+            rowIndex: index + 1,
+          }));
+
+        // Check if email was already sent to this address (check any row with same email)
+        const emailSentResponse = await sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: 'Home!C:AC', // Email through "Email Sent" columns
+        });
+        const emailSentRows = emailSentResponse.data.values || [];
+        const emailAlreadySent = emailSentRows.some(row =>
+          row[0] === emailAddr && row[29] // Column AC (Email Sent) = index 29 from C
+        );
+
+        // Only send email if not already sent to this address
+        if (emailAlreadySent) {
+          console.log(`Skipping email to ${emailAddr} - already sent for this address`);
+          // Just mark this row as email sent (timestamp)
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!AC${rowIndex + 1}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[new Date().toISOString()]],
+            },
+          });
+        } else {
+
         // Send Discord notification for voucher claim completion
         try {
           await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
@@ -196,11 +238,34 @@ export async function POST(request: NextRequest) {
           if (process.env.RESEND_API_KEY) {
             const resend = new Resend(process.env.RESEND_API_KEY);
 
+            // Generate email content based on number of signups
+            const isMultiple = sameEmailSignups.length > 1;
+            const totalValue = sameEmailSignups.reduce((sum, s) => sum + parseInt(s.voucherValue), 0);
+
+            const voucherListHTML = isMultiple
+              ? sameEmailSignups.map(signup => `
+                  <tr>
+                    <td style="padding: 15px; border-bottom: 1px solid #e0e0e0;">
+                      <p style="margin: 0 0 5px 0; color: #1f3a33; font-size: 16px; font-weight: bold;">${signup.name}</p>
+                      <p style="margin: 0; color: #666; font-size: 14px;">${signup.phone} • ${signup.postcode}</p>
+                    </td>
+                    <td style="padding: 15px; border-bottom: 1px solid #e0e0e0; text-align: center;">
+                      <p style="margin: 0; color: #1f3a33; font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace;">${signup.voucherCode}</p>
+                    </td>
+                    <td style="padding: 15px; border-bottom: 1px solid #e0e0e0; text-align: center;">
+                      <p style="margin: 0; color: #70d490; font-size: 18px; font-weight: bold;">£${signup.voucherValue}</p>
+                    </td>
+                  </tr>
+                `).join('')
+              : '';
+
             const emailResult = await resend.emails.send({
               from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
               to: [emailAddr],
-              replyTo: 'marcus@smilemoore.co.uk',
-              subject: `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,
+              replyTo: 'reception@smilemoore.co.uk',
+              subject: isMultiple
+                ? `Your ${sameEmailSignups.length} Smile Moore Vouchers (£${totalValue} Total Value)`
+                : `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,
               html: `
                 <!DOCTYPE html>
                 <html>
@@ -221,37 +286,59 @@ export async function POST(request: NextRequest) {
                             </tr>
                             <tr>
                               <td style="padding: 40px 30px;">
-                                <h2 style="margin: 0 0 20px 0; color: #1f3a33; font-size: 24px;">Congratulations, ${name}! 🎉</h2>
+                                <h2 style="margin: 0 0 20px 0; color: #1f3a33; font-size: 24px;">
+                                  ${isMultiple ? 'Congratulations! 🎉' : `Congratulations, ${name}! 🎉`}
+                                </h2>
                                 <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 24px;">
-                                  Thank you for claiming your voucher! Your £${voucherValue} voucher is confirmed and ready to use.
+                                  ${isMultiple
+                                    ? `Thank you for claiming vouchers for your family! You've registered ${sameEmailSignups.length} people with a total value of £${totalValue}.`
+                                    : `Thank you for claiming your voucher! Your £${voucherValue} voucher is confirmed and ready to use.`
+                                  }
                                 </p>
-                                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
-                                  <tr>
-                                    <td style="background-color: #cfe8d7; border-radius: 8px; padding: 30px; text-align: center;">
-                                      <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR VOUCHER CODE</p>
-                                      <p style="margin: 0; color: #1f3a33; font-size: 36px; font-weight: bold; letter-spacing: 2px; font-family: 'Courier New', monospace;">
-                                        ${voucherCode}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                </table>
+                                ${isMultiple
+                                  ? `
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0; border: 2px solid #cfe8d7; border-radius: 8px; overflow: hidden;">
+                                      <tr style="background-color: #1f3a33;">
+                                        <td style="padding: 15px; color: white; font-weight: bold;">Family Member</td>
+                                        <td style="padding: 15px; color: white; font-weight: bold; text-align: center;">Voucher Code</td>
+                                        <td style="padding: 15px; color: white; font-weight: bold; text-align: center;">Value</td>
+                                      </tr>
+                                      ${voucherListHTML}
+                                    </table>
+                                  `
+                                  : `
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                                      <tr>
+                                        <td style="background-color: #cfe8d7; border-radius: 8px; padding: 30px; text-align: center;">
+                                          <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR VOUCHER CODE</p>
+                                          <p style="margin: 0; color: #1f3a33; font-size: 36px; font-weight: bold; letter-spacing: 2px; font-family: 'Courier New', monospace;">
+                                            ${voucherCode}
+                                          </p>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  `
+                                }
                                 <p style="margin: 20px 0; color: #333333; font-size: 16px; line-height: 24px;">
                                   <strong>What Happens Next?</strong>
                                 </p>
                                 <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #333333; font-size: 16px; line-height: 28px;">
-                                  <li>Keep this voucher code safe - you'll need it when we open!</li>
+                                  <li>Keep ${isMultiple ? 'these voucher codes' : 'this voucher code'} safe - you'll need ${isMultiple ? 'them' : 'it'} when we open!</li>
                                   <li>We'll keep you updated as we complete our CQC approval process</li>
                                   <li>You'll receive updates throughout our practice fit-out</li>
                                   <li>Once we're ready to see our first patients, we'll send you a booking link</li>
-                                  <li>Use your voucher code when booking to redeem your £${voucherValue} discount</li>
-                                  <li><strong>Bonus: Receive +100 prize draw entries when you redeem your voucher!</strong></li>
+                                  <li>Use your voucher code${isMultiple ? 's' : ''} when booking to redeem your discount</li>
+                                  <li><strong>Bonus: Receive +100 prize draw entries when you redeem ${isMultiple ? 'each' : 'your'} voucher!</strong></li>
                                 </ul>
                                 <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                                   <tr>
                                     <td style="background-color: #cfe8d7; border-radius: 8px; padding: 25px; text-align: center;">
                                       <h3 style="margin: 0 0 15px 0; color: #1f3a33; font-size: 20px;">🎁 You're Entered to Win!</h3>
                                       <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
-                                        You have <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth up to £5,000!</strong>
+                                        ${isMultiple
+                                          ? `Each family member has <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth up to £5,000!</strong>`
+                                          : `You have <strong>3 entries</strong> in our draw to win <strong>1 Year of FREE Dentistry worth up to £5,000!</strong>`
+                                        }
                                       </p>
                                       <p style="margin: 0; color: #1f3a33; font-size: 16px; line-height: 24px;">
                                         Want <strong>+10 bonus entries?</strong> Share your unique referral link with friends!
@@ -297,21 +384,27 @@ export async function POST(request: NextRequest) {
               `,
             });
 
-            // Mark email as sent in Google Sheets (column AB)
+            // Mark email as sent in Google Sheets (column AC) for ALL rows with this email
             if (emailResult) {
-              await sheets.spreadsheets.values.update({
-                spreadsheetId: SPREADSHEET_ID,
-                range: `Home!AB${rowIndex + 1}`,
-                valueInputOption: 'USER_ENTERED',
-                requestBody: {
-                  values: [[new Date().toISOString()]],
-                },
-              });
+              const timestamp = new Date().toISOString();
+              const updatePromises = sameEmailSignups.map(signup =>
+                sheets.spreadsheets.values.update({
+                  spreadsheetId: SPREADSHEET_ID,
+                  range: `Home!AC${signup.rowIndex}`,
+                  valueInputOption: 'USER_ENTERED',
+                  requestBody: {
+                    values: [[timestamp]],
+                  },
+                })
+              );
+              await Promise.all(updatePromises);
+              console.log(`Marked ${sameEmailSignups.length} rows as email sent for ${emailAddr}`);
             }
           }
         } catch (emailError) {
           console.error('Failed to send confirmation email:', emailError);
           // Don't fail the request if email fails
+        }
         }
       }
     }

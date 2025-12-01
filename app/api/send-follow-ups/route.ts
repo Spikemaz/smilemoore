@@ -174,6 +174,9 @@ export async function GET(request: Request) {
     const rows = response.data.values || [];
     let sentCount = 0;
 
+    // Track which emails we've already sent to (deduplication for multiple family members)
+    const emailsSentThisRun = new Set<string>();
+
     // Skip header row
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
@@ -184,6 +187,12 @@ export async function GET(request: Request) {
       const unsubscribed = row[46]; // Column AV (index 46) - Unsubscribed from Follow-ups
 
       if (!email || !name || unsubscribed) continue; // Skip if unsubscribed
+
+      // Skip if we already sent to this email in this run (deduplication for families)
+      if (emailsSentThisRun.has(email)) {
+        console.log(`Skipping ${email} - already sent follow-up this run`);
+        continue;
+      }
 
       const rowIndex = i + 1; // 1-indexed for sheets
 
@@ -262,6 +271,8 @@ export async function GET(request: Request) {
             },
           });
 
+          // Mark this email as sent in this run
+          emailsSentThisRun.add(email);
           sentCount++;
         }
       }
@@ -309,6 +320,8 @@ export async function GET(request: Request) {
             },
           });
 
+          // Mark this email as sent in this run
+          emailsSentThisRun.add(email);
           sentCount++;
         }
       }
@@ -385,6 +398,8 @@ export async function GET(request: Request) {
             },
           });
 
+          // Mark this email as sent in this run
+          emailsSentThisRun.add(email);
           sentCount++;
         }
       }
