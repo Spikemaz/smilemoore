@@ -31,8 +31,10 @@ export async function POST(request: NextRequest) {
         } else if (field === 'body') {
           // Escape special characters for regex
           const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          searchPattern = /body:\s*\(name:\s*string,\s*voucherValue:\s*number\)\s*=>\s*`[^`]*`/s;
+          searchPattern = new RegExp('body:\\s*\\(name:\\s*string,\\s*voucherValue:\\s*number\\)\\s*=>\\s*`[^`]*`', 's');
           replacePattern = `body: (name: string, voucherValue: number) => \`${value}\``;
+        } else {
+          return NextResponse.json({ error: 'Invalid field for Christmas template' }, { status: 400 });
         }
       } else {
         // 4Q or 10Q variations
@@ -50,11 +52,13 @@ export async function POST(request: NextRequest) {
         } else if (field === 'body') {
           // Find the specific variation and update body
           const variationPattern = new RegExp(
-            `(const ${arrayName} = \\[(?:[\\s\\S]*?\\{[\\s\\S]*?){${index}}[\\s\\S]*?body:[\\s\\S]*?=>[\\s\\S]*?\`)[^\\`]*(\`[\\s\\S]*?\\})`,
+            `(const ${arrayName} = \\[(?:[\\s\\S]*?\\{[\\s\\S]*?){${index}}[\\s\\S]*?body:[\\s\\S]*?=>[\\s\\S]*?\`)` + `[^\`]*` + `(\`[\\s\\S]*?\\})`,
             ''
           );
           replacePattern = `$1${value}$2`;
           searchPattern = variationPattern;
+        } else {
+          return NextResponse.json({ error: 'Invalid field for variation template' }, { status: 400 });
         }
       }
 
