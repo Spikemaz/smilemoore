@@ -70,6 +70,15 @@ export default function LandingPage() {
     additionalFeedback: '',
   });
 
+  // Retrieve customerId from localStorage on mount (for family signups with same email)
+  useEffect(() => {
+    const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
+    if (storedCustomerId) {
+      setCustomerId(storedCustomerId);
+      console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+    }
+  }, []);
+
   // Track visitor immediately on page load
   useEffect(() => {
     async function trackVisitor() {
@@ -470,7 +479,14 @@ export default function LandingPage() {
         const emailTime = Date.now();
         setEmailSubmitTime(emailTime);
 
-        // Submit email immediately to Google Sheets
+        // ALWAYS clear customerId when submitting step 1 (email)
+        // This is a NEW signup, not a continuation
+        console.log('🆔 Starting fresh signup - clearing any old Customer ID');
+        localStorage.removeItem('smilemoore_customer_id');
+        localStorage.removeItem('smilemoore_last_email');
+        setCustomerId('');
+
+        // Submit email immediately to Google Sheets - this creates a NEW row
         const response = await fetch('/api/submit-voucher', {
           method: 'POST',
           headers: {
@@ -502,6 +518,11 @@ export default function LandingPage() {
         }
         if (data.customerId) {
           setCustomerId(data.customerId);
+          // Store customerId AND email in localStorage to persist across page refreshes
+          // This allows the user to refresh the page during steps 2-4 without losing their signup
+          localStorage.setItem('smilemoore_customer_id', data.customerId.toString());
+          localStorage.setItem('smilemoore_last_email', formData.email);
+          console.log('🆔 Stored new Customer ID:', data.customerId, 'for email:', formData.email);
         }
 
         // Track email submission
