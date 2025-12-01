@@ -80,6 +80,7 @@ export async function POST(request: Request) {
     }
 
     // Update the row with all survey data (columns M through AA)
+    // CRITICAL: Column order must match the form question order
     const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
     const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
     const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : importantFactors;
@@ -91,11 +92,11 @@ export async function POST(request: Request) {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          dentalCareString,
-          timeline,
-          appointmentTimesString,
-          factorsString,
-          previousExperience || '',
+          appointmentTimesString,  // Q1: When do you prefer appointments?
+          timeline,                 // Q2: When was your most recent appointment?
+          dentalCareString,        // Q3: What type of dental care?
+          factorsString,           // Q4: How do you feel about visiting?
+          previousExperience || '', // Q5: Main reason for looking?
           mostImportantFactor || '',
           smileConfidence || '',
           sameClinician || '',
