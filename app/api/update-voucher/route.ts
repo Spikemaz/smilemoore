@@ -39,12 +39,18 @@ export async function POST(request: NextRequest) {
       // Search by Customer ID (more reliable for duplicate emails)
       // Pad customerId to 5 digits to match format in sheet (00001, 00010, etc.)
       const paddedCustomerId = customerId.toString().padStart(5, '0');
+      console.log('🔍 Searching for Customer ID:', paddedCustomerId);
+
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: 'Home!A:A',
       });
       const rows = response.data.values || [];
+      console.log('📊 Total rows in A:A:', rows.length);
+      console.log('📊 First 5 rows:', rows.slice(0, 5).map(r => r[0]));
+
       rowIndex = rows.findIndex((row) => row[0] === paddedCustomerId);
+      console.log('📍 Found at rowIndex:', rowIndex, 'Will update row:', rowIndex + 1);
     } else {
       // Fall back to email search (legacy support)
       const response = await sheets.spreadsheets.values.get({
