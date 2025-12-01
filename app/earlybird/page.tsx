@@ -806,40 +806,10 @@ export default function EarlyBirdPage() {
               setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
-              {/* Question 1 */}
+              {/* Question 1 (was Q2) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  1. What type of dental care is most important to you?
-                </label>
-                <div className="space-y-3">
-                  {[
-                    'Routine check-ups & hygiene',
-                    'Cosmetic improvements',
-                    'Family/children\'s dentistry',
-                    'Emergency/relief from pain',
-                    'Nervous-patient friendly care'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.dentalCare === option ? '#1f3a33' : '#cfe8d7' }}>
-                      <input
-                        type="radio"
-                        name="dentalCare"
-                        value={option}
-                        checked={surveyData.dentalCare === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, dentalCare: e.target.value })}
-                        required
-                        className="mr-3 w-5 h-5"
-                      />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Question 2 */}
-              <div className="text-left">
-                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  2. How soon do you expect to register with or visit a dentist?
+                  1. How soon do you expect to register with or visit a dentist?
                 </label>
                 <div className="space-y-3">
                   {[
@@ -865,10 +835,10 @@ export default function EarlyBirdPage() {
                 </div>
               </div>
 
-              {/* Question 3 */}
+              {/* Question 2 (was Q3) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  3. What days/times work best for your dental appointments?
+                  2. What days/times work best for your dental appointments?
                 </label>
                 <div className="space-y-3">
                   {[
@@ -885,6 +855,36 @@ export default function EarlyBirdPage() {
                         value={option}
                         checked={surveyData.appointmentTimes === option}
                         onChange={(e) => setSurveyData({ ...surveyData, appointmentTimes: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3 (was Q1) */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. What type of dental care is most important to you?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Routine check-ups & hygiene',
+                    'Cosmetic improvements',
+                    'Family/children\'s dentistry',
+                    'Emergency/relief from pain',
+                    'Nervous-patient friendly care'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.dentalCare === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="dentalCare"
+                        value={option}
+                        checked={surveyData.dentalCare === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, dentalCare: e.target.value })}
                         required
                         className="mr-3 w-5 h-5"
                       />

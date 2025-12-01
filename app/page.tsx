@@ -866,47 +866,10 @@ export default function LandingPage() {
               setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
-              {/* Question 1: Multiple choice */}
+              {/* Question 1: Multiple choice (was Q2) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  1. What type of dental care are you most interested in?
-                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
-                </label>
-                <div className="space-y-3">
-                  {[
-                    'Routine check-ups and cleanings',
-                    'Cosmetic dentistry (e.g., whitening, veneers)',
-                    'Orthodontics (e.g., braces, Invisalign)',
-                    'Restorative work (e.g., fillings, crowns)',
-                    'Emergency dental care',
-                    'Specialist treatments (e.g., implants, root canals)'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.dentalCare.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
-                      <input
-                        type="checkbox"
-                        value={option}
-                        checked={surveyData.dentalCare.includes(option)}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (e.target.checked) {
-                            setSurveyData({ ...surveyData, dentalCare: [...surveyData.dentalCare, value] });
-                          } else {
-                            setSurveyData({ ...surveyData, dentalCare: surveyData.dentalCare.filter(c => c !== value) });
-                          }
-                        }}
-                        className="mr-3 w-5 h-5"
-                      />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Question 2: Multiple choice */}
-              <div className="text-left">
-                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  2. When do you usually prefer appointments?
+                  1. When do you usually prefer appointments?
                   <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
@@ -939,10 +902,10 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 3: Single choice */}
+              {/* Question 2: Single choice (was Q3) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  3. When was your most recent appointment?
+                  2. When was your most recent appointment?
                 </label>
                 <div className="space-y-3">
                   {[
@@ -961,6 +924,43 @@ export default function LandingPage() {
                         checked={surveyData.timeline === option}
                         onChange={(e) => setSurveyData({ ...surveyData, timeline: e.target.value })}
                         required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3: Multiple choice (was Q1) */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. What type of dental care are you most interested in?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Routine check-ups and cleanings',
+                    'Cosmetic dentistry (e.g., whitening, veneers)',
+                    'Orthodontics (e.g., braces, Invisalign)',
+                    'Restorative work (e.g., fillings, crowns)',
+                    'Emergency dental care',
+                    'Specialist treatments (e.g., implants, root canals)'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.dentalCare.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={surveyData.dentalCare.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setSurveyData({ ...surveyData, dentalCare: [...surveyData.dentalCare, value] });
+                          } else {
+                            setSurveyData({ ...surveyData, dentalCare: surveyData.dentalCare.filter(c => c !== value) });
+                          }
+                        }}
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
