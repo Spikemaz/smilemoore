@@ -1126,9 +1126,6 @@ export default function LandingPage() {
               <p className="text-lg mb-2" style={{ color: '#666' }}>
                 It takes 20 seconds and it will really shape your dental experience.
               </p>
-              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
-                Complete to earn +1 entry (3 entries total) 🎟️
-              </p>
             </div>
 
             <form onSubmit={async (e) => {
