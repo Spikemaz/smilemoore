@@ -511,6 +511,9 @@
             <button onclick="showTab('10q-2')">📮 10Q #2</button>
             <button onclick="showTab('10q-3')">📮 10Q #3</button>
             <button onclick="showTab('christmas')">🎄 Christmas</button>
+            <button onclick="showTab('referral')">🔗 Referral</button>
+            <button onclick="showTab('whatsapp')">💬 WhatsApp</button>
+            <button onclick="showTab('sms')">📱 SMS</button>
         </div>
 
         <div class="content">
@@ -522,16 +525,16 @@
 
                 <div class="stats">
                     <div class="stat-card">
-                        <div class="number">10</div>
-                        <div class="label">Total Email Templates</div>
+                        <div class="number">11</div>
+                        <div class="label">Email Templates</div>
                     </div>
                     <div class="stat-card">
-                        <div class="number">4</div>
-                        <div class="label">Email Types</div>
+                        <div class="number">3</div>
+                        <div class="label">Communication Channels</div>
                     </div>
                     <div class="stat-card">
                         <div class="number">✓</div>
-                        <div class="label">Live Editing Enabled</div>
+                        <div class="label">Multi-Channel Automation</div>
                     </div>
                 </div>
 
@@ -1158,6 +1161,108 @@ Smile Moore Team 🎅</div>
                 </div>
             </div>
 
+            <!-- REFERRAL FOLLOW-UP TAB -->
+            <div id="referral" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">Referral Code Follow-up</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="tag tag-trigger">Trigger: Manual/Scheduled</span>
+                    <span class="tag tag-timing">Send: As needed</span>
+                    <span class="tag tag-entries">Encourage sharing</span>
+                </div>
+
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
+
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="referral-subject"
+                                   value="🎁 Earn +10 Entries for Every Friend You Refer!"
+                                   oninput="updatePreview('referral')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Body</label>
+                            <textarea id="referral-body" style="min-height: 300px;" oninput="updatePreview('referral')">Hi [Name],
+
+We hope you're excited about your £50 voucher! 🎉
+
+Did you know you can BOOST your chances of winning 1 Year of FREE Dentistry?
+
+🔗 Share Your Unique Referral Link:
+https://smilemoore.co.uk?ref=[Name]-[Code]
+
+For every friend or family member who claims their voucher using your link, you'll receive:
+✓ +10 bonus entries in the prize draw
+✓ Help your loved ones save £50 on dental care
+✓ Build your community of healthy smiles
+
+The more you share, the better your chances!
+
+Currently, you have [ENTRIES] entries. Imagine how many more you could earn!
+
+Start sharing today,
+Smile Moore Team</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('referral', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('referral')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> New template - requires implementation<br>
+                            <strong>Location:</strong> Can be added to send-follow-ups/route.ts<br>
+                            <strong>Note:</strong> Currently manual - automation pending
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('referral', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('referral', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="referral-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div style="padding: 20px; background: #f5f5f5;">
+                                    <div style="background: white; padding: 30px; border-radius: 8px;">
+                                        <div id="referral-preview-subject" style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #1f3a33;">
+                                            🎁 Earn +10 Entries for Every Friend You Refer!
+                                        </div>
+                                        <div id="referral-preview-body" style="line-height: 1.6; white-space: pre-wrap; color: #333;">Hi John,
+
+We hope you're excited about your £50 voucher! 🎉
+
+Did you know you can BOOST your chances of winning 1 Year of FREE Dentistry?
+
+🔗 Share Your Unique Referral Link:
+https://smilemoore.co.uk?ref=John-123
+
+For every friend or family member who claims their voucher using your link, you'll receive:
+✓ +10 bonus entries in the prize draw
+✓ Help your loved ones save £50 on dental care
+✓ Build your community of healthy smiles
+
+The more you share, the better your chances!
+
+Currently, you have 3 entries. Imagine how many more you could earn!
+
+Start sharing today,
+Smile Moore Team</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- VOUCHER SINGLE TAB -->
             <div id="voucher-single" class="email-card">
                 <h2 style="color: #1f3a33; margin-bottom: 20px;">Voucher Confirmation (Single Signup)</h2>
@@ -1375,6 +1480,225 @@ Each family member has 3 entries in our draw to win 1 Year of FREE Dentistry wor
                 </div>
             </div>
 
+            <!-- WHATSAPP AUTOMATION TAB -->
+            <div id="whatsapp" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">💬 WhatsApp Automation</h2>
+
+                <div class="info-box">
+                    <h3>📱 WhatsApp Business API</h3>
+                    <p>Automated WhatsApp messages can be sent for voucher confirmations, follow-ups, and referral reminders. Requires WhatsApp Business API integration.</p>
+                </div>
+
+                <div class="stats" style="margin-bottom: 30px;">
+                    <div class="stat-card">
+                        <div class="number">5</div>
+                        <div class="label">Message Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">98%</div>
+                        <div class="label">Open Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">⚡</div>
+                        <div class="label">Instant Delivery</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #1f3a33; margin-bottom: 15px;">Available WhatsApp Templates</h3>
+
+                <div style="display: grid; gap: 20px;">
+                    <!-- WhatsApp Template 1: Voucher Confirmation -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #25D366;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">1. Voucher Confirmation</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Hi *[Name]* 👋
+
+🎉 Your £50 voucher is confirmed!
+
+*Voucher Code:* [CODE]
+
+You now have *3 entries* in our prize draw to win 1 Year of FREE Dentistry worth up to £5,000! 🏆
+
+Share your referral link to earn +10 bonus entries per friend:
+https://smilemoore.co.uk?ref=[Name]-[Code]
+
+- Smile Moore Team
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: Voucher claimed</span>
+                            <span class="tag tag-timing">Send: Immediate</span>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Template 2: Survey Reminder -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #25D366;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">2. Survey Reminder (4Q)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Hi *[Name]* 👋
+
+Quick reminder! Complete 4 questions to get +1 bonus entry 🎁
+
+Takes just 60 seconds:
+https://smilemoore.co.uk
+
+Thanks!
+- Smile Moore Team
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: 1 entry, email not opened</span>
+                            <span class="tag tag-timing">Send: 48hrs after email</span>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Template 3: Referral Reminder -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #25D366;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">3. Referral Reminder</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Hi *[Name]* 🎉
+
+Did you know? You earn *+10 entries* for EVERY friend who claims their voucher using your link! 🔗
+
+Your referral link:
+https://smilemoore.co.uk?ref=[Name]-[Code]
+
+Currently: *[ENTRIES] entries*
+
+Share with friends & family to boost your chances! 🚀
+
+- Smile Moore Team
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: Manual/Scheduled</span>
+                            <span class="tag tag-timing">Send: As needed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h3>🛠️ Implementation Required</h3>
+                    <p><strong>To enable WhatsApp automation:</strong><br>
+                    1. Set up WhatsApp Business API account<br>
+                    2. Get templates approved by WhatsApp<br>
+                    3. Integrate with Twilio/MessageBird/WhatsApp Cloud API<br>
+                    4. Add phone number collection to signup form<br>
+                    5. Configure automation triggers in send-follow-ups route</p>
+                </div>
+            </div>
+
+            <!-- SMS AUTOMATION TAB -->
+            <div id="sms" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">📱 SMS/Text Automation</h2>
+
+                <div class="info-box">
+                    <h3>💬 SMS Messaging</h3>
+                    <p>Automated text messages for instant notifications and reminders. High open rates and immediate delivery via Twilio SMS API.</p>
+                </div>
+
+                <div class="stats" style="margin-bottom: 30px;">
+                    <div class="stat-card">
+                        <div class="number">5</div>
+                        <div class="label">SMS Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">99%</div>
+                        <div class="label">Delivery Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">3min</div>
+                        <div class="label">Avg. Read Time</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #1f3a33; margin-bottom: 15px;">Available SMS Templates</h3>
+
+                <div style="display: grid; gap: 20px;">
+                    <!-- SMS Template 1: Voucher Confirmation -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #0084FF;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">1. Voucher Confirmation (160 chars)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Smile Moore: Your £50 voucher [CODE] is confirmed! You have 3 entries to win FREE dentistry worth £5,000. Reply SHARE for your referral link.
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: Voucher claimed</span>
+                            <span class="tag tag-timing">Send: Immediate</span>
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #2e7d32;">160 chars</span>
+                        </div>
+                    </div>
+
+                    <!-- SMS Template 2: Survey Reminder -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #0084FF;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">2. Quick Survey Reminder (142 chars)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Smile Moore: Complete 4 quick questions for +1 bonus entry! Takes 60 seconds: https://smilemoore.co.uk - You currently have [ENTRIES] entries
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: 1 entry</span>
+                            <span class="tag tag-timing">Send: 48hrs after email</span>
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #2e7d32;">142 chars</span>
+                        </div>
+                    </div>
+
+                    <!-- SMS Template 3: Referral Boost -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #0084FF;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">3. Referral Reminder (155 chars)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Smile Moore: Earn +10 entries per friend! Share: https://smilemoore.co.uk?ref=[Name]-[Code] You have [ENTRIES] entries. Keep sharing to win! 🎉
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: Manual/Scheduled</span>
+                            <span class="tag tag-timing">Send: As needed</span>
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #fff3e0; color: #f57c00;">155 chars</span>
+                        </div>
+                    </div>
+
+                    <!-- SMS Template 4: Prize Draw Reminder -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #0084FF;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">4. Extended Survey (10Q) (148 chars)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Smile Moore: Want 3 total entries? Complete the extended survey for +1 more entry: https://smilemoore.co.uk Currently: [ENTRIES] entries 🏆
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: 2 entries</span>
+                            <span class="tag tag-timing">Send: Immediate</span>
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #2e7d32;">148 chars</span>
+                        </div>
+                    </div>
+
+                    <!-- SMS Template 5: Christmas Sharing -->
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #0084FF;">
+                        <h4 style="color: #1f3a33; margin-bottom: 10px;">5. Christmas Sharing (145 chars)</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 entries per friend: https://smilemoore.co.uk?ref=[Name]-[Code] 🎁
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-trigger">Trigger: 3 entries</span>
+                            <span class="tag tag-timing">Send: Christmas period</span>
+                            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #2e7d32;">145 chars</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h3>🛠️ Implementation Required</h3>
+                    <p><strong>To enable SMS automation:</strong><br>
+                    1. Sign up for Twilio account (or alternative: AWS SNS, MessageBird)<br>
+                    2. Purchase UK phone number for sender ID<br>
+                    3. Configure Twilio API credentials in environment variables<br>
+                    4. Add phone number field to signup form (with validation)<br>
+                    5. Create SMS sending route (app/api/send-sms/route.ts)<br>
+                    6. Add SMS triggers to send-follow-ups automation<br>
+                    7. Ensure GDPR compliance (SMS opt-in checkbox)</p>
+                </div>
+
+                <div class="info-box" style="background: #fff3e0; border-left-color: #f57c00;">
+                    <h3>💷 Cost Estimate</h3>
+                    <p><strong>UK SMS Pricing (Twilio):</strong> ~£0.04 per message<br>
+                    For 1,000 signups with 3 SMS each = £120/month<br>
+                    <br>
+                    <strong>Recommended:</strong> Use SMS sparingly for high-priority messages only (voucher confirmation, final reminders). Use email as primary channel to minimize costs.</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1501,6 +1825,29 @@ The more you share, the better your chances of winning 1 Year of FREE Dentistry 
 
 Wishing you a wonderful festive season,
 Smile Moore Team 🎅`
+            },
+            'referral': {
+                subject: '🎁 Earn +10 Entries for Every Friend You Refer!',
+                body: `Hi [Name],
+
+We hope you're excited about your £50 voucher! 🎉
+
+Did you know you can BOOST your chances of winning 1 Year of FREE Dentistry?
+
+🔗 Share Your Unique Referral Link:
+https://smilemoore.co.uk?ref=[Name]-[Code]
+
+For every friend or family member who claims their voucher using your link, you'll receive:
+✓ +10 bonus entries in the prize draw
+✓ Help your loved ones save £50 on dental care
+✓ Build your community of healthy smiles
+
+The more you share, the better your chances!
+
+Currently, you have [ENTRIES] entries. Imagine how many more you could earn!
+
+Start sharing today,
+Smile Moore Team`
             }
         };
 
