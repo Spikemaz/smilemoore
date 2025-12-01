@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const { data, error } = await resend.emails.send({
       from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
       to: [email],
-      replyTo: 'marcus@smilemoore.co.uk',
+      replyTo: 'reception@smilemoore.co.uk',
       subject: `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,
       html: `
         <!DOCTYPE html>

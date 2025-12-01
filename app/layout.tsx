@@ -16,6 +16,28 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Smile Moore Dental Practice",
   description: "Professional dental care and cosmetic dentistry services",
+  openGraph: {
+    title: "Claim Your £50 Dental Voucher - Smile Moore",
+    description: "Your friend shared this exclusive £50 voucher with you! Limited vouchers remaining - claim yours now.",
+    url: "https://smilemoore.co.uk",
+    siteName: "Smile Moore Dental Practice",
+    images: [
+      {
+        url: "/favicon.svg",
+        width: 512,
+        height: 512,
+        alt: "Smile Moore - Claim Your £50 Voucher",
+      },
+    ],
+    locale: "en_GB",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Claim Your £50 Dental Voucher - Smile Moore",
+    description: "Your friend shared this exclusive £50 voucher with you! Limited vouchers remaining - claim yours now.",
+    images: ["/favicon.svg"],
+  },
   icons: {
     icon: [
       { url: '/favicon.ico' },

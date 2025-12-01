@@ -386,9 +386,8 @@ export default function EarlyBirdPage() {
     switch (step) {
       case 1: return 0;
       case 2: return 50;
-      case 3: return 90;
-      case 4: return 99;
-      case 5: return 100;
+      case 3: return 99;
+      case 4: return 100;
       default: return 0;
     }
   };
@@ -467,12 +466,15 @@ export default function EarlyBirdPage() {
         setStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 3) {
-        // Calculate time between name submit and phone submit
-        const phoneTime = Date.now();
-        const nameToPhone = Math.round((phoneTime - nameSubmitTime) / 1000);
-        setPhoneSubmitTime(phoneTime);
+        // Combined step: phone + postcode
+        // Calculate time between name submit and final submit
+        const finalTime = Date.now();
+        const nameToFinal = Math.round((finalTime - nameSubmitTime) / 1000);
 
-        // Update phone in Google Sheets
+        // Calculate total time from page load to completion
+        const totalTime = Math.round((finalTime - pageLoadTimestamp) / 1000);
+
+        // Update phone and address in Google Sheets
         await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
@@ -483,21 +485,10 @@ export default function EarlyBirdPage() {
             field: 'phone',
             value: formData.phone,
             campaignSource: 'earlybird',
-            nameToPhone,
+            nameToPhone: nameToFinal,
           }),
         });
 
-        setStep(4);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (step === 4) {
-        // Calculate time between phone submit and postcode submit
-        const postcodeTime = Date.now();
-        const phoneToPostcode = Math.round((postcodeTime - phoneSubmitTime) / 1000);
-
-        // Calculate total time from page load to completion
-        const totalTime = Math.round((postcodeTime - pageLoadTimestamp) / 1000);
-
-        // Update address in Google Sheets
         const response = await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
@@ -508,7 +499,7 @@ export default function EarlyBirdPage() {
             field: 'address',
             value: formData.address,
             campaignSource: 'earlybird',
-            phoneToPostcode,
+            phoneToPostcode: 0,
             totalTime,
           }),
         });
@@ -522,7 +513,7 @@ export default function EarlyBirdPage() {
             currency: 'GBP'
           });
 
-          setStep(5);
+          setStep(4);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           alert('Failed to submit. Please try again.');
@@ -678,22 +669,25 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 3: Phone */}
+        {/* Step 3: Phone + Postcode (Combined Final Step) */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
+              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-4xl">🎁</span>
+              </div>
               <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Thanks, {formData.name}!
+                Almost There, {formData.name}!
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
-                We'll send your voucher via SMS
+                Just 2 more details to claim your £{voucherValue} voucher
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="phone" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
-                  What's your phone number?
+                  Your mobile number
                 </label>
                 <input
                   type="tel"
@@ -706,38 +700,8 @@ export default function EarlyBirdPage() {
                   placeholder="07XXX XXXXXX"
                   autoFocus
                 />
-                <p className="text-sm mt-2 text-center" style={{ color: '#666' }}>
-                  We'll text you the voucher code instantly
-                </p>
               </div>
 
-              <button
-                type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
-                style={{ backgroundColor: '#1f3a33' }}
-              >
-                Almost There →
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* Step 4: Address (Final Required) */}
-        {step === 4 && (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-4xl">🎁</span>
-              </div>
-              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Final Question - You're One Step Away!
-              </h2>
-              <p className="text-lg" style={{ color: '#666' }}>
-                Getting your £{voucherValue} voucher sent to you now...
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="address" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
                   Your postcode
@@ -751,13 +715,12 @@ export default function EarlyBirdPage() {
                   className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="SW1A 1AA"
-                  autoFocus
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg animate-pulse"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg"
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 🎉 Claim My £{voucherValue} Voucher Now!
@@ -766,8 +729,8 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 5: Success + Bonus Offer */}
-        {step === 5 && (
+        {/* Step 4: Success + Bonus Offer */}
+        {step === 4 && (
           <div>
             {/* Success Message with Bonus Offer */}
             <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
@@ -810,7 +773,7 @@ export default function EarlyBirdPage() {
                 </p>
 
                 <button
-                  onClick={() => setStep(6)}
+                  onClick={() => setStep(5)}
                   className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
                   style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
                 >
@@ -828,8 +791,8 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 6: Survey Questions */}
-        {step === 6 && (
+        {/* Step 5: Survey Questions */}
+        {step === 5 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
@@ -845,8 +808,8 @@ export default function EarlyBirdPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
-              // Move to extended survey (step 7)
-              setStep(7);
+              // Move to extended survey (step 6)
+              setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
               {/* Question 1 */}
@@ -986,8 +949,8 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 7: Extended Survey Questions - Copy from main page */}
-        {step === 7 && (
+        {/* Step 6: Extended Survey Questions */}
+        {step === 6 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
@@ -1014,15 +977,339 @@ export default function EarlyBirdPage() {
                     ...extendedSurvey,
                   }),
                 });
-                setStep(8);
+                setStep(7);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               } catch (error) {
                 console.error('Survey submission error:', error);
-                setStep(8);
+                setStep(7);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }} className="space-y-8">
-              {/* Questions 1-10 from page.tsx - abbreviated for brevity, will push full version */}
+              {/* Question 1 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  1. How would you describe your previous experience with dental practices?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Mostly positive',
+                    'Mixed experiences',
+                    'Mostly negative',
+                    'I\'ve avoided going for a while',
+                    'I feel nervous about dental visits'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value={option}
+                        checked={extendedSurvey.previousExperience === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, previousExperience: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 2 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  2. When thinking about dental care, which factor matters most to you?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Feeling listened to',
+                    'Pain-free treatment',
+                    'Clear explanations',
+                    'Availability of appointments',
+                    'Cost transparency',
+                    'A calm, modern clinic environment'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.mostImportantFactor === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="mostImportantFactor"
+                        value={option}
+                        checked={extendedSurvey.mostImportantFactor === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, mostImportantFactor: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  3. How confident do you currently feel about your smile?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Very confident',
+                    'Mostly confident',
+                    'A little self-conscious',
+                    'Not confident',
+                    'I\'d like help improving it'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.smileConfidence === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="smileConfidence"
+                        value={option}
+                        checked={extendedSurvey.smileConfidence === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, smileConfidence: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 4 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  4. How important is seeing the same clinician each time?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Essential',
+                    'Preferable',
+                    'Not important',
+                    'Depends on the treatment'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.sameClinician === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="sameClinician"
+                        value={option}
+                        checked={extendedSurvey.sameClinician === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, sameClinician: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 5 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  5. What types of treatments do you think you may need in the next year?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Hygienist visits',
+                    'Check-ups',
+                    'Whitening',
+                    'Composite bonding / veneers',
+                    'Teeth straightening (e.g., aligners)',
+                    'Fillings / crowns / restorative work',
+                    'Not sure — I need guidance'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.neededTreatments.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={extendedSurvey.neededTreatments.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setExtendedSurvey({ ...extendedSurvey, neededTreatments: [...extendedSurvey.neededTreatments, value] });
+                          } else {
+                            setExtendedSurvey({ ...extendedSurvey, neededTreatments: extendedSurvey.neededTreatments.filter(t => t !== value) });
+                          }
+                        }}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 6 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  6. How do you usually feel before a dental appointment?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Relaxed',
+                    'Neutral',
+                    'Slightly anxious',
+                    'Very anxious',
+                    'I often delay or avoid going'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.beforeAppointment === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="beforeAppointment"
+                        value={option}
+                        checked={extendedSurvey.beforeAppointment === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, beforeAppointment: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 7 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  7. What would make you more likely to stay with a dental practice long-term?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Consistency of clinician',
+                    'Clear pricing & no surprises',
+                    'Flexible appointment times',
+                    'Gentle, patient-focused approach',
+                    'Quick availability',
+                    'Modern technology & facilities'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.stayLongTerm === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="stayLongTerm"
+                        value={option}
+                        checked={extendedSurvey.stayLongTerm === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, stayLongTerm: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 8 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  8. What prevents you from attending the dentist as often as you'd like?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Cost',
+                    'Time / busy schedule',
+                    'Anxiety',
+                    'Difficulty getting appointments',
+                    'Not had a practice I felt comfortable with',
+                    'Nothing stops me'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.preventingVisits === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="preventingVisits"
+                        value={option}
+                        checked={extendedSurvey.preventingVisits === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, preventingVisits: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 9 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  9. How important is it that your dental practice offers cosmetic options?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Very important',
+                    'Somewhat important',
+                    'Neutral',
+                    'Not important',
+                    'Unsure'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.cosmeticImportance === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="cosmeticImportance"
+                        value={option}
+                        checked={extendedSurvey.cosmeticImportance === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, cosmeticImportance: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 10 */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  10. How do you prefer to receive updates or reminders?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'WhatsApp',
+                    'Email',
+                    'Text message',
+                    'Phone call',
+                    'No preference'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: extendedSurvey.preferredContact === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="preferredContact"
+                        value={option}
+                        checked={extendedSurvey.preferredContact === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, preferredContact: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional Feedback */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  Anything else you'd like us to know? (Optional)
+                </label>
+                <textarea
+                  value={extendedSurvey.additionalFeedback}
+                  onChange={(e) => setExtendedSurvey({ ...extendedSurvey, additionalFeedback: e.target.value })}
+                  className="w-full px-6 py-4 text-base border-2 rounded-xl focus:ring-4 transition-all"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  placeholder="Share any thoughts, preferences, or concerns..."
+                  rows={4}
+                />
+              </div>
+
               <button
                 type="submit"
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
@@ -1034,8 +1321,8 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 8: Congratulations & Share */}
-        {step === 8 && (
+        {/* Step 7: Congratulations & Share */}
+        {step === 7 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-6">
               <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
@@ -1058,10 +1345,13 @@ export default function EarlyBirdPage() {
             {/* Share Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Want Even More Entries?
+                🎄 Want Even More Entries?
               </h3>
+              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
+                Who else do you know would like a £50 voucher, especially before Christmas?
+              </p>
               <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
-                Share your unique link with friends and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
+                Share your unique link and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
@@ -1077,7 +1367,7 @@ export default function EarlyBirdPage() {
                   const referralLink = `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name)}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
-                    alert('✅ Link copied to clipboard! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                    alert('Copied, Now Share To Give Someone £50 Voucher');
                   } catch (err) {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -1086,7 +1376,7 @@ export default function EarlyBirdPage() {
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('✅ Link copied! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                    alert('Copied, Now Share To Give Someone £50 Voucher');
                   }
                 }}
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"

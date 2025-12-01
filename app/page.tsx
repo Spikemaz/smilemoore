@@ -446,9 +446,8 @@ export default function LandingPage() {
     switch (step) {
       case 1: return 0;
       case 2: return 50;
-      case 3: return 90;
-      case 4: return 99;
-      case 5: return 100;
+      case 3: return 99;
+      case 4: return 100;
       default: return 0;
     }
   };
@@ -527,12 +526,15 @@ export default function LandingPage() {
         setStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 3) {
-        // Calculate time between name submit and phone submit
-        const phoneTime = Date.now();
-        const nameToPhone = Math.round((phoneTime - nameSubmitTime) / 1000);
-        setPhoneSubmitTime(phoneTime);
+        // Combined step: phone + postcode
+        // Calculate time between name submit and final submit
+        const finalTime = Date.now();
+        const nameToFinal = Math.round((finalTime - nameSubmitTime) / 1000);
 
-        // Update phone in Google Sheets
+        // Calculate total time from page load to completion
+        const totalTime = Math.round((finalTime - pageLoadTimestamp) / 1000);
+
+        // Update phone and address in Google Sheets
         await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
@@ -543,21 +545,10 @@ export default function LandingPage() {
             field: 'phone',
             value: formData.phone,
             campaignSource: 'direct',
-            nameToPhone,
+            nameToPhone: nameToFinal,
           }),
         });
 
-        setStep(4);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (step === 4) {
-        // Calculate time between phone submit and postcode submit
-        const postcodeTime = Date.now();
-        const phoneToPostcode = Math.round((postcodeTime - phoneSubmitTime) / 1000);
-
-        // Calculate total time from page load to completion
-        const totalTime = Math.round((postcodeTime - pageLoadTimestamp) / 1000);
-
-        // Update address in Google Sheets
         const response = await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
@@ -568,7 +559,7 @@ export default function LandingPage() {
             field: 'address',
             value: formData.address,
             campaignSource: 'direct',
-            phoneToPostcode,
+            phoneToPostcode: 0,
             totalTime,
           }),
         });
@@ -582,7 +573,7 @@ export default function LandingPage() {
             currency: 'GBP'
           });
 
-          setStep(5);
+          setStep(4);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           alert('Failed to submit. Please try again.');
@@ -738,22 +729,25 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 3: Phone */}
+        {/* Step 3: Phone + Postcode (Combined Final Step) */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
+              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-4xl">🎁</span>
+              </div>
               <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Thanks, {formData.name}!
+                Almost There, {formData.name}!
               </h2>
               <p className="text-lg" style={{ color: '#666' }}>
-                We'll send your voucher via SMS
+                Just 2 more details to claim your £{voucherValue} voucher
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="phone" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
-                  What's your phone number?
+                  Your mobile number
                 </label>
                 <input
                   type="tel"
@@ -766,38 +760,8 @@ export default function LandingPage() {
                   placeholder="07XXX XXXXXX"
                   autoFocus
                 />
-                <p className="text-sm mt-2 text-center" style={{ color: '#666' }}>
-                  We'll text you the voucher code instantly
-                </p>
               </div>
 
-              <button
-                type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
-                style={{ backgroundColor: '#1f3a33' }}
-              >
-                Almost There →
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* Step 4: Address (Final Required) */}
-        {step === 4 && (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-4xl">🎁</span>
-              </div>
-              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Final Question - You're One Step Away!
-              </h2>
-              <p className="text-lg" style={{ color: '#666' }}>
-                Getting your £{voucherValue} voucher sent to you now...
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="address" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
                   Your postcode
@@ -811,7 +775,6 @@ export default function LandingPage() {
                   className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center placeholder-gray-500"
                   style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="SW1A 1AA"
-                  autoFocus
                 />
               </div>
 
@@ -826,8 +789,8 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 5: Success + Bonus Offer */}
-        {step === 5 && (
+        {/* Step 4: Success + Bonus Offer */}
+        {step === 4 && (
           <div>
             {/* Success Message with Bonus Offer */}
             <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
@@ -875,7 +838,7 @@ export default function LandingPage() {
                 </p>
 
                 <button
-                  onClick={() => setStep(6)}
+                  onClick={() => setStep(5)}
                   className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
                   style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
                 >
@@ -893,21 +856,21 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 6: Survey Questions */}
-        {step === 6 && (
+        {/* Step 5: Survey Questions */}
+        {step === 5 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                🔥 5 QUICK QUESTIONS
+                📋 RESEARCH SURVEY
               </span>
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Help Us Build Your Perfect Practice
+                We Want to Get to Know You
               </h3>
               <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Your answers enter you for 1 year of FREE dentistry worth £2,000!
+                Help us build your perfect dental practice - your answers enter you for 1 year of FREE dentistry worth £2,000!
               </p>
               <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
-                Complete to earn +1 entry (2 entries total) 🎟️
+                Complete 5 quick questions to earn +1 entry (2 entries total) 🎟️
               </p>
             </div>
 
@@ -922,8 +885,8 @@ export default function LandingPage() {
                 alert('Please select at least one preferred appointment time.');
                 return;
               }
-              // Move to extended survey (step 7)
-              setStep(7);
+              // Move to extended survey (step 6)
+              setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
               {/* Question 1: Multiple choice */}
@@ -1100,8 +1063,8 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 7: Extended Survey Questions */}
-        {step === 7 && (
+        {/* Step 6: Extended Survey Questions */}
+        {step === 6 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
@@ -1131,11 +1094,11 @@ export default function LandingPage() {
                     ...extendedSurvey,
                   }),
                 });
-                setStep(8);
+                setStep(7);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               } catch (error) {
                 console.error('Survey submission error:', error);
-                setStep(8);
+                setStep(7);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }} className="space-y-8">
@@ -1475,8 +1438,8 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 8: Congratulations & Share */}
-        {step === 8 && (
+        {/* Step 7: Congratulations & Share */}
+        {step === 7 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-6">
               <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
@@ -1506,10 +1469,13 @@ export default function LandingPage() {
             {/* Share Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Want Even More Entries?
+                🎄 Want Even More Entries?
               </h3>
+              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
+                Who else do you know would like a £50 voucher, especially before Christmas?
+              </p>
               <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
-                Share your unique link with friends and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
+                Share your unique link and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
@@ -1525,7 +1491,7 @@ export default function LandingPage() {
                   const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name)}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
-                    alert('✅ Link copied to clipboard! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                    alert('Copied, Now Share To Give Someone £50 Voucher');
                   } catch (err) {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -1534,7 +1500,7 @@ export default function LandingPage() {
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('✅ Link copied! Share it with your friends to get +10 bonus entries for each friend who claims their voucher.');
+                    alert('Copied, Now Share To Give Someone £50 Voucher');
                   }
                 }}
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"

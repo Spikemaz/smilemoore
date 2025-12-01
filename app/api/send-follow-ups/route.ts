@@ -73,6 +73,32 @@ const fourQuestionVariations = [
   }
 ];
 
+// Christmas sharing incentive email
+const christmasSharingEmail = {
+  subject: "🎄 Spread Christmas Joy - Share Your £50 Voucher!",
+  body: (name: string, voucherValue: number) => `
+    Hi ${name},
+
+    The festive season is here! 🎄✨
+
+    We noticed you claimed your £${voucherValue} voucher - why not spread some Christmas joy to your family and friends?
+
+    🎁 Give the Gift of a Healthy Smile This Christmas
+
+    Who else do you know who may also want this? Share your unique referral link and:
+    • Help your loved ones save £${voucherValue} on dental care
+    • Earn +10 bonus entries in the £2,000 prize draw for EACH friend who claims their voucher
+    • Perfect timing before the Christmas period!
+
+    Your Referral Link: https://smilemoore.co.uk?ref=${encodeURIComponent(name)}
+
+    The more you share, the better your chances of winning 1 Year of FREE Dentistry worth £2,000!
+
+    Wishing you a wonderful festive season,
+    Smile Moore Team 🎅
+  `
+};
+
 // Email variations for 10 questions follow-up
 const tenQuestionVariations = [
   {
@@ -199,7 +225,8 @@ export async function GET(request: Request) {
           const trackingParam = `?email=${encodeURIComponent(email)}&type=4q&v=${variationIndex + 1}`;
 
           await resend.emails.send({
-            from: 'Smile Moore <noreply@smilemoore.co.uk>',
+            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+            replyTo: 'reception@smilemoore.co.uk',
             to: [email],
             subject: variation.subject,
             html: `
@@ -229,6 +256,53 @@ export async function GET(request: Request) {
           await sheets.spreadsheets.values.update({
             spreadsheetId: SPREADSHEET_ID,
             range: `Home!${columnToUpdate}${rowIndex}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[new Date().toISOString()]],
+            },
+          });
+
+          sentCount++;
+        }
+      }
+
+      // Check if should receive Christmas sharing email (has 3 entries - completed everything)
+      if (entries === 3) {
+        const christmasEmailSent = row[48]; // Column AW (index 48) - Christmas Sharing Email Sent
+
+        if (!christmasEmailSent) {
+          // Send Christmas sharing incentive email
+          const trackingParam = `?email=${encodeURIComponent(email)}&type=christmas`;
+
+          await resend.emails.send({
+            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+            replyTo: 'reception@smilemoore.co.uk',
+            to: [email],
+            subject: christmasSharingEmail.subject,
+            html: `
+              <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                  ${christmasSharingEmail.body(name, voucherValue).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+
+                  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
+                      Don't want promotional emails?
+                      <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
+                        Unsubscribe here
+                      </a>
+                    </p>
+                  </div>
+
+                  <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
+                </body>
+              </html>
+            `,
+          });
+
+          // Mark as sent in Column AW
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!AW${rowIndex}`,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
               values: [[new Date().toISOString()]],
@@ -274,7 +348,8 @@ export async function GET(request: Request) {
           const trackingParam = `?email=${encodeURIComponent(email)}&type=10q&v=${variationIndex + 1}`;
 
           await resend.emails.send({
-            from: 'Smile Moore <noreply@smilemoore.co.uk>',
+            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+            replyTo: 'reception@smilemoore.co.uk',
             to: [email],
             subject: variation.subject,
             html: `

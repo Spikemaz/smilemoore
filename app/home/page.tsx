@@ -152,6 +152,11 @@ export default function HomePage() {
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-4">Smile Moore Dental Practice</h3>
             <p className="mb-4" style={{ color: '#cfe8d7' }}>Professional dental care for the whole family</p>
+            <div className="mb-4">
+              <a href="/terms" className="text-sm hover:underline" style={{ color: '#cfe8d7' }}>
+                Terms & Conditions
+              </a>
+            </div>
             <p className="text-sm" style={{ color: '#cfe8d7', opacity: 0.8 }}>© 2025 Smile Moore. All rights reserved.</p>
           </div>
         </div>
