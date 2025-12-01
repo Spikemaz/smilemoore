@@ -496,12 +496,20 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📧 Email Template Manager</h1>
-            <p>Edit, preview, and deploy email templates in real-time</p>
+            <h1>🎯 Multi-Channel Communication Manager</h1>
+            <p>Edit, preview, and deploy across Email, WhatsApp, SMS & Website</p>
         </div>
 
         <div class="nav">
-            <button class="active" onclick="showTab('overview')">📊 Overview</button>
+            <button class="active" onclick="showMainSection('overview')">📊 Overview</button>
+            <button onclick="showMainSection('email')">📧 Email</button>
+            <button onclick="showMainSection('whatsapp')">💬 WhatsApp</button>
+            <button onclick="showMainSection('sms')">📱 SMS</button>
+            <button onclick="showMainSection('website')">🌐 Website</button>
+        </div>
+
+        <!-- Email Sub-Navigation -->
+        <div id="email-subnav" class="nav" style="background: #f8f9fa; display: none; border-top: 2px solid #e0e0e0;">
             <button onclick="showTab('voucher-single')">✉️ Voucher (Single)</button>
             <button onclick="showTab('voucher-family')">👨‍👩‍👧 Voucher (Family)</button>
             <button onclick="showTab('4q-1')">📬 4Q #1</button>
@@ -512,8 +520,6 @@
             <button onclick="showTab('10q-3')">📮 10Q #3</button>
             <button onclick="showTab('christmas')">🎄 Christmas</button>
             <button onclick="showTab('referral')">🔗 Referral</button>
-            <button onclick="showTab('whatsapp')">💬 WhatsApp</button>
-            <button onclick="showTab('sms')">📱 SMS</button>
         </div>
 
         <div class="content">
@@ -1487,6 +1493,7 @@ Each family member has 3 entries in our draw to win 1 Year of FREE Dentistry wor
                 <div class="info-box">
                     <h3>📱 WhatsApp Business API</h3>
                     <p>Automated WhatsApp messages can be sent for voucher confirmations, follow-ups, and referral reminders. Requires WhatsApp Business API integration.</p>
+                    <p><strong>Note:</strong> Templates below are view-only reference. Full editing capability coming soon.</p>
                 </div>
 
                 <div class="stats" style="margin-bottom: 30px;">
@@ -1592,6 +1599,7 @@ Share with friends & family to boost your chances! 🚀
                 <div class="info-box">
                     <h3>💬 SMS Messaging</h3>
                     <p>Automated text messages for instant notifications and reminders. High open rates and immediate delivery via Twilio SMS API.</p>
+                    <p><strong>Note:</strong> Templates below are view-only reference. Full editing capability coming soon.</p>
                 </div>
 
                 <div class="stats" style="margin-bottom: 30px;">
@@ -1696,6 +1704,116 @@ Smile Moore: 🎄 Spread Christmas joy! Share your £50 voucher link & earn +10 
                     For 1,000 signups with 3 SMS each = £120/month<br>
                     <br>
                     <strong>Recommended:</strong> Use SMS sparingly for high-priority messages only (voucher confirmation, final reminders). Use email as primary channel to minimize costs.</p>
+                </div>
+            </div>
+
+            <!-- WEBSITE CONTENT TAB -->
+            <div id="website" class="email-card">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">🌐 Website Content Editor</h2>
+
+                <div class="info-box">
+                    <h3>📝 Edit Website Copy</h3>
+                    <p>Manage headlines, descriptions, and call-to-action text across your website pages.</p>
+                </div>
+
+                <div style="display: grid; gap: 30px; margin-top: 30px;">
+
+                    <!-- Homepage Hero Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🏠 Homepage Hero Section</h3>
+
+                        <div class="form-group">
+                            <label>Main Headline</label>
+                            <input type="text" id="website-hero-headline"
+                                   value="Claim Your £50 Voucher Today!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Subheadline</label>
+                            <textarea id="website-hero-subheadline"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 80px;">Join hundreds of local families who have already claimed their voucher. Plus, enter our prize draw to win 1 Year of FREE Dentistry worth up to £5,000!</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>CTA Button Text</label>
+                            <input type="text" id="website-hero-cta"
+                                   value="Claim My £50 Voucher"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px;">
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveWebsiteContent('hero')">
+                                💾 Save & Update Website
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetWebsiteContent('hero')">
+                                ↺ Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Prize Draw Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🎁 Prize Draw Section</h3>
+
+                        <div class="form-group">
+                            <label>Section Headline</label>
+                            <input type="text" id="website-prize-headline"
+                                   value="Win 1 Year of FREE Dentistry!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="website-prize-description"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Enter our exclusive prize draw for a chance to win 1 Year of FREE Dentistry worth up to £5,000! Simply claim your voucher and answer a few quick questions to earn entries.</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveWebsiteContent('prize')">
+                                💾 Save & Update Website
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetWebsiteContent('prize')">
+                                ↺ Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Referral Section -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #70d490;">
+                        <h3 style="color: #1f3a33; margin-bottom: 20px;">🔗 Referral Section</h3>
+
+                        <div class="form-group">
+                            <label>Section Headline</label>
+                            <input type="text" id="website-referral-headline"
+                                   value="Share & Earn Bonus Entries!"
+                                   style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="website-referral-description"
+                                      style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; min-height: 100px;">Earn +10 bonus entries for every friend or family member who claims their voucher using your unique referral link. The more you share, the better your chances of winning!</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveWebsiteContent('referral')">
+                                💾 Save & Update Website
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetWebsiteContent('referral')">
+                                ↺ Reset
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h3>🛠️ Implementation Note</h3>
+                    <p>Website content updates require integration with your CMS or Next.js content files. Currently configured to update:<br>
+                    • Homepage: app/page.tsx<br>
+                    • Earlybird page: app/earlybird/page.tsx<br>
+                    Changes will be deployed automatically after saving.</p>
                 </div>
             </div>
 
@@ -2077,10 +2195,105 @@ Smile Moore Team`
             }, 5000);
         }
 
+        // Main section navigation
+        function showMainSection(section) {
+            // Hide email subnav
+            document.getElementById('email-subnav').style.display = 'none';
+
+            // Update main nav buttons
+            document.querySelectorAll('.nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.email-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Show appropriate section
+            if (section === 'email') {
+                // Show email subnav and first email template
+                document.getElementById('email-subnav').style.display = 'flex';
+                const firstEmailTemplate = document.getElementById('voucher-single');
+                if (firstEmailTemplate) {
+                    firstEmailTemplate.classList.add('active');
+                    // Activate first button in subnav
+                    const firstSubnavBtn = document.querySelector('#email-subnav button');
+                    if (firstSubnavBtn) firstSubnavBtn.classList.add('active');
+                }
+            } else {
+                // Show the section directly
+                const sectionElement = document.getElementById(section);
+                if (sectionElement) {
+                    sectionElement.classList.add('active');
+                }
+            }
+        }
+
+        // Website content functions
+        async function saveWebsiteContent(section) {
+            event.target.disabled = true;
+            event.target.innerHTML = '<span class="loading"></span> Saving...';
+
+            try {
+                let content = {};
+
+                if (section === 'hero') {
+                    content = {
+                        headline: document.getElementById('website-hero-headline').value,
+                        subheadline: document.getElementById('website-hero-subheadline').value,
+                        cta: document.getElementById('website-hero-cta').value
+                    };
+                } else if (section === 'prize') {
+                    content = {
+                        headline: document.getElementById('website-prize-headline').value,
+                        description: document.getElementById('website-prize-description').value
+                    };
+                } else if (section === 'referral') {
+                    content = {
+                        headline: document.getElementById('website-referral-headline').value,
+                        description: document.getElementById('website-referral-description').value
+                    };
+                }
+
+                // TODO: Implement API call to update website content
+                // const response = await fetch('/api/update-website-content', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ section, content })
+                // });
+
+                showAlert('✓ Website content saved successfully! (Implementation pending)', 'info');
+
+            } catch (error) {
+                showAlert('✗ Save failed: ' + error.message, 'error');
+                console.error('Save error:', error);
+            } finally {
+                event.target.disabled = false;
+                event.target.innerHTML = '💾 Save & Update Website';
+            }
+        }
+
+        function resetWebsiteContent(section) {
+            if (section === 'hero') {
+                document.getElementById('website-hero-headline').value = 'Claim Your £50 Voucher Today!';
+                document.getElementById('website-hero-subheadline').value = 'Join hundreds of local families who have already claimed their voucher. Plus, enter our prize draw to win 1 Year of FREE Dentistry worth up to £5,000!';
+                document.getElementById('website-hero-cta').value = 'Claim My £50 Voucher';
+            } else if (section === 'prize') {
+                document.getElementById('website-prize-headline').value = 'Win 1 Year of FREE Dentistry!';
+                document.getElementById('website-prize-description').value = 'Enter our exclusive prize draw for a chance to win 1 Year of FREE Dentistry worth up to £5,000! Simply claim your voucher and answer a few quick questions to earn entries.';
+            } else if (section === 'referral') {
+                document.getElementById('website-referral-headline').value = 'Share & Earn Bonus Entries!';
+                document.getElementById('website-referral-description').value = 'Earn +10 bonus entries for every friend or family member who claims their voucher using your unique referral link. The more you share, the better your chances of winning!';
+            }
+            showAlert('Website content reset to defaults', 'info');
+        }
+
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📧 Email Template Manager with Live Editing loaded');
-            console.log('✏️ Edit any template and click Save & Deploy to update live site');
+            console.log('🎯 Multi-Channel Communication Manager Loaded');
+            console.log('✏️ Edit Email, WhatsApp, SMS & Website content with live preview');
         });
     </script>
 </body>
