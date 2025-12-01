@@ -821,7 +821,7 @@ export default function LandingPage() {
                   Join {totalSignups} others competing for this prize
                 </p>
                 <p className="text-lg mb-6 opacity-90">
-                  Answer a couple questions to earn your entry
+                  Answer a couple questions to claim your entry
                 </p>
 
                 <button
