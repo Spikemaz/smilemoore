@@ -15,54 +15,113 @@ export async function GET(request: NextRequest) {
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-    // Fetch data from multiple sheets if needed
-    // For now, we'll return mock data structure
-    // TODO: Implement actual data fetching from Google Sheets
+    // Fetch visitor data from Home sheet
+    const homeResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Home!A:M',
+    });
+
+    const homeRows = homeResponse.data.values || [];
+
+    // Calculate funnel metrics
+    const totalVisitors = homeRows.length - 1; // Exclude header
+    const validEntries = homeRows.slice(1).filter(row => row[0]); // Has Visitor ID
+    const formStarts = validEntries.length;
+    const completions = validEntries.filter(row => row[3] && row[3].length > 0).length; // Has postcode
+    const conversionRate = formStarts > 0 ? ((completions / formStarts) * 100).toFixed(1) : 0;
+
+    // Fetch customer data
+    const customersResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Customers!A:L',
+    });
+
+    const customerRows = customersResponse.data.values || [];
+    const customers = customerRows.slice(1); // Exclude header
+
+    // Calculate email metrics from customers
+    const totalCustomers = customers.length;
+    const customersWithVouchers = customers.filter(row => row[6]); // Has voucher code
+
+    // Count survey progress
+    const customers1Entry = customers.filter(row => row[7] === '1').length; // Survey Progress = 1
+    const customers2Entries = customers.filter(row => row[7] === '2').length;
+    const customers3Entries = customers.filter(row => row[7] === '3').length;
+
+    // Email template metrics (estimated based on data)
+    // Voucher emails = all customers with voucher codes
+    const voucherEmailsSent = customersWithVouchers.length;
+
+    // 4Q follow-ups sent to customers with 1 entry
+    const followup4QSent = customers1Entry;
+
+    // 10Q follow-ups sent to customers with 2 entries
+    const followup10QSent = customers2Entries;
+
+    // Christmas emails sent to customers with 3 entries
+    const christmasSent = customers3Entries;
 
     const analytics = {
       email: {
-        totalSent: 0,
-        openRate: 0,
-        clickRate: 0,
-        conversionRate: 0,
+        totalSent: voucherEmailsSent + followup4QSent + followup10QSent + christmasSent,
+        openRate: 0, // TODO: Track via Resend webhooks
+        clickRate: 0, // TODO: Track via Resend webhooks
+        conversionRate: completions > 0 ? ((completions / totalCustomers) * 100).toFixed(1) : 0,
         templates: {
-          voucherSingle: { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
+          voucherSingle: {
+            sent: voucherEmailsSent,
+            opened: 0,
+            clicked: 0,
+            openRate: 0,
+            clickRate: 0
+          },
           voucherFamily: { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
-          '4q1': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
+          '4q1': {
+            sent: followup4QSent,
+            opened: 0,
+            clicked: 0,
+            openRate: 0,
+            clickRate: 0
+          },
           '4q2': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
           '4q3': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
-          '10q1': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
+          '10q1': {
+            sent: followup10QSent,
+            opened: 0,
+            clicked: 0,
+            openRate: 0,
+            clickRate: 0
+          },
           '10q2': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
           '10q3': { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
-          christmas: { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
+          christmas: {
+            sent: christmasSent,
+            opened: 0,
+            clicked: 0,
+            openRate: 0,
+            clickRate: 0
+          },
           referral: { sent: 0, opened: 0, clicked: 0, openRate: 0, clickRate: 0 },
         },
       },
       whatsapp: {
-        totalSent: 0,
+        totalSent: 0, // Not yet implemented
         readRate: 0,
         replyRate: 0,
       },
       sms: {
-        totalSent: 0,
+        totalSent: 0, // Not yet implemented
         deliveryRate: 0,
         clickRate: 0,
       },
       funnel: {
-        totalVisitors: 0,
-        formStarts: 0,
-        completions: 0,
-        conversionRate: 0,
+        totalVisitors,
+        formStarts,
+        completions,
+        conversionRate: parseFloat(conversionRate as string),
       },
       lastUpdated: new Date().toISOString(),
     };
-
-    // TODO: Query Google Sheets to populate real data
-    // Example query:
-    // const response = await sheets.spreadsheets.values.get({
-    //   spreadsheetId,
-    //   range: 'Analytics!A:Z',
-    // });
 
     return NextResponse.json({
       success: true,
