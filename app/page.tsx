@@ -919,6 +919,22 @@ export default function LandingPage() {
                 alert('Please select at least one preferred appointment time.');
                 return;
               }
+
+              // Save the first 5 questions to Google Sheets immediately
+              try {
+                await fetch('/api/save-survey', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.email,
+                    ...surveyData,
+                  }),
+                });
+                console.log('✅ First 5 questions saved to Google Sheets');
+              } catch (error) {
+                console.error('Error saving first 5 questions:', error);
+              }
+
               // Move to extended survey (step 6)
               setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
