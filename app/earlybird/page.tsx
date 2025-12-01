@@ -762,7 +762,7 @@ export default function EarlyBirdPage() {
                     🏆 Win 1 Year of FREE Dentistry
                   </h3>
                   <p className="text-2xl mb-2" style={{ color: '#FFD700' }}>
-                    Worth £2,000!
+                    Worth up to £5,000!
                   </p>
                 </div>
 
