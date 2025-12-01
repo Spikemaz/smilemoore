@@ -37,12 +37,14 @@ export async function POST(request: NextRequest) {
 
     if (customerId) {
       // Search by Customer ID (more reliable for duplicate emails)
+      // Pad customerId to 5 digits to match format in sheet (00001, 00010, etc.)
+      const paddedCustomerId = customerId.toString().padStart(5, '0');
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: 'Home!A:A',
       });
       const rows = response.data.values || [];
-      rowIndex = rows.findIndex((row) => row[0] === customerId);
+      rowIndex = rows.findIndex((row) => row[0] === paddedCustomerId);
     } else {
       // Fall back to email search (legacy support)
       const response = await sheets.spreadsheets.values.get({
