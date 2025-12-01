@@ -540,8 +540,10 @@ export default function LandingPage() {
         const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
         setNameSubmitTime(nameTime);
 
+        console.log('📝 Updating name with:', { email: formData.email, customerId, name: formData.name });
+
         // Update name in Google Sheets
-        await fetch('/api/update-voucher', {
+        const nameResponse = await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -556,6 +558,15 @@ export default function LandingPage() {
           }),
         });
 
+        const nameResult = await nameResponse.json();
+        console.log('📝 Name update response:', nameResult);
+
+        if (!nameResponse.ok) {
+          console.error('Failed to update name:', nameResult);
+          alert('Failed to save name. Please try again.');
+          return;
+        }
+
         setStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (step === 3) {
@@ -567,8 +578,10 @@ export default function LandingPage() {
         // Calculate total time from page load to completion
         const totalTime = Math.round((finalTime - pageLoadTimestamp) / 1000);
 
-        // Update phone and address in Google Sheets
-        await fetch('/api/update-voucher', {
+        console.log('📞 Updating phone with:', { email: formData.email, customerId, phone: formData.phone });
+
+        // Update phone in Google Sheets
+        const phoneResponse = await fetch('/api/update-voucher', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -582,6 +595,15 @@ export default function LandingPage() {
             nameToPhone: nameToFinal,
           }),
         });
+
+        if (!phoneResponse.ok) {
+          const phoneResult = await phoneResponse.json();
+          console.error('Failed to update phone:', phoneResult);
+          alert('Failed to save phone. Please try again.');
+          return;
+        }
+
+        console.log('📮 Updating postcode with:', { email: formData.email, customerId, address: formData.address });
 
         const response = await fetch('/api/update-voucher', {
           method: 'POST',
