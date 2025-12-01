@@ -31,45 +31,33 @@ export async function POST(request: NextRequest) {
     const authClient = await getAuthClient();
     const sheets = google.sheets({ version: 'v4', auth: authClient as any });
 
-    // All data is in Home tab now
-    // Find the row - prefer customerId (column A) for uniqueness, fall back to email (column C)
+    // EMERGENCY FIX: Use email search first to get site working
+    // TODO: Debug Customer ID mismatch issue separately
     let rowIndex = -1;
 
-    if (customerId) {
-      // Search by Customer ID (more reliable for duplicate emails)
-      // Pad customerId to 5 digits to match format in sheet (00001, 00010, etc.)
-      const paddedCustomerId = customerId.toString().padStart(5, '0');
-      console.log('🔍 Received customerId:', customerId, 'type:', typeof customerId);
-      console.log('🔍 Padded customerId:', paddedCustomerId);
+    // Always search by email for now (works for single signups)
+    console.log('🔍 Searching by email:', email);
+    const emailResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!C:C',
+    });
+    const emailRows = emailResponse.data.values || [];
 
-      const response = await sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: 'Home!A:A',
-      });
-      const rows = response.data.values || [];
-      console.log('📊 Total rows in A:A:', rows.length);
-      console.log('📊 First 5 rows:', rows.slice(0, 5).map(r => `[${r[0]}] type: ${typeof r[0]}`));
-
-      rowIndex = rows.findIndex((row) => row[0] === paddedCustomerId);
-      console.log('📍 Found at rowIndex:', rowIndex, 'Will update row:', rowIndex + 1);
-
-      if (rowIndex === -1) {
-        // Not found - log all Customer IDs for debugging
-        console.log('❌ Customer ID not found. All IDs in sheet:', rows.slice(0, 20).map(r => r[0]));
+    // Find the LAST occurrence of this email (most recent signup)
+    for (let i = emailRows.length - 1; i >= 0; i--) {
+      if (emailRows[i] && emailRows[i][0] === email) {
+        rowIndex = i;
+        console.log('✅ Found email at rowIndex:', rowIndex, 'Will update row:', rowIndex + 1);
+        break;
       }
-    } else {
-      // Fall back to email search (legacy support)
-      const response = await sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: 'Home!C:C',
-      });
-      const rows = response.data.values || [];
-      rowIndex = rows.findIndex((row) => row[0] === email);
     }
 
     if (rowIndex === -1) {
+      console.log('❌ Email not found:', email);
+      console.log('📊 Total emails in sheet:', emailRows.length);
+      console.log('📊 Last 5 emails:', emailRows.slice(-5).map(r => r[0]));
       return NextResponse.json(
-        { error: customerId ? 'Customer ID not found' : 'Email not found' },
+        { error: 'Email not found' },
         { status: 404 }
       );
     }
