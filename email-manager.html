@@ -1134,14 +1134,9 @@ Smile Moore Team 🎅</div>
                 </div>
             </div>
 
-            <!-- VOUCHER SINGLE TAB (Read-only) -->
+            <!-- VOUCHER SINGLE TAB -->
             <div id="voucher-single" class="email-card">
                 <h2 style="color: #1f3a33; margin-bottom: 20px;">Voucher Confirmation (Single Signup)</h2>
-
-                <div class="info-box">
-                    <h3>ℹ️ Note</h3>
-                    <p>This is the automated voucher confirmation email sent when a user completes the form. Subject and content are dynamically generated based on number of signups. This template is in the voucher route and requires manual code editing.</p>
-                </div>
 
                 <div style="margin-bottom: 20px;">
                     <span class="tag tag-trigger">Trigger: Postcode submitted</span>
@@ -1149,46 +1144,91 @@ Smile Moore Team 🎅</div>
                     <span class="tag tag-entries">User has: 1 entry</span>
                 </div>
 
-                <div class="code-location">
-                    <strong>File:</strong> app/api/update-voucher/route.ts<br>
-                    <strong>Lines:</strong> ~240-385<br>
-                    <strong>Note:</strong> Complex HTML template - edit with caution
-                </div>
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
 
-                <div class="preview-panel" style="margin-top: 20px;">
-                    <div class="preview-controls">
-                        <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Preview (Read-only)</span>
-                        <button onclick="setPreviewMode('voucher-single', 'mobile')">📱 Mobile</button>
-                        <button class="active" onclick="setPreviewMode('voucher-single', 'desktop')">💻 Desktop</button>
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="voucher-single-subject"
+                                   value="Your £50 Voucher is Confirmed! 🎉"
+                                   oninput="updatePreview('voucher-single')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Heading</label>
+                            <input type="text" id="voucher-single-heading"
+                                   value="Congratulations, [Name]! 🎉"
+                                   oninput="updatePreview('voucher-single')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Opening Message</label>
+                            <textarea id="voucher-single-opening" style="min-height: 100px;" oninput="updatePreview('voucher-single')">Thank you for claiming your voucher! Your £50 voucher is confirmed and ready to use.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Prize Entry Message</label>
+                            <textarea id="voucher-single-prize" style="min-height: 120px;" oninput="updatePreview('voucher-single')">🎁 You're Entered to Win!
+
+You have 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
+
+Want +10 bonus entries? Share your unique referral link with friends!</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('voucher-single', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('voucher-single')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/update-voucher/route.ts<br>
+                            <strong>Lines:</strong> ~240-385<br>
+                            <strong>Note:</strong> Complex HTML template
+                        </div>
                     </div>
-                    <div id="voucher-single-preview" class="preview-viewport desktop">
-                        <div class="email-preview">
-                            <div class="email-header">
-                                <h2>Smile Moore</h2>
-                            </div>
-                            <div class="email-body">
-                                <h3>Congratulations, John! 🎉</h3>
-                                <p>Thank you for claiming your voucher! Your £50 voucher is confirmed and ready to use.</p>
 
-                                <div class="voucher-code">
-                                    <p style="margin-bottom: 10px; font-size: 14px; color: #1f3a33; font-weight: bold;">YOUR VOUCHER CODE</p>
-                                    <div class="voucher-code-text">SMILEABC123</div>
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('voucher-single', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('voucher-single', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="voucher-single-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div class="email-header">
+                                    <h2>Smile Moore</h2>
                                 </div>
+                                <div class="email-body">
+                                    <h3 id="voucher-single-preview-heading">Congratulations, John! 🎉</h3>
+                                    <p id="voucher-single-preview-opening">Thank you for claiming your voucher! Your £50 voucher is confirmed and ready to use.</p>
 
-                                <h3>What Happens Next?</h3>
-                                <ul style="line-height: 1.8; color: #333;">
-                                    <li>Keep this voucher code safe - you'll need it when we open!</li>
-                                    <li>We'll keep you updated as we complete our CQC approval process</li>
-                                    <li>You'll receive updates throughout our practice fit-out</li>
-                                    <li>Once we're ready to see our first patients, we'll send you a booking link</li>
-                                    <li>Use your voucher code when booking to redeem your £50 discount</li>
-                                    <li>Bonus: Receive +100 prize draw entries when you redeem your voucher!</li>
-                                </ul>
+                                    <div class="voucher-code">
+                                        <p style="margin-bottom: 10px; font-size: 14px; color: #1f3a33; font-weight: bold;">YOUR VOUCHER CODE</p>
+                                        <div class="voucher-code-text">SMILEABC123</div>
+                                    </div>
 
-                                <div class="prize-box">
-                                    <h4>🎁 You're Entered to Win!</h4>
-                                    <p>You have <strong>3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</p>
-                                    <p>Want <strong>+10 bonus entries?</strong> Share your unique referral link with friends!</p>
+                                    <h3>What Happens Next?</h3>
+                                    <ul style="line-height: 1.8; color: #333;">
+                                        <li>Keep this voucher code safe - you'll need it when we open!</li>
+                                        <li>We'll keep you updated as we complete our CQC approval process</li>
+                                        <li>You'll receive updates throughout our practice fit-out</li>
+                                        <li>Once we're ready to see our first patients, we'll send you a booking link</li>
+                                        <li>Use your voucher code when booking to redeem your £50 discount</li>
+                                        <li>Bonus: Receive +100 prize draw entries when you redeem your voucher!</li>
+                                    </ul>
+
+                                    <div class="prize-box">
+                                        <div id="voucher-single-preview-prize" style="white-space: pre-wrap;">🎁 You're Entered to Win!
+
+You have 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
+
+Want +10 bonus entries? Share your unique referral link with friends!</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1196,7 +1236,7 @@ Smile Moore Team 🎅</div>
                 </div>
             </div>
 
-            <!-- VOUCHER FAMILY TAB (Read-only) -->
+            <!-- VOUCHER FAMILY TAB -->
             <div id="voucher-family" class="email-card">
                 <h2 style="color: #1f3a33; margin-bottom: 20px;">Voucher Confirmation (Family - Multiple Signups)</h2>
 
@@ -1211,57 +1251,99 @@ Smile Moore Team 🎅</div>
                     <span class="tag tag-entries">Deduplication: Active</span>
                 </div>
 
-                <div class="code-location">
-                    <strong>File:</strong> app/api/update-voucher/route.ts<br>
-                    <strong>Lines:</strong> ~240-385<br>
-                    <strong>Logic:</strong> isMultiple = true (when sameEmailSignups.length > 1)
-                </div>
+                <div class="editor-layout">
+                    <div class="editor-panel">
+                        <h3>✏️ Edit Template</h3>
 
-                <div class="preview-panel" style="margin-top: 20px;">
-                    <div class="preview-controls">
-                        <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Preview (Read-only)</span>
-                        <button onclick="setPreviewMode('voucher-family', 'mobile')">📱 Mobile</button>
-                        <button class="active" onclick="setPreviewMode('voucher-family', 'desktop')">💻 Desktop</button>
+                        <div class="form-group">
+                            <label>Subject Line</label>
+                            <input type="text" id="voucher-family-subject"
+                                   value="Your Family Vouchers are Confirmed! 🎉"
+                                   oninput="updatePreview('voucher-family')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Heading</label>
+                            <input type="text" id="voucher-family-heading"
+                                   value="Congratulations! 🎉"
+                                   oninput="updatePreview('voucher-family')">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Opening Message</label>
+                            <textarea id="voucher-family-opening" style="min-height: 100px;" oninput="updatePreview('voucher-family')">Thank you for claiming vouchers for your family! You've registered [COUNT] people with a total value of £[TOTAL].</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Prize Entry Message</label>
+                            <textarea id="voucher-family-prize" style="min-height: 120px;" oninput="updatePreview('voucher-family')">🎁 You're Entered to Win!
+
+Each family member has 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTemplate('voucher-family', 0)">
+                                💾 Save & Deploy
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetTemplate('voucher-family')">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <div class="code-location" style="margin-top: 20px;">
+                            <strong>File:</strong> app/api/update-voucher/route.ts<br>
+                            <strong>Lines:</strong> ~240-385<br>
+                            <strong>Logic:</strong> isMultiple = true
+                        </div>
                     </div>
-                    <div id="voucher-family-preview" class="preview-viewport desktop">
-                        <div class="email-preview">
-                            <div class="email-header">
-                                <h2>Smile Moore</h2>
-                            </div>
-                            <div class="email-body">
-                                <h3>Congratulations! 🎉</h3>
-                                <p>Thank you for claiming vouchers for your family! You've registered 3 people with a total value of £150.</p>
 
-                                <table class="family-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Family Member</th>
-                                            <th>Voucher Code</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>John Smith</td>
-                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEABC123</td>
-                                            <td style="color: #70d490; font-weight: bold;">£50</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jane Smith</td>
-                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEDEF456</td>
-                                            <td style="color: #70d490; font-weight: bold;">£50</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tom Smith</td>
-                                            <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEGHI789</td>
-                                            <td style="color: #70d490; font-weight: bold;">£50</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <div class="preview-panel">
+                        <div class="preview-controls">
+                            <span style="font-weight: 600; color: #1f3a33; margin-right: auto;">Live Preview</span>
+                            <button onclick="setPreviewMode('voucher-family', 'mobile')">📱 Mobile</button>
+                            <button class="active" onclick="setPreviewMode('voucher-family', 'desktop')">💻 Desktop</button>
+                        </div>
+                        <div id="voucher-family-preview" class="preview-viewport desktop">
+                            <div class="email-preview">
+                                <div class="email-header">
+                                    <h2>Smile Moore</h2>
+                                </div>
+                                <div class="email-body">
+                                    <h3 id="voucher-family-preview-heading">Congratulations! 🎉</h3>
+                                    <p id="voucher-family-preview-opening">Thank you for claiming vouchers for your family! You've registered 3 people with a total value of £150.</p>
 
-                                <div class="prize-box">
-                                    <h4>🎁 You're Entered to Win!</h4>
-                                    <p>Each family member has <strong>3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</p>
+                                    <table class="family-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Family Member</th>
+                                                <th>Voucher Code</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>John Smith</td>
+                                                <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEABC123</td>
+                                                <td style="color: #70d490; font-weight: bold;">£50</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Jane Smith</td>
+                                                <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEDEF456</td>
+                                                <td style="color: #70d490; font-weight: bold;">£50</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tom Smith</td>
+                                                <td style="font-family: 'Courier New', monospace; font-weight: bold;">SMILEGHI789</td>
+                                                <td style="color: #70d490; font-weight: bold;">£50</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="prize-box">
+                                        <div id="voucher-family-preview-prize" style="white-space: pre-wrap;">🎁 You're Entered to Win!
+
+Each family member has 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1275,6 +1357,24 @@ Smile Moore Team 🎅</div>
     <script>
         // Store original templates
         const originalTemplates = {
+            'voucher-single': {
+                subject: 'Your £50 Voucher is Confirmed! 🎉',
+                heading: 'Congratulations, [Name]! 🎉',
+                opening: 'Thank you for claiming your voucher! Your £50 voucher is confirmed and ready to use.',
+                prize: `🎁 You're Entered to Win!
+
+You have 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
+
+Want +10 bonus entries? Share your unique referral link with friends!`
+            },
+            'voucher-family': {
+                subject: 'Your Family Vouchers are Confirmed! 🎉',
+                heading: 'Congratulations! 🎉',
+                opening: 'Thank you for claiming vouchers for your family! You\'ve registered [COUNT] people with a total value of £[TOTAL].',
+                prize: `🎁 You're Entered to Win!
+
+Each family member has 3 entries in our draw to win 1 Year of FREE Dentistry worth up to £5,000!`
+            },
             '4q-1': {
                 subject: '🎁 Quick reminder: Boost your prize draw entries!',
                 body: `Hi [Name],
@@ -1399,20 +1499,47 @@ Smile Moore Team 🎅`
         }
 
         function updatePreview(templateId) {
-            const subjectInput = document.getElementById(templateId + '-subject');
-            const bodyInput = document.getElementById(templateId + '-body');
-            const subjectPreview = document.getElementById(templateId + '-preview-subject');
-            const bodyPreview = document.getElementById(templateId + '-preview-body');
+            // Handle voucher templates differently
+            if (templateId === 'voucher-single' || templateId === 'voucher-family') {
+                const headingInput = document.getElementById(templateId + '-heading');
+                const openingInput = document.getElementById(templateId + '-opening');
+                const prizeInput = document.getElementById(templateId + '-prize');
 
-            if (subjectInput && subjectPreview) {
-                subjectPreview.textContent = subjectInput.value;
-            }
+                const headingPreview = document.getElementById(templateId + '-preview-heading');
+                const openingPreview = document.getElementById(templateId + '-preview-opening');
+                const prizePreview = document.getElementById(templateId + '-preview-prize');
 
-            if (bodyInput && bodyPreview) {
-                // Replace [Name] with sample name for preview
-                let previewText = bodyInput.value.replace(/\[Name\]/g, 'John');
-                previewText = previewText.replace(/\[Code\]/g, '123');
-                bodyPreview.textContent = previewText;
+                if (headingInput && headingPreview) {
+                    headingPreview.textContent = headingInput.value.replace(/\[Name\]/g, 'John');
+                }
+
+                if (openingInput && openingPreview) {
+                    let text = openingInput.value;
+                    text = text.replace(/\[COUNT\]/g, '3');
+                    text = text.replace(/\[TOTAL\]/g, '150');
+                    openingPreview.textContent = text;
+                }
+
+                if (prizeInput && prizePreview) {
+                    prizePreview.textContent = prizeInput.value;
+                }
+            } else {
+                // Handle standard templates
+                const subjectInput = document.getElementById(templateId + '-subject');
+                const bodyInput = document.getElementById(templateId + '-body');
+                const subjectPreview = document.getElementById(templateId + '-preview-subject');
+                const bodyPreview = document.getElementById(templateId + '-preview-body');
+
+                if (subjectInput && subjectPreview) {
+                    subjectPreview.textContent = subjectInput.value;
+                }
+
+                if (bodyInput && bodyPreview) {
+                    // Replace [Name] with sample name for preview
+                    let previewText = bodyInput.value.replace(/\[Name\]/g, 'John');
+                    previewText = previewText.replace(/\[Code\]/g, '123');
+                    bodyPreview.textContent = previewText;
+                }
             }
         }
 
@@ -1432,11 +1559,23 @@ Smile Moore Team 🎅`
 
         function resetTemplate(templateId) {
             if (originalTemplates[templateId]) {
-                const subjectInput = document.getElementById(templateId + '-subject');
-                const bodyInput = document.getElementById(templateId + '-body');
+                if (templateId === 'voucher-single' || templateId === 'voucher-family') {
+                    const subjectInput = document.getElementById(templateId + '-subject');
+                    const headingInput = document.getElementById(templateId + '-heading');
+                    const openingInput = document.getElementById(templateId + '-opening');
+                    const prizeInput = document.getElementById(templateId + '-prize');
 
-                if (subjectInput) subjectInput.value = originalTemplates[templateId].subject;
-                if (bodyInput) bodyInput.value = originalTemplates[templateId].body;
+                    if (subjectInput) subjectInput.value = originalTemplates[templateId].subject;
+                    if (headingInput) headingInput.value = originalTemplates[templateId].heading;
+                    if (openingInput) openingInput.value = originalTemplates[templateId].opening;
+                    if (prizeInput) prizeInput.value = originalTemplates[templateId].prize;
+                } else {
+                    const subjectInput = document.getElementById(templateId + '-subject');
+                    const bodyInput = document.getElementById(templateId + '-body');
+
+                    if (subjectInput) subjectInput.value = originalTemplates[templateId].subject;
+                    if (bodyInput) bodyInput.value = originalTemplates[templateId].body;
+                }
 
                 updatePreview(templateId);
                 showAlert('Template reset to original', 'info');
@@ -1444,61 +1583,109 @@ Smile Moore Team 🎅`
         }
 
         async function saveTemplate(templateType, variation) {
-            const templateId = templateType + '-' + (variation + 1);
-            const subjectInput = document.getElementById(templateId + '-subject');
-            const bodyInput = document.getElementById(templateId + '-body');
-
-            if (!subjectInput || !bodyInput) {
-                showAlert('Error: Template inputs not found', 'error');
-                return;
-            }
-
-            const subject = subjectInput.value;
-            const body = bodyInput.value;
+            const templateId = templateType === 'voucher-single' || templateType === 'voucher-family'
+                ? templateType
+                : templateType + '-' + (variation + 1);
 
             // Show loading state
             event.target.disabled = true;
             event.target.innerHTML = '<span class="loading"></span> Saving...';
 
             try {
-                // Save subject
-                const subjectResponse = await fetch('http://localhost:3000/api/update-email-template', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        templateType,
-                        variation: variation.toString(),
-                        field: 'subject',
-                        value: subject
-                    })
-                });
+                if (templateType === 'voucher-single' || templateType === 'voucher-family') {
+                    // Handle voucher templates
+                    const subjectInput = document.getElementById(templateId + '-subject');
+                    const headingInput = document.getElementById(templateId + '-heading');
+                    const openingInput = document.getElementById(templateId + '-opening');
+                    const prizeInput = document.getElementById(templateId + '-prize');
 
-                if (!subjectResponse.ok) {
-                    const error = await subjectResponse.json();
-                    throw new Error(error.error || 'Failed to save subject');
-                }
+                    if (!subjectInput || !headingInput || !openingInput || !prizeInput) {
+                        throw new Error('Template inputs not found');
+                    }
 
-                // Save body
-                const bodyResponse = await fetch('http://localhost:3000/api/update-email-template', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        templateType,
-                        variation: variation.toString(),
-                        field: 'body',
-                        value: body
-                    })
-                });
+                    const fields = [
+                        { field: 'subject', value: subjectInput.value },
+                        { field: 'heading', value: headingInput.value },
+                        { field: 'opening', value: openingInput.value },
+                        { field: 'prize', value: prizeInput.value }
+                    ];
 
-                if (!bodyResponse.ok) {
-                    const error = await bodyResponse.json();
-                    throw new Error(error.error || 'Failed to save body');
+                    for (const { field, value } of fields) {
+                        const response = await fetch('http://localhost:3000/api/update-email-template', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                templateType,
+                                variation: '0',
+                                field,
+                                value
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const error = await response.json();
+                            throw new Error(error.error || `Failed to save ${field}`);
+                        }
+                    }
+
+                    // Update original template
+                    originalTemplates[templateId] = {
+                        subject: subjectInput.value,
+                        heading: headingInput.value,
+                        opening: openingInput.value,
+                        prize: prizeInput.value
+                    };
+                } else {
+                    // Handle standard templates
+                    const subjectInput = document.getElementById(templateId + '-subject');
+                    const bodyInput = document.getElementById(templateId + '-body');
+
+                    if (!subjectInput || !bodyInput) {
+                        throw new Error('Template inputs not found');
+                    }
+
+                    const subject = subjectInput.value;
+                    const body = bodyInput.value;
+
+                    // Save subject
+                    const subjectResponse = await fetch('http://localhost:3000/api/update-email-template', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            templateType,
+                            variation: variation.toString(),
+                            field: 'subject',
+                            value: subject
+                        })
+                    });
+
+                    if (!subjectResponse.ok) {
+                        const error = await subjectResponse.json();
+                        throw new Error(error.error || 'Failed to save subject');
+                    }
+
+                    // Save body
+                    const bodyResponse = await fetch('http://localhost:3000/api/update-email-template', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            templateType,
+                            variation: variation.toString(),
+                            field: 'body',
+                            value: body
+                        })
+                    });
+
+                    if (!bodyResponse.ok) {
+                        const error = await bodyResponse.json();
+                        throw new Error(error.error || 'Failed to save body');
+                    }
+
+                    // Update original template
+                    originalTemplates[templateId] = { subject, body };
                 }
 
                 showAlert('✓ Template saved and deployed successfully!', 'success');
-
-                // Update original template
-                originalTemplates[templateId] = { subject, body };
 
             } catch (error) {
                 showAlert('✗ Save failed: ' + error.message, 'error');
