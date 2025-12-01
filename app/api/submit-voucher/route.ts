@@ -209,6 +209,7 @@ export async function POST(request: Request) {
       batchNumber,
       announcement,
       totalSignups: totalSignups + 1,
+      customerId,
     });
   } catch (error) {
     console.error('Error submitting voucher:', error);

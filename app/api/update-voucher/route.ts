@@ -18,9 +18,10 @@ async function getAuthClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, field, value, campaignSource, emailToName, nameToPhone, phoneToPostcode, totalTime } = await request.json();
+    const { email, customerId, field, value, campaignSource, emailToName, nameToPhone, phoneToPostcode, totalTime } = await request.json();
 
-    if (!email || !field || !value) {
+    // Require either email or customerId
+    if ((!email && !customerId) || !field || !value) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -31,18 +32,30 @@ export async function POST(request: NextRequest) {
     const sheets = google.sheets({ version: 'v4', auth: authClient as any });
 
     // All data is in Home tab now
-    // Find the row with this email (email is in column C)
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!C:C',
-    });
+    // Find the row - prefer customerId (column A) for uniqueness, fall back to email (column C)
+    let rowIndex = -1;
 
-    const rows = response.data.values || [];
-    const rowIndex = rows.findIndex((row) => row[0] === email);
+    if (customerId) {
+      // Search by Customer ID (more reliable for duplicate emails)
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'Home!A:A',
+      });
+      const rows = response.data.values || [];
+      rowIndex = rows.findIndex((row) => row[0] === customerId);
+    } else {
+      // Fall back to email search (legacy support)
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'Home!C:C',
+      });
+      const rows = response.data.values || [];
+      rowIndex = rows.findIndex((row) => row[0] === email);
+    }
 
     if (rowIndex === -1) {
       return NextResponse.json(
-        { error: 'Email not found' },
+        { error: customerId ? 'Customer ID not found' : 'Email not found' },
         { status: 404 }
       );
     }

@@ -48,6 +48,7 @@ export default function LandingPage() {
   const [totalSignups, setTotalSignups] = useState<number>(0);
   const [referredBy, setReferredBy] = useState<string>('');
   const [campaignSource, setCampaignSource] = useState<string>('URL Direct');
+  const [customerId, setCustomerId] = useState<string>('');
   const [surveyData, setSurveyData] = useState({
     dentalCare: [] as string[], // Q1: Multiple choice
     appointmentTimes: [] as string[], // Q2: Multiple choice
@@ -499,6 +500,9 @@ export default function LandingPage() {
         if (data.totalSignups) {
           setTotalSignups(data.totalSignups);
         }
+        if (data.customerId) {
+          setCustomerId(data.customerId);
+        }
 
         // Track email submission
         window.dataLayer = window.dataLayer || [];
@@ -523,6 +527,7 @@ export default function LandingPage() {
           },
           body: JSON.stringify({
             email: formData.email,
+            customerId,
             field: 'name',
             value: formData.name,
             campaignSource,
@@ -549,6 +554,7 @@ export default function LandingPage() {
           },
           body: JSON.stringify({
             email: formData.email,
+            customerId,
             field: 'phone',
             value: formData.phone,
             campaignSource,
@@ -563,6 +569,7 @@ export default function LandingPage() {
           },
           body: JSON.stringify({
             email: formData.email,
+            customerId,
             field: 'address',
             value: formData.address,
             campaignSource,
