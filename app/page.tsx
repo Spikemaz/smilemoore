@@ -789,67 +789,47 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 4: Success + Bonus Offer */}
+        {/* Step 4: Success + Continue to Prize Draw */}
         {step === 4 && (
           <div>
             {/* Success Message with Bonus Offer */}
             <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
-              <div className="mb-6">
+              <div className="mb-8">
                 <div className="inline-block rounded-full p-6 mb-4 animate-bounce" style={{ backgroundColor: '#cfe8d7' }}>
                   <span className="text-6xl">🎉</span>
                 </div>
                 <h2 className="text-4xl font-bold mb-4">
-                  Congratulations, {formData.name}!
+                  Success, {formData.name}!
                 </h2>
-                <p className="text-2xl mb-6">
-                  Your £{voucherValue} voucher is confirmed!
+                <p className="text-xl mb-4" style={{ color: '#cfe8d7' }}>
+                  Your £{voucherValue} voucher code has been sent to your email
                 </p>
-                <div className="rounded-xl p-6 mb-4 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
-                  <p className="text-lg mb-2">Check your email and phone for:</p>
-                  <div className="text-3xl font-mono font-bold tracking-wider mb-3">
-                    {voucherCode}
-                  </div>
-                  <p className="text-sm" style={{ color: '#cfe8d7' }}>
-                    Keep this code safe you will need it to claim your voucher
-                  </p>
-                </div>
-                <div className="rounded-xl p-4 mb-2 inline-block" style={{ backgroundColor: 'rgba(255, 215, 0, 0.2)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
-                  <p className="text-lg font-bold" style={{ color: '#cfe8d7' }}>
-                    🎟️ You've earned 1 entry in the £2,000 prize draw!
-                  </p>
-                </div>
               </div>
 
-              {/* Bonus Offer in Same Element */}
-              <div className="border-t pt-6" style={{ borderColor: 'rgba(207, 232, 215, 0.3)' }}>
-                <div className="mb-4">
-                  <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-4 animate-pulse" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                    👉 CLICK HERE - Collect Your £{voucherValue} Voucher! 👈
-                  </span>
+              {/* Prize Draw CTA */}
+              <div className="border-t pt-8" style={{ borderColor: 'rgba(207, 232, 215, 0.3)' }}>
+                <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
+                  <h3 className="text-3xl font-bold mb-3">
+                    🏆 Win 1 Year of FREE Dentistry
+                  </h3>
+                  <p className="text-2xl mb-2" style={{ color: '#FFD700' }}>
+                    Worth £2,000!
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold mb-3">
-                  Win 1 Year of FREE Dentistry Worth £2,000!
-                </h3>
-                <p className="text-lg mb-4">
-                  Join {totalSignups} other voucher holders competing for this prize!
+
+                <p className="text-xl mb-4">
+                  Join {totalSignups} others competing for this prize
                 </p>
-                <p className="text-base mb-6 opacity-90">
-                  Answer 5 quick questions to earn +1 entry (2 entries total)
+                <p className="text-lg mb-6 opacity-90">
+                  Answer 5 quick questions to earn your entry
                 </p>
 
                 <button
                   onClick={() => setStep(5)}
-                  className="w-full px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
-                  style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                  className="w-full px-10 py-6 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl animate-pulse"
+                  style={{ backgroundColor: '#70d490', color: '#1f3a33' }}
                 >
-                  Yes! Enter Me in the Draw →
-                </button>
-
-                <button
-                  onClick={() => window.location.href = '/home'}
-                  className="text-white/80 hover:text-white underline text-sm"
-                >
-                  No thanks, I'll skip this opportunity
+                  Continue to Prize Draw →
                 </button>
               </div>
             </div>
