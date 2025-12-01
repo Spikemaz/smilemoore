@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
       // Search by Customer ID (more reliable for duplicate emails)
       // Pad customerId to 5 digits to match format in sheet (00001, 00010, etc.)
       const paddedCustomerId = customerId.toString().padStart(5, '0');
-      console.log('🔍 Searching for Customer ID:', paddedCustomerId);
+      console.log('🔍 Received customerId:', customerId, 'type:', typeof customerId);
+      console.log('🔍 Padded customerId:', paddedCustomerId);
 
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
@@ -47,10 +48,20 @@ export async function POST(request: NextRequest) {
       });
       const rows = response.data.values || [];
       console.log('📊 Total rows in A:A:', rows.length);
-      console.log('📊 First 5 rows:', rows.slice(0, 5).map(r => r[0]));
+      console.log('📊 First 5 rows:', rows.slice(0, 5).map(r => `[${r[0]}] type: ${typeof r[0]}`));
 
-      rowIndex = rows.findIndex((row) => row[0] === paddedCustomerId);
+      rowIndex = rows.findIndex((row) => {
+        const matches = row[0] === paddedCustomerId;
+        if (!matches && row[0] && row[0].toString().includes(paddedCustomerId.slice(-2))) {
+          console.log(`❌ Near miss: row[0]="${row[0]}" vs paddedCustomerId="${paddedCustomerId}"`);
+        }
+        return matches;
+      });
       console.log('📍 Found at rowIndex:', rowIndex, 'Will update row:', rowIndex + 1);
+
+      if (rowIndex === -1) {
+        console.log('❌ Customer ID not found. All IDs in sheet:', rows.slice(0, 10).map(r => r[0]));
+      }
     } else {
       // Fall back to email search (legacy support)
       const response = await sheets.spreadsheets.values.get({

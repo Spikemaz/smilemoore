@@ -50,7 +50,6 @@ export async function POST(request: Request) {
     const batchNumber = Math.floor(totalSignups / 90) + 1;
 
     // Generate random alphanumeric voucher code
-    const customerId = totalSignups + 1;
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded I, O, 0, 1 for clarity
     let code = '';
 
@@ -62,8 +61,8 @@ export async function POST(request: Request) {
 
     const voucherCode = `SMILE${code}`;
 
-    // Add to Google Sheets
-    const success = await addSignup({
+    // Add to Google Sheets - this generates the Customer ID
+    const result = await addSignup({
       email,
       name,
       phone,
@@ -76,18 +75,21 @@ export async function POST(request: Request) {
       referredBy: referredBy || '',
     });
 
-    if (!success) {
+    if (!result.success || !result.customerId) {
       return NextResponse.json(
         { error: 'Failed to save signup' },
         { status: 500 }
       );
     }
 
+    // Use the actual Customer ID that was written to the sheet
+    const customerId = result.customerId;
+
     // Update visitor status to "Email Submitted" with time and scroll metrics
     await updateVisitorStatus(
       ip,
       email,
-      customerId.toString().padStart(5, '0'),
+      customerId,
       'Email Submitted',
       timeToSubmit,
       scrollDepth

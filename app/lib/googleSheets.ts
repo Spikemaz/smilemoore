@@ -86,7 +86,7 @@ export async function addSignup(data: {
   batchNumber: number;
   ipAddress?: string;
   referredBy?: string;
-}): Promise<boolean> {
+}): Promise<{ success: boolean; customerId?: string }> {
   try {
     const sheets = getGoogleSheetsClient();
     const timestamp = new Date().toISOString();
@@ -135,10 +135,10 @@ export async function addSignup(data: {
       },
     });
 
-    return true;
+    return { success: true, customerId };
   } catch (error) {
     console.error('Error writing to Google Sheets:', error);
-    return false;
+    return { success: false };
   }
 }
 
