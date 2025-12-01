@@ -48,10 +48,11 @@ export default function EarlyBirdPage() {
   const [totalSignups, setTotalSignups] = useState<number>(0);
   const [referredBy, setReferredBy] = useState<string>('');
   const [surveyData, setSurveyData] = useState({
-    dentalCare: '',
-    timeline: '',
-    appointmentTimes: '',
-    importantFactors: [] as string[],
+    dentalCare: [] as string[], // Q1: Multiple choice
+    appointmentTimes: [] as string[], // Q2: Multiple choice
+    timeline: '', // Q3: Single choice
+    importantFactors: '', // Q4: Single choice (how they feel about dentist)
+    previousExperience: '', // Q5: Single choice (reason for new dentist)
   });
   const [extendedSurvey, setExtendedSurvey] = useState({
     previousExperience: '',
@@ -326,6 +327,65 @@ export default function EarlyBirdPage() {
           sessionStorage.setItem('visitorId', data.visitorId);
           // Store in localStorage for return visitor tracking
           localStorage.setItem('smilemoore_visitor_id', data.visitorId);
+
+          // CRITICAL FIX: Capture cookies AGAIN after 10 seconds and update the visitor row
+          // This ensures all platform pixels have fully loaded
+          setTimeout(async () => {
+            const getCookie = (name: string) => {
+              const value = `; ${document.cookie}`;
+              const parts = value.split(`; ${name}=`);
+              if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+              return '';
+            };
+
+            const delayedFbp = getCookie('_fbp');
+            const delayedFbc = getCookie('_fbc');
+            const delayedGa = getCookie('_ga');
+            const delayedGid = getCookie('_gid');
+            const delayedMuid = getCookie('MUID');
+            const delayedTtp = getCookie('_ttp');
+            const delayedTta = getCookie('_tta');
+            const delayedMucAds = getCookie('muc_ads');
+
+            console.log('🔄 Updating visitor with delayed cookies:', {
+              visitorId: data.visitorId,
+              fbp: delayedFbp,
+              fbc: delayedFbc,
+              ga: delayedGa,
+              gid: delayedGid,
+              muid: delayedMuid,
+              ttp: delayedTtp,
+              tta: delayedTta,
+              mucAds: delayedMucAds,
+              smUniversalId,
+              allCookies: document.cookie
+            });
+
+            // Update the visitor row with all cookies
+            if (delayedFbp || delayedGa || delayedMuid || delayedTtp || delayedMucAds) {
+              try {
+                await fetch('/api/update-visitor-cookies', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    visitorId: data.visitorId,
+                    fbp: delayedFbp,
+                    fbc: delayedFbc,
+                    gaClientId: delayedGa,
+                    gid: delayedGid,
+                    muid: delayedMuid,
+                    ttp: delayedTtp,
+                    tta: delayedTta,
+                    mucAds: delayedMucAds,
+                    smUniversalId,
+                  }),
+                });
+                console.log('✅ All visitor cookies updated successfully!');
+              } catch (err) {
+                console.error('❌ Failed to update visitor cookies:', err);
+              }
+            }
+          }, 10000); // Wait 10 seconds after initial tracking
         }
       } catch (error) {
         console.error('Error tracking visitor:', error);
@@ -729,30 +789,21 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 4: Success + Bonus Offer */}
+        {/* Step 4: Success + Continue to Prize Draw */}
         {step === 4 && (
           <div>
             {/* Success Message with Bonus Offer */}
             <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
-              <div className="mb-6">
+              <div className="mb-8">
                 <div className="inline-block rounded-full p-6 mb-4 animate-bounce" style={{ backgroundColor: '#cfe8d7' }}>
                   <span className="text-6xl">🎉</span>
                 </div>
                 <h2 className="text-4xl font-bold mb-4">
-                  Congratulations, {formData.name}!
+                  Success, {formData.name}!
                 </h2>
-                <p className="text-2xl mb-6">
-                  Your £{voucherValue} voucher is confirmed!
+                <p className="text-xl mb-4" style={{ color: '#cfe8d7' }}>
+                  Your £{voucherValue} voucher code has been sent to your email
                 </p>
-                <div className="rounded-xl p-6 mb-6 inline-block" style={{ backgroundColor: 'rgba(207, 232, 215, 0.2)' }}>
-                  <p className="text-lg mb-2">Check your email and phone for:</p>
-                  <div className="text-3xl font-mono font-bold tracking-wider mb-3">
-                    {voucherCode}
-                  </div>
-                  <p className="text-sm" style={{ color: '#cfe8d7' }}>
-                    Keep this code safe you will need it to claim your voucher
-                  </p>
-                </div>
               </div>
 
               {/* Prize Draw CTA */}
@@ -790,33 +841,79 @@ export default function EarlyBirdPage() {
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                🔥 4 QUICK QUESTIONS
+                📋 RESEARCH SURVEY
               </span>
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Help Us Build Your Perfect Practice
+                We Want to Get to Know You
               </h3>
-              <p className="text-lg" style={{ color: '#666' }}>
-                Your answers enter you for 1 year of FREE dentistry worth up to £5,000!
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
+                Help us build your perfect dental practice - your answers enter you for 1 year of FREE dentistry worth up to £5,000!
               </p>
             </div>
 
             <form onSubmit={async (e) => {
               e.preventDefault();
+              // Validate at least one option selected for multiple choice questions
+              if (surveyData.dentalCare.length === 0) {
+                alert('Please select at least one type of dental care you\'re interested in.');
+                return;
+              }
+              if (surveyData.appointmentTimes.length === 0) {
+                alert('Please select at least one preferred appointment time.');
+                return;
+              }
               // Move to extended survey (step 6)
               setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }} className="space-y-8">
-              {/* Question 1 (was Q2) */}
+              {/* Question 1: Multiple choice (was Q2) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  1. How soon do you expect to register with or visit a dentist?
+                  1. When do you usually prefer appointments?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Immediately',
-                    'Within 1–3 months',
-                    'Within 3–6 months',
-                    'I\'m just browsing'
+                    'Weekday mornings',
+                    'Weekday afternoons',
+                    'Weekday evenings (after 5pm)',
+                    'Saturdays',
+                    'Sundays'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.appointmentTimes.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={surveyData.appointmentTimes.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setSurveyData({ ...surveyData, appointmentTimes: [...surveyData.appointmentTimes, value] });
+                          } else {
+                            setSurveyData({ ...surveyData, appointmentTimes: surveyData.appointmentTimes.filter(t => t !== value) });
+                          }
+                        }}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 2: Single choice (was Q3) */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  2. When was your most recent appointment?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'Within the last 6 months',
+                    '6 months to 1 year ago',
+                    '1-2 years ago',
+                    'More than 2 years ago',
+                    'I\'ve never been to the dentist'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
                       style={{ borderColor: surveyData.timeline === option ? '#1f3a33' : '#cfe8d7' }}>
@@ -835,95 +932,95 @@ export default function EarlyBirdPage() {
                 </div>
               </div>
 
-              {/* Question 2 (was Q3) */}
+              {/* Question 3: Multiple choice (was Q1) */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  2. What days/times work best for your dental appointments?
+                  3. What type of dental care are you most interested in?
+                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
                   {[
-                    'Weekdays',
-                    'Evenings',
-                    'Weekends',
-                    'Flexible'
+                    'Routine check-ups and cleanings',
+                    'Cosmetic dentistry (e.g., whitening, veneers)',
+                    'Orthodontics (e.g., braces, Invisalign)',
+                    'Restorative work (e.g., fillings, crowns)',
+                    'Emergency dental care',
+                    'Specialist treatments (e.g., implants, root canals)'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.appointmentTimes === option ? '#1f3a33' : '#cfe8d7' }}>
-                      <input
-                        type="radio"
-                        name="appointmentTimes"
-                        value={option}
-                        checked={surveyData.appointmentTimes === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, appointmentTimes: e.target.value })}
-                        required
-                        className="mr-3 w-5 h-5"
-                      />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Question 3 (was Q1) */}
-              <div className="text-left">
-                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  3. What type of dental care is most important to you?
-                </label>
-                <div className="space-y-3">
-                  {[
-                    'Routine check-ups & hygiene',
-                    'Cosmetic improvements',
-                    'Family/children\'s dentistry',
-                    'Emergency/relief from pain',
-                    'Nervous-patient friendly care'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.dentalCare === option ? '#1f3a33' : '#cfe8d7' }}>
-                      <input
-                        type="radio"
-                        name="dentalCare"
-                        value={option}
-                        checked={surveyData.dentalCare === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, dentalCare: e.target.value })}
-                        required
-                        className="mr-3 w-5 h-5"
-                      />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Question 4 */}
-              <div className="text-left">
-                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  4. What matters most when choosing a new dental practice?
-                  <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select up to 3)</span>
-                </label>
-                <div className="space-y-3">
-                  {[
-                    'Price & transparency',
-                    'Gentle, patient-focused care',
-                    'Availability of hygiene appointments',
-                    'Modern clinic & technology',
-                    'Convenience of location',
-                    'Short waiting lists'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.importantFactors.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: surveyData.dentalCare.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="checkbox"
                         value={option}
-                        checked={surveyData.importantFactors.includes(option)}
+                        checked={surveyData.dentalCare.includes(option)}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (e.target.checked && surveyData.importantFactors.length < 3) {
-                            setSurveyData({ ...surveyData, importantFactors: [...surveyData.importantFactors, value] });
-                          } else if (!e.target.checked) {
-                            setSurveyData({ ...surveyData, importantFactors: surveyData.importantFactors.filter(f => f !== value) });
+                          if (e.target.checked) {
+                            setSurveyData({ ...surveyData, dentalCare: [...surveyData.dentalCare, value] });
+                          } else {
+                            setSurveyData({ ...surveyData, dentalCare: surveyData.dentalCare.filter(c => c !== value) });
                           }
                         }}
-                        disabled={!surveyData.importantFactors.includes(option) && surveyData.importantFactors.length >= 3}
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 4: Single choice */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  4. How do you feel about visiting the dentist?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'I feel comfortable and relaxed',
+                    'I feel slightly anxious',
+                    'I feel very nervous or anxious',
+                    'I avoid it due to fear or bad experiences'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.importantFactors === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="importantFactors"
+                        value={option}
+                        checked={surveyData.importantFactors === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, importantFactors: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 5: Single choice */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  5. What's the main reason for looking for a new dentist?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'I\'m new to the area',
+                    'Dissatisfied with my current dentist',
+                    'Looking for better prices or payment plans',
+                    'Need a specific treatment or specialist',
+                    'My previous practice closed or stopped taking NHS patients',
+                    'Other'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value={option}
+                        checked={surveyData.previousExperience === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, previousExperience: e.target.value })}
+                        required
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
@@ -953,8 +1050,11 @@ export default function EarlyBirdPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Can we ask for a little more feedback?
               </h3>
-              <p className="text-lg" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 It takes 20 seconds and it will really shape your dental experience.
+              </p>
+              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
+                Complete to earn +1 entry (3 entries total) 🎟️
               </p>
             </div>
 
@@ -1328,9 +1428,16 @@ export default function EarlyBirdPage() {
               <p className="text-2xl mb-4" style={{ color: '#70d490' }}>
                 You're Now Eligible for Your £{voucherValue} Voucher!
               </p>
-              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
-                Plus, you've received <span className="font-bold">3 entries</span> into the draw to win 1 Year of FREE Dentistry worth up to £5,000!
-              </p>
+              <div className="rounded-xl p-4 mb-4 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You have 3 entries in the prize draw worth up to £5,000!
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 4 questions<br/>
+                  • 1 entry for completing extended survey
+                </p>
+              </div>
               <p className="text-base mb-8" style={{ color: '#666' }}>
                 Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
               </p>
