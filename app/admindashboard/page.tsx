@@ -175,11 +175,48 @@ export default function AdminDashboard() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        gap: '30px',
       }}>
         <div>
           <h1 style={{ fontSize: '24px', marginBottom: '5px' }}>Smile Moore Admin Dashboard</h1>
           <p style={{ opacity: 0.9, fontSize: '14px' }}>Marketing Campaign Manager</p>
         </div>
+
+        {/* Live Metrics in Header */}
+        {!loading && stats && (
+          <div style={{
+            display: 'flex',
+            gap: '15px',
+            flex: '1',
+            justifyContent: 'flex-end',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '100px' }}>
+              <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px' }}>Visitors</div>
+              <div style={{ fontSize: '18px', fontWeight: '700' }}>{stats.siteVisitorsTotal}/{stats.siteVisitorsUnique}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '80px' }}>
+              <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px' }}>Stage 1</div>
+              <div style={{ fontSize: '18px', fontWeight: '700' }}>{stats.stage1}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '80px' }}>
+              <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px' }}>Stage 2</div>
+              <div style={{ fontSize: '18px', fontWeight: '700' }}>{stats.stage2}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '80px' }}>
+              <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px' }}>Stage 3</div>
+              <div style={{ fontSize: '18px', fontWeight: '700' }}>{stats.stage3}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '10px', opacity: 0.8, marginBottom: '2px' }}>Conv. Rate</div>
+              <div style={{ fontSize: '18px', fontWeight: '700' }}>
+                {stats.siteVisitorsUnique > 0 ? ((stats.stage1 / stats.siteVisitorsUnique) * 100).toFixed(1) : '0.0'}%
+              </div>
+            </div>
+          </div>
+        )}
+
         <button
           onClick={handleLogout}
           style={{
@@ -190,6 +227,7 @@ export default function AdminDashboard() {
             borderRadius: '6px',
             cursor: 'pointer',
             fontSize: '14px',
+            whiteSpace: 'nowrap',
           }}
         >
           Logout
