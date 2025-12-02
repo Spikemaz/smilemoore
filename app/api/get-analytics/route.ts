@@ -22,6 +22,62 @@ function getGoogleSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
+// Get WhatsApp metrics from WA sheet
+async function getWhatsAppMetrics(sheets: any) {
+  try {
+    const waResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'WA!A2:Y',
+    });
+    const waData = waResponse.data.values || [];
+    const sent = waData.length;
+    const read = waData.filter(row => row[11] === 'Yes').length; // Column L
+    const replied = waData.filter(row => row[12] === 'Yes').length; // Column M
+
+    return {
+      totalSent: sent,
+      readRate: sent > 0 ? ((read / sent) * 100).toFixed(1) : '0.0',
+      replyRate: sent > 0 ? ((replied / sent) * 100).toFixed(1) : '0.0',
+    };
+  } catch (error) {
+    console.error('Error fetching WA metrics:', error);
+    return { totalSent: 0, readRate: '0.0', replyRate: '0.0' };
+  }
+}
+
+// Get Funnel metrics from FUNNEL sheet
+async function getFunnelMetrics(sheets: any, totalVisitors: number, stage1: number, stage3: number) {
+  try {
+    const funnelResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'FUNNEL!A2:AT',
+    });
+    const funnelData = funnelResponse.data.values || [];
+    const funnelTotal = funnelData.length;
+    const funnelCompleted = funnelData.filter(row => row[35] === 'Completed').length; // Column AJ
+
+    // Use FUNNEL sheet data if available, otherwise fallback to existing logic
+    const visitors = funnelTotal > 0 ? funnelTotal : totalVisitors;
+    const completions = funnelTotal > 0 ? funnelCompleted : stage3;
+    const conversionRate = visitors > 0 ? ((stage1 / visitors) * 100).toFixed(1) : '0.0';
+
+    return {
+      totalVisitors: visitors,
+      formStarts: stage1,
+      completions: completions,
+      conversionRate,
+    };
+  } catch (error) {
+    console.error('Error fetching funnel metrics:', error);
+    return {
+      totalVisitors,
+      formStarts: stage1,
+      completions: stage3,
+      conversionRate: totalVisitors > 0 ? ((stage1 / totalVisitors) * 100).toFixed(1) : '0.0',
+    };
+  }
+}
+
 export async function GET() {
   try {
     const sheets = getGoogleSheetsClient();
@@ -265,17 +321,8 @@ export async function GET() {
         deliveryRate: smsDeliveryRate.toFixed(1),
         clickRate: smsClickRate.toFixed(1),
       },
-      whatsapp: {
-        totalSent: 0,
-        readRate: '0.0',
-        replyRate: '0.0',
-      },
-      funnel: {
-        totalVisitors,
-        formStarts: stage1,
-        completions: stage3,
-        conversionRate: funnelConversionRate.toFixed(1),
-      },
+      whatsapp: await getWhatsAppMetrics(sheets),
+      funnel: await getFunnelMetrics(sheets, totalVisitors, stage1, stage3),
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {
