@@ -661,6 +661,13 @@ export default function LandingPage() {
             currency: 'GBP'
           });
 
+          // CRITICAL: Clear visitor tracking so next person on this device is counted as unique
+          // This handles the case where multiple people use the same device to sign up
+          localStorage.removeItem('smilemoore_visitor_id');
+          localStorage.removeItem('smilemoore_session_count');
+          localStorage.removeItem('smilemoore_first_visit');
+          console.log('✅ Signup complete - cleared visitor tracking for next person');
+
           setStep(4);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
