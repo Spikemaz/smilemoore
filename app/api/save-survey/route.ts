@@ -131,25 +131,23 @@ export async function POST(request: Request) {
     }
 
     // Award entries based on survey completion
-    // Check if this is the 5-question survey or extended survey
-    const dentalCareArray = Array.isArray(dentalCare) ? dentalCare : [dentalCare];
-    const appointmentTimesArray = Array.isArray(appointmentTimes) ? appointmentTimes : [appointmentTimes];
-    const isBasicSurvey = dentalCareArray.length > 0 && timeline && appointmentTimesArray.length > 0 && importantFactors && previousExperience;
-    const isExtendedSurvey = mostImportantFactor || smileConfidence || sameClinician;
+    // Use the same logic as the save operations above
+    const isBasicSurvey = isStep5;
+    const isExtendedSurvey = isStep6;
 
     // Get current entries and timestamps
     const dataResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Home!B${rowIndex}:BB${rowIndex}`,
+      range: `Home!B${rowIndex}:BN${rowIndex}`,
     });
     const rowData = dataResponse.data.values?.[0] || [];
 
-    const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BB range)
+    const voucherTimestamp = rowData[0]; // Column B (index 0 in B:BN range)
     const campaignSource = rowData[5] || ''; // Column G (B=0, so G=5) - Campaign Source
     const referredBy = rowData[10] || ''; // Column L (B=0, so L=10) - Referred By
     const currentEntries = parseInt(rowData[31]) || 0; // Column AG (B=0, so AG=31)
 
-    // Follow-up tracking (B:BB range, so subtract 1 from standard index)
+    // Follow-up tracking (B:BN range, so subtract 1 from standard index)
     const followup1Sent4Q = rowData[33]; // Column AI (34-1=33)
     const followup2Sent4Q = rowData[35]; // Column AK (36-1=35)
     const followup3Sent4Q = rowData[37]; // Column AM (38-1=37)
@@ -207,7 +205,7 @@ export async function POST(request: Request) {
 
       // Calculate time to complete 10Q from when they completed 4Q (column AZ = Time to Complete 10Q)
       // We'll use the current timestamp minus when they would have completed 4Q
-      const timeToComplete4Q = parseInt(rowData[49]) || 0; // Column AY (50-1=49 in B:BB range)
+      const timeToComplete4Q = parseInt(rowData[49]) || 0; // Column AY (50-1=49 in B:BN range)
       if (voucherTimestamp && timeToComplete4Q) {
         const fourQCompletionTime = new Date(voucherTimestamp).getTime() + (timeToComplete4Q * 60000);
         const nowTime = Date.now();
@@ -296,11 +294,11 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           type: notificationType,
           data: {
-            name: rowData[2] || 'Unknown', // Name from column D (B:BA range, D=2)
+            name: rowData[2] || 'Unknown', // Name from column D (B:BN range, D=2)
             email,
             timeToComplete,
-            device: rowData[51] || 'Unknown', // Column BA (52-1=51 in B:BA range)
-            totalTime: (parseInt(rowData[48]) || 0) + (parseInt(rowData[49]) || 0), // AX + AY (48 and 49 in B:BA range)
+            device: rowData[51] || 'Unknown', // Column BB (52-1=51 in B:BN range)
+            totalTime: (parseInt(rowData[48]) || 0) + (parseInt(rowData[49]) || 0), // AW + AX (48 and 49 in B:BN range)
           },
         }),
       });
