@@ -39,13 +39,14 @@ export async function GET(request: NextRequest) {
     const rowIndex = rows.findIndex((row) => row[0] === email);
 
     if (rowIndex !== -1) {
-      // Update Referral Link Clicked column (AD) with timestamp
+      // Update Referral Link Clicked column (AE) with timestamp
+      // This tracks when the user clicks/copies their own referral link to share it
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!AD${rowIndex + 1}`,
+        range: `Home!AE${rowIndex + 1}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[new Date().toISOString()]],
+          values: [['Yes']],
         },
       });
     }
