@@ -45,6 +45,11 @@ export default function AdminDashboard() {
 
       if (data.success) {
         setStats(data.stats);
+
+        // Update CustomerID sheet with latest calculated values (background task)
+        fetch('/api/update-customerid-sheet', { method: 'POST' }).catch(err =>
+          console.error('Failed to update CustomerID sheet:', err)
+        );
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
