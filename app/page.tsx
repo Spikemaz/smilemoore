@@ -264,10 +264,18 @@ export default function LandingPage() {
         if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
         if (!mucAds) console.warn('⚠️ Twitter/X muc_ads cookie not found after 5 seconds');
 
-        // Get campaign source - prioritize referral, then UTM, then default to URL Direct
+        // Extract email and SMS campaign parameters
+        const emailVariation = urlParams.get('email') || '';
+        const smsVariation = urlParams.get('sms') || '';
+
+        // Get campaign source - prioritize referral, email, SMS, then UTM, then default to URL Direct
         let sourceName = 'URL Direct';
         if (ref) {
           sourceName = `Referral: ${ref}`;
+        } else if (emailVariation) {
+          sourceName = `Email ${emailVariation}`;
+        } else if (smsVariation) {
+          sourceName = `SMS ${smsVariation}`;
         } else if (utmSource) {
           sourceName = utmSource;
         }
