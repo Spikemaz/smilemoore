@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
-import { updateCustomerIDTracking } from '@/app/lib/googleSheets';
+import { updateCustomerIDSheet } from '@/app/lib/updateCustomerIDSheet';
 
 const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -178,11 +178,8 @@ export async function POST(request: Request) {
       requestBody: { values },
     });
 
-    // Update CustomerID tracking counters
-    await updateCustomerIDTracking('visitor'); // Increment total visitors
-    if (!isReturningVisitor) {
-      await updateCustomerIDTracking('visitor_unique'); // Increment unique visitors only if first visit
-    }
+    // Update CustomerID sheet with live-calculated metrics
+    await updateCustomerIDSheet();
 
     return NextResponse.json({
       success: true,

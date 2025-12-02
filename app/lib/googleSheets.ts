@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { updateCustomerIDSheet } from './updateCustomerIDSheet';
 
 const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -135,8 +136,8 @@ export async function addSignup(data: {
       },
     });
 
-    // Update Stage 1 counter (completed basic info)
-    await updateCustomerIDTracking('stage1');
+    // Update CustomerID sheet with live-calculated metrics
+    await updateCustomerIDSheet();
 
     return { success: true, customerId };
   } catch (error) {
