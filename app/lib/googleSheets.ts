@@ -120,7 +120,7 @@ export async function addSignup(data: {
       requestBody: { values },
     });
 
-    // Initialize Total Referrals (0) and Total Draw Entries (0 - earned through milestones)
+    // Initialize Total Referrals (0) and Total Draw Entries (1 - awarded for submitting basic info)
     const rowNumber = (await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Home!A:A',
@@ -131,7 +131,7 @@ export async function addSignup(data: {
       range: `Home!AF${rowNumber}:AG${rowNumber}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[0, 0]], // 0 referrals, 0 entries (earned through milestones)
+        values: [[0, 1]], // 0 referrals, 1 entry for submitting email/name/phone/postcode
       },
     });
 
