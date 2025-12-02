@@ -94,6 +94,36 @@ export async function GET() {
       }
     });
 
+    // Get WA (WhatsApp) metrics
+    const waResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'WA!A2:Y',
+    });
+    const waData = waResponse.data.values || [];
+    const waSent = waData.length;
+    const waDelivered = waData.filter(row => row[10] === 'Yes').length; // Column K
+    const waRead = waData.filter(row => row[11] === 'Yes').length; // Column L
+    const waReplied = waData.filter(row => row[12] === 'Yes').length; // Column M
+
+    // Get SMS metrics
+    const smsResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'SMS!A2:V',
+    });
+    const smsData = smsResponse.data.values || [];
+    const smsSent = smsData.length;
+    const smsDelivered = smsData.filter(row => row[10] === 'Yes').length; // Column K
+    const smsClicked = smsData.filter(row => row[11] && row[11] !== '0').length; // Column L
+
+    // Get FUNNEL metrics
+    const funnelResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'FUNNEL!A2:AT',
+    });
+    const funnelData = funnelResponse.data.values || [];
+    const funnelTotal = funnelData.length;
+    const funnelCompleted = funnelData.filter(row => row[35] === 'Completed').length; // Column AJ
+
     return NextResponse.json({
       success: true,
       stats: {
@@ -103,6 +133,26 @@ export async function GET() {
         stage1: stage1Count,
         stage2: stage2Count,
         stage3: stage3Count,
+        whatsapp: {
+          sent: waSent,
+          delivered: waDelivered,
+          read: waRead,
+          replied: waReplied,
+          readRate: waSent > 0 ? ((waRead / waSent) * 100).toFixed(1) : '0.0',
+          replyRate: waSent > 0 ? ((waReplied / waSent) * 100).toFixed(1) : '0.0',
+        },
+        sms: {
+          sent: smsSent,
+          delivered: smsDelivered,
+          clicked: smsClicked,
+          deliveryRate: smsSent > 0 ? ((smsDelivered / smsSent) * 100).toFixed(1) : '0.0',
+          clickRate: smsSent > 0 ? ((smsClicked / smsSent) * 100).toFixed(1) : '0.0',
+        },
+        funnel: {
+          total: funnelTotal,
+          completed: funnelCompleted,
+          completionRate: funnelTotal > 0 ? ((funnelCompleted / funnelTotal) * 100).toFixed(1) : '0.0',
+        },
       },
     });
   } catch (error) {

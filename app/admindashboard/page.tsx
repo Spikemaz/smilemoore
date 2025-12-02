@@ -9,6 +9,26 @@ interface TrackingStats {
   stage1: number;
   stage2: number;
   stage3: number;
+  whatsapp: {
+    sent: number;
+    delivered: number;
+    read: number;
+    replied: number;
+    readRate: string;
+    replyRate: string;
+  };
+  sms: {
+    sent: number;
+    delivered: number;
+    clicked: number;
+    deliveryRate: string;
+    clickRate: string;
+  };
+  funnel: {
+    total: number;
+    completed: number;
+    completionRate: string;
+  };
 }
 
 export default function AdminDashboard() {
@@ -227,6 +247,30 @@ export default function AdminDashboard() {
               <div style={{ fontSize: '19px', fontWeight: '700' }}>
                 {stats.stage1 > 0 ? ((stats.stage3 / stats.stage1) * 100).toFixed(1) : '0.0'}%
               </div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>WA Sent</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.whatsapp.sent}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>WA Read</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.whatsapp.readRate}%</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>SMS Sent</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.sms.sent}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '100px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>SMS Click</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.sms.clickRate}%</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Funnels</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.funnel.total}</div>
+            </div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '100px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Funnel %</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.funnel.completionRate}%</div>
             </div>
           </div>
         )}
