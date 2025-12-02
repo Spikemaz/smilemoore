@@ -273,9 +273,32 @@ export default function LandingPage() {
         if (ref) {
           sourceName = `Referral: ${ref}`;
         } else if (emailVariation) {
-          sourceName = `Email ${emailVariation}`;
+          // Map email template names to readable format
+          const emailNames: { [key: string]: string } = {
+            'voucher-single': 'Email: Voucher Single',
+            'voucher-family': 'Email: Voucher Family',
+            '4q-1': 'Email: 4Q Follow-up #1',
+            '4q-2': 'Email: 4Q Follow-up #2',
+            '4q-3': 'Email: 4Q Follow-up #3',
+            '10q-1': 'Email: 10Q Follow-up #1',
+            '10q-2': 'Email: 10Q Follow-up #2',
+            '10q-3': 'Email: 10Q Follow-up #3',
+            'christmas': 'Email: Christmas Sharing',
+            'referral': 'Email: Referral Follow-up',
+          };
+          sourceName = emailNames[emailVariation] || `Email: ${emailVariation}`;
         } else if (smsVariation) {
-          sourceName = `SMS ${smsVariation}`;
+          // Map SMS template names to readable format
+          const smsNames: { [key: string]: string } = {
+            '4q-1': 'SMS: 4Q Follow-up #1',
+            '4q-2': 'SMS: 4Q Follow-up #2',
+            '4q-3': 'SMS: 4Q Follow-up #3',
+            '10q-1': 'SMS: 10Q Follow-up #1',
+            '10q-2': 'SMS: 10Q Follow-up #2',
+            '10q-3': 'SMS: 10Q Follow-up #3',
+            'referral': 'SMS: Referral Follow-up',
+          };
+          sourceName = smsNames[smsVariation] || `SMS: ${smsVariation}`;
         } else if (utmSource) {
           sourceName = utmSource;
         }
