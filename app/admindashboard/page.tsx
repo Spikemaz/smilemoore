@@ -186,45 +186,45 @@ export default function AdminDashboard() {
         {!loading && stats && (
           <div style={{
             display: 'flex',
-            gap: '10px',
+            gap: '12px',
             flex: '1',
             justifyContent: 'flex-end',
             flexWrap: 'wrap',
             alignItems: 'center',
           }}>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '75px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Customer ID</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.lastCustomerId}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Customer ID</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.lastCustomerId}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '75px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Visitors (T)</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.siteVisitorsTotal}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Visitors (T)</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.siteVisitorsTotal}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '75px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Visitors (U)</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.siteVisitorsUnique}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '90px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Visitors (U)</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.siteVisitorsUnique}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '70px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Stage 1</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.stage1}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '84px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Stage 1</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.stage1}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '70px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Stage 2</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.stage2}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '84px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Stage 2</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.stage2}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '70px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Stage 3</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>{stats.stage3}</div>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '84px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Stage 3</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>{stats.stage3}</div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '85px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Conv. Rate</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '102px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Conv. Rate</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>
                 {stats.siteVisitorsUnique > 0 ? ((stats.stage1 / stats.siteVisitorsUnique) * 100).toFixed(1) : '0.0'}%
               </div>
             </div>
-            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '6px 10px', borderRadius: '6px', minWidth: '85px' }}>
-              <div style={{ fontSize: '9px', opacity: 0.8, marginBottom: '2px' }}>Compl. Rate</div>
-              <div style={{ fontSize: '16px', fontWeight: '700' }}>
+            <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.15)', padding: '8px 12px', borderRadius: '6px', minWidth: '102px' }}>
+              <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '3px' }}>Compl. Rate</div>
+              <div style={{ fontSize: '19px', fontWeight: '700' }}>
                 {stats.stage1 > 0 ? ((stats.stage3 / stats.stage1) * 100).toFixed(1) : '0.0'}%
               </div>
             </div>
