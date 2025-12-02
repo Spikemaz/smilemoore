@@ -267,7 +267,7 @@ export default function LandingPage() {
         // Get campaign source - prioritize referral, then UTM, then default to URL Direct
         let sourceName = 'URL Direct';
         if (ref) {
-          sourceName = 'Referral';
+          sourceName = `Referral: ${ref}`;
         } else if (utmSource) {
           sourceName = utmSource;
         }

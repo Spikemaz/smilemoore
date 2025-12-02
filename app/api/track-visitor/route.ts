@@ -120,12 +120,12 @@ export async function POST(request: Request) {
 
     const allCookiesCaptured = cookieQualityScore === 6 ? 'Yes' : 'No';
 
-    // Prepare row data matching Visitors sheet headers (columns A-AR)
+    // Prepare row data matching Visitors sheet headers (columns A-AT)
     const values = [[
       visitorId, // A - Visitor ID
       timestamp, // B - Timestamp
       ip, // C - IP Address
-      campaignSource || 'direct', // D - Campaign Source
+      campaignSource || 'direct', // D - Campaign Source (includes "Referral: Name-XXX" if from referral link)
       deviceType || 'unknown', // E - Device Type
       deviceModel || 'unknown', // F - Device Model
       browser || 'unknown', // G - Browser
