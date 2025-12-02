@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import { updateCustomerIDTracking } from '@/app/lib/googleSheets';
 
 const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -104,6 +105,9 @@ export async function POST(request: Request) {
           ]],
         },
       });
+
+      // Update Stage 2 counter (completed Q1-Q5)
+      await updateCustomerIDTracking('stage2');
     } else if (isStep6) {
       // Step 6: Save only Q6-Q15 + Additional Feedback (columns R-AB)
       const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
@@ -128,6 +132,9 @@ export async function POST(request: Request) {
           ]],
         },
       });
+
+      // Update Stage 3 counter (completed all survey questions)
+      await updateCustomerIDTracking('stage3');
     }
 
     // Award entries based on survey completion

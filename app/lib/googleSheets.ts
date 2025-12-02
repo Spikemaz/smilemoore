@@ -135,10 +135,57 @@ export async function addSignup(data: {
       },
     });
 
+    // Update Stage 1 counter (completed basic info)
+    await updateCustomerIDTracking('stage1');
+
     return { success: true, customerId };
   } catch (error) {
     console.error('Error writing to Google Sheets:', error);
     return { success: false };
+  }
+}
+
+// Update CustomerID sheet tracking counters
+export async function updateCustomerIDTracking(stage: 'visitor' | 'visitor_unique' | 'stage1' | 'stage2' | 'stage3'): Promise<void> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Read current values from CustomerID!A2:F2
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A2:F2',
+    });
+
+    const values = response.data.values?.[0] || ['0', '0', '0', '0', '0', '0'];
+    const lastCustomerId = parseInt(values[0]) || 0;
+    const visitorsTotal = parseInt(values[1]) || 0;
+    const visitorsUnique = parseInt(values[2]) || 0;
+    const stage1Count = parseInt(values[3]) || 0;
+    const stage2Count = parseInt(values[4]) || 0;
+    const stage3Count = parseInt(values[5]) || 0;
+
+    // Update the appropriate counter
+    const newValues = [
+      lastCustomerId.toString(),
+      stage === 'visitor' ? (visitorsTotal + 1).toString() : visitorsTotal.toString(),
+      stage === 'visitor_unique' ? (visitorsUnique + 1).toString() : visitorsUnique.toString(),
+      stage === 'stage1' ? (stage1Count + 1).toString() : stage1Count.toString(),
+      stage === 'stage2' ? (stage2Count + 1).toString() : stage2Count.toString(),
+      stage === 'stage3' ? (stage3Count + 1).toString() : stage3Count.toString(),
+    ];
+
+    // Write back updated values
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A2:F2',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [newValues],
+      },
+    });
+  } catch (error) {
+    console.error('Error updating CustomerID tracking:', error);
+    // Don't throw - this is non-critical tracking
   }
 }
 
@@ -246,13 +293,29 @@ export async function initializeSheet(): Promise<boolean> {
       requestBody: { values: headers },
     });
 
-    // Initialize CustomerID counter
-    const customerIdHeaders = [['Last Customer ID'], ['0']];
+    // Initialize CustomerID sheet with tracking headers
+    const customerIdHeaders = [[
+      'Last Customer ID',
+      'Site Visitors Total',
+      'Site Visitors Unique',
+      'Stage 1 (Email/Name/Phone/Postcode)',
+      'Stage 2 (Completed Questions 1-5)',
+      'Stage 3 (Completed All Survey)'
+    ]];
+    const customerIdData = [['0', '0', '0', '0', '0', '0']];
+
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'CustomerID!A1:A2',
+      range: 'CustomerID!A1:F1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: customerIdHeaders },
+    });
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A2:F2',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: customerIdData },
     });
 
     return true;
