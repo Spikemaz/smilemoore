@@ -93,21 +93,21 @@ export async function POST(request: Request) {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          appointmentTimesString,  // M - Q1: When do you prefer appointments?
-          timeline,                 // N - Q2: When was your most recent appointment?
-          dentalCareString,        // O - Q3: What type of dental care?
-          factorsString,           // P - Q4: How do you feel about visiting?
-          previousExperience || '', // Q - Q5: Main reason for looking?
-          mostImportantFactor || '', // R - Q6: Factor that matters most?
-          smileConfidence || '',     // S - Q7: Smile confidence?
-          sameClinician || '',       // T - Q8: Same clinician important?
-          treatmentsString,          // U - Q9: Treatments needed?
-          beforeAppointment || '',   // V - Q10: Feel before appointment?
-          stayLongTerm || '',        // W - Q11: Stay long-term?
-          preventingVisits || '',    // X - Q12: What prevents visits?
-          cosmeticImportance || '',  // Y - Q13: Cosmetic importance?
-          preferredContact || '',    // Z - Q14: Preferred contact?
-          dentalExperience || '',    // AA - Q15: Previous dental experience?
+          appointmentTimesString,    // M - Q1: When do you prefer appointments?
+          timeline,                  // N - Q2: When was your most recent appointment?
+          dentalCareString,          // O - Q3: What type of dental care?
+          factorsString,             // P - Q4: How do you feel about visiting?
+          previousExperience || '',  // Q - Q5: Main reason for looking?
+          dentalExperience || '',    // R - Q6: Previous dental experience?
+          mostImportantFactor || '', // S - Q7: Factor that matters most?
+          smileConfidence || '',     // T - Q8: Smile confidence?
+          sameClinician || '',       // U - Q9: Same clinician important?
+          treatmentsString,          // V - Q10: Treatments needed?
+          beforeAppointment || '',   // W - Q11: Feel before appointment?
+          stayLongTerm || '',        // X - Q12: Stay long-term?
+          preventingVisits || '',    // Y - Q13: What prevents visits?
+          cosmeticImportance || '',  // Z - Q14: Cosmetic importance?
+          preferredContact || '',    // AA - Q15: Preferred contact?
           additionalFeedback || '',  // AB - Additional Feedback
         ]],
       },
