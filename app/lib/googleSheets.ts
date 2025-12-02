@@ -150,6 +150,49 @@ export async function updateCustomerIDTracking(stage: 'visitor' | 'visitor_uniqu
   try {
     const sheets = getGoogleSheetsClient();
 
+    // Verify headers exist first - if not, initialize them
+    const headersResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'CustomerID!A1:F1',
+    });
+
+    const headers = headersResponse.data.values?.[0];
+    const expectedHeaders = [
+      'Last Customer ID',
+      'Site Visitors Total',
+      'Site Visitors Unique',
+      'Stage 1',
+      'Stage 2',
+      'Stage 3'
+    ];
+
+    // If headers don't match expected structure, create them
+    if (!headers || headers.length !== 6 || headers[0] !== expectedHeaders[0]) {
+      console.log('CustomerID headers missing or incorrect - initializing...');
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'CustomerID!A1:F1',
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [expectedHeaders] },
+      });
+
+      // Initialize row 2 with zeros if it doesn't exist
+      const dataCheck = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'CustomerID!A2:F2',
+      });
+
+      if (!dataCheck.data.values?.[0]) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SPREADSHEET_ID,
+          range: 'CustomerID!A2:F2',
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values: [['0', '0', '0', '0', '0', '0']] },
+        });
+      }
+    }
+
     // Read current values from CustomerID!A2:F2
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
