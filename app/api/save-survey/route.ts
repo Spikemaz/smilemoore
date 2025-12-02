@@ -80,38 +80,55 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the row with all survey data (columns M through AB)
-    // CRITICAL: Column order must match the form question order
-    const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
-    const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
-    const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : importantFactors;
-    const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
+    // Determine if this is step 5 (first 5 questions) or step 6 (extended 10 questions)
+    const isStep5 = appointmentTimes && !dentalExperience; // Step 5 has Q1-Q5, no extended fields
+    const isStep6 = dentalExperience; // Step 6 has extended fields
 
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `Home!M${rowIndex}:AB${rowIndex}`,
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [[
-          appointmentTimesString,    // M - Q1: When do you prefer appointments?
-          timeline,                  // N - Q2: When was your most recent appointment?
-          dentalCareString,          // O - Q3: What type of dental care?
-          factorsString,             // P - Q4: How do you feel about visiting?
-          previousExperience || '',  // Q - Q5: Main reason for looking?
-          dentalExperience || '',    // R - Q6: Previous dental experience?
-          mostImportantFactor || '', // S - Q7: Factor that matters most?
-          smileConfidence || '',     // T - Q8: Smile confidence?
-          sameClinician || '',       // U - Q9: Same clinician important?
-          treatmentsString,          // V - Q10: Treatments needed?
-          beforeAppointment || '',   // W - Q11: Feel before appointment?
-          stayLongTerm || '',        // X - Q12: Stay long-term?
-          preventingVisits || '',    // Y - Q13: What prevents visits?
-          cosmeticImportance || '',  // Z - Q14: Cosmetic importance?
-          preferredContact || '',    // AA - Q15: Preferred contact?
-          additionalFeedback || '',  // AB - Additional Feedback
-        ]],
-      },
-    });
+    if (isStep5) {
+      // Step 5: Save only Q1-Q5 (columns M-Q)
+      const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
+      const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
+      const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : importantFactors;
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!M${rowIndex}:Q${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[
+            appointmentTimesString,    // M - Q1: When do you prefer appointments?
+            timeline,                  // N - Q2: When was your most recent appointment?
+            dentalCareString,          // O - Q3: What type of dental care?
+            factorsString,             // P - Q4: How do you feel about visiting?
+            previousExperience || '',  // Q - Q5: Main reason for looking?
+          ]],
+        },
+      });
+    } else if (isStep6) {
+      // Step 6: Save only Q6-Q15 + Additional Feedback (columns R-AB)
+      const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!R${rowIndex}:AB${rowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[
+            dentalExperience || '',    // R - Q6: Previous dental experience?
+            mostImportantFactor || '', // S - Q7: Factor that matters most?
+            smileConfidence || '',     // T - Q8: Smile confidence?
+            sameClinician || '',       // U - Q9: Same clinician important?
+            treatmentsString,          // V - Q10: Treatments needed?
+            beforeAppointment || '',   // W - Q11: Feel before appointment?
+            stayLongTerm || '',        // X - Q12: Stay long-term?
+            preventingVisits || '',    // Y - Q13: What prevents visits?
+            cosmeticImportance || '',  // Z - Q14: Cosmetic importance?
+            preferredContact || '',    // AA - Q15: Preferred contact?
+            additionalFeedback || '',  // AB - Additional Feedback
+          ]],
+        },
+      });
+    }
 
     // Award entries based on survey completion
     // Check if this is the 5-question survey or extended survey

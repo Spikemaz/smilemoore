@@ -1130,14 +1130,14 @@ export default function LandingPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
-              // Save all survey responses
+              // Save only the extended survey responses (Q6-Q15 + Additional Feedback)
+              // Q1-Q5 were already saved in step 5
               try {
                 await fetch('/api/save-survey', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     email: formData.email,
-                    ...surveyData,
                     ...extendedSurvey,
                   }),
                 });
