@@ -500,183 +500,155 @@ export default function LandingPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      if (step === 1) {
-        // Calculate time from page load to email submission (in seconds)
-        const timeToSubmit = Math.round((Date.now() - pageLoadTimestamp) / 1000);
-        const emailTime = Date.now();
-        setEmailSubmitTime(emailTime);
+    if (step === 1) {
+      // Move to next step IMMEDIATELY - before any other operations
+      const emailTime = Date.now();
+      setEmailSubmitTime(emailTime);
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: 'instant' });
 
-        // ALWAYS clear customerId when submitting step 1 (email)
-        // This is a NEW signup, not a continuation
-        console.log('🆔 Starting fresh signup - clearing any old Customer ID');
-        localStorage.removeItem('smilemoore_customer_id');
-        localStorage.removeItem('smilemoore_last_email');
-        setCustomerId('');
+      // Calculate time from page load to email submission (in seconds)
+      const timeToSubmit = Math.round((emailTime - pageLoadTimestamp) / 1000);
 
-        // Submit email immediately to Google Sheets - this creates a NEW row
-        const response = await fetch('/api/submit-voucher', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            name: '',
-            phone: '',
-            address: '',
-            campaignSource,
-            timeToSubmit,
-            scrollDepth: maxScrollDepth,
-            referredBy,
-          }),
-        });
+      // ALWAYS clear customerId when submitting step 1 (email)
+      localStorage.removeItem('smilemoore_customer_id');
+      localStorage.removeItem('smilemoore_last_email');
+      setCustomerId('');
 
-        if (!response.ok) {
-          alert('Failed to submit. Please try again.');
-          return;
-        }
+      // Get SmileMoore Universal ID from localStorage
+      const smUniversalId = localStorage.getItem('sm_universal_id');
 
-        const data = await response.json();
-        if (data.voucherCode) {
-          setVoucherCode(data.voucherCode);
-        }
-        if (data.totalSignups) {
-          setTotalSignups(data.totalSignups);
-        }
-        if (data.customerId) {
-          setCustomerId(data.customerId);
-          // Store customerId AND email in localStorage to persist across page refreshes
-          // This allows the user to refresh the page during steps 2-4 without losing their signup
-          localStorage.setItem('smilemoore_customer_id', data.customerId.toString());
-          localStorage.setItem('smilemoore_last_email', formData.email);
-          console.log('🆔 Stored new Customer ID:', data.customerId, 'for email:', formData.email);
-        }
-
-        // Track email submission
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'email_submitted',
-          voucher_value: voucherValue
-        });
-
-        setStep(2);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (step === 2) {
-        // Calculate time between email submit and name submit
-        const nameTime = Date.now();
-        const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
-        setNameSubmitTime(nameTime);
-
-        console.log('📝 Updating name with:', { email: formData.email, customerId, name: formData.name });
-
-        // Update name in Google Sheets
-        const nameResponse = await fetch('/api/update-voucher', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            customerId,
-            field: 'name',
-            value: formData.name,
-            campaignSource,
-            emailToName,
-          }),
-        });
-
-        const nameResult = await nameResponse.json();
-        console.log('📝 Name update response:', nameResult);
-
-        if (!nameResponse.ok) {
-          console.error('Failed to update name:', nameResult);
-          alert('Failed to save name. Please try again.');
-          return;
-        }
-
-        setStep(3);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (step === 3) {
-        // Combined step: phone + postcode
-        // Calculate time between name submit and final submit
-        const finalTime = Date.now();
-        const nameToFinal = Math.round((finalTime - nameSubmitTime) / 1000);
-
-        // Calculate total time from page load to completion
-        const totalTime = Math.round((finalTime - pageLoadTimestamp) / 1000);
-
-        console.log('📞 Updating phone with:', { email: formData.email, customerId, phone: formData.phone });
-
-        // Update phone in Google Sheets
-        const phoneResponse = await fetch('/api/update-voucher', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            customerId,
-            field: 'phone',
-            value: formData.phone,
-            campaignSource,
-            nameToPhone: nameToFinal,
-          }),
-        });
-
-        if (!phoneResponse.ok) {
-          const phoneResult = await phoneResponse.json();
-          console.error('Failed to update phone:', phoneResult);
-          alert('Failed to save phone. Please try again.');
-          return;
-        }
-
-        console.log('📮 Updating postcode with:', { email: formData.email, customerId, address: formData.address });
-
-        const response = await fetch('/api/update-voucher', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            customerId,
-            field: 'address',
-            value: formData.address,
-            campaignSource,
-            phoneToPostcode: 0,
-            totalTime,
-          }),
-        });
-
+      // Submit email in background to Google Sheets
+      fetch('/api/submit-voucher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          name: '',
+          phone: '',
+          address: '',
+          campaignSource,
+          timeToSubmit,
+          scrollDepth: maxScrollDepth,
+          referredBy,
+          smUniversalId,
+        }),
+      }).then(async (response) => {
         if (response.ok) {
-          // Track voucher claimed
+          const data = await response.json();
+          if (data.voucherCode) {
+            setVoucherCode(data.voucherCode);
+          }
+          if (data.totalSignups) {
+            setTotalSignups(data.totalSignups);
+          }
+          if (data.customerId) {
+            setCustomerId(data.customerId);
+            localStorage.setItem('smilemoore_customer_id', data.customerId.toString());
+            localStorage.setItem('smilemoore_last_email', formData.email);
+          }
+
+          // Track email submission
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
-            event: 'voucher_claimed',
-            voucher_value: voucherValue,
-            currency: 'GBP'
+            event: 'email_submitted',
+            voucher_value: voucherValue
           });
-
-          // CRITICAL: Clear visitor tracking so next person on this device is counted as unique
-          // This handles the case where multiple people use the same device to sign up
-          localStorage.removeItem('smilemoore_visitor_id');
-          localStorage.removeItem('smilemoore_session_count');
-          localStorage.removeItem('smilemoore_first_visit');
-          console.log('✅ Signup complete - cleared visitor tracking for next person');
-
-          setStep(4);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          alert('Failed to submit. Please try again.');
         }
-      }
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert('Failed to submit. Please try again.');
+      }).catch(error => {
+        console.error('Error submitting email:', error);
+      });
+    } else if (step === 2) {
+      // Move to next step IMMEDIATELY
+      const nameTime = Date.now();
+      setNameSubmitTime(nameTime);
+      setStep(3);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Calculate time between email submit and name submit
+      const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
+
+      // Update name in background
+      fetch('/api/update-voucher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          customerId,
+          field: 'name',
+          value: formData.name,
+          campaignSource,
+          emailToName,
+        }),
+      }).catch(error => {
+        console.error('Error updating name:', error);
+      });
+    } else if (step === 3) {
+      // Move to next step IMMEDIATELY
+      const finalTime = Date.now();
+      setStep(4);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Calculate time between name submit and final submit
+      const nameToFinal = Math.round((finalTime - nameSubmitTime) / 1000);
+      const totalTime = Math.round((finalTime - pageLoadTimestamp) / 1000);
+
+      // Update phone in background
+      fetch('/api/update-voucher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          customerId,
+          field: 'phone',
+          value: formData.phone,
+          campaignSource,
+          nameToPhone: nameToFinal,
+        }),
+      }).catch(error => {
+        console.error('Error updating phone:', error);
+      });
+
+      // Update address in background
+      fetch('/api/update-voucher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          customerId,
+          field: 'address',
+          value: formData.address,
+          campaignSource,
+          phoneToPostcode: 0,
+          totalTime,
+        }),
+      }).then(() => {
+        // Track voucher claimed
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'voucher_claimed',
+          voucher_value: voucherValue,
+          currency: 'GBP'
+        });
+
+        // Clear visitor tracking
+        localStorage.removeItem('smilemoore_visitor_id');
+        localStorage.removeItem('smilemoore_session_count');
+        localStorage.removeItem('smilemoore_first_visit');
+      }).catch(error => {
+        console.error('Error updating address:', error);
+      });
     }
   };
 
@@ -1566,14 +1538,14 @@ export default function LandingPage() {
               <div className="bg-white p-4 rounded-lg mb-4">
                 <p className="text-sm mb-2" style={{ color: '#666' }}>Your referral link:</p>
                 <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
-                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${encodeURIComponent(formData.name)}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
                 </p>
               </div>
 
               <button
                 onClick={async () => {
                   const randomNum = Math.floor(100 + Math.random() * 900);
-                  const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name)}-${randomNum}`;
+                  const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
                     alert('Copied, Now Share To Give Someone £50 Voucher');

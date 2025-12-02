@@ -28,7 +28,7 @@ function getGoogleSheetsClient() {
 
 export async function POST(request: Request) {
   try {
-    const { email, name, phone, address, campaignSource, timeToSubmit, scrollDepth, referredBy } = await request.json();
+    const { email, name, phone, address, campaignSource, timeToSubmit, scrollDepth, referredBy, smUniversalId } = await request.json();
 
     // Validate required fields - only email is required for initial submission
     if (!email) {
@@ -39,9 +39,10 @@ export async function POST(request: Request) {
     }
 
     // Get IP address from request headers
-    const ip = request.headers.get('x-forwarded-for') ||
-               request.headers.get('x-real-ip') ||
-               'unknown';
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const ip = forwardedFor
+      ? forwardedFor.split(',')[0].trim() // Take first IP if multiple
+      : request.headers.get('x-real-ip') || 'unknown';
 
     // Get current signup count
     const totalSignups = await getTotalSignups();
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
       batchNumber,
       ipAddress: ip,
       referredBy: referredBy || '',
+      smUniversalId: smUniversalId || '',
     });
 
     if (!result.success || !result.customerId) {
@@ -85,15 +87,52 @@ export async function POST(request: Request) {
     // Use the actual Customer ID that was written to the sheet
     const customerId = result.customerId;
 
-    // Update visitor status to "Email Submitted" with time and scroll metrics
-    await updateVisitorStatus(
-      ip,
-      email,
-      customerId,
-      'Email Submitted',
-      timeToSubmit,
-      scrollDepth
-    );
+    // Update Visitors sheet with voucher code at the same time - find most recent visitor
+    try {
+      const sheets = getGoogleSheetsClient();
+
+      const visitorsResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'Visitors!A:AU',
+      });
+
+      const visitors = visitorsResponse.data.values || [];
+
+      // Find most recent visitor row (last row)
+      const visitorRowIndex = visitors.length;
+      console.log('📊 Total Visitors rows:', visitors.length, '| Writing to row:', visitorRowIndex);
+
+      if (visitorRowIndex > 1) {
+        await sheets.spreadsheets.values.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            valueInputOption: 'USER_ENTERED',
+            data: [
+              {
+                range: `Visitors!J${visitorRowIndex}`,
+                values: [[email]],
+              },
+              {
+                range: `Visitors!K${visitorRowIndex}`,
+                values: [[customerId]],
+              },
+              {
+                range: `Visitors!L${visitorRowIndex}`,
+                values: [['Email Submitted']],
+              },
+              {
+                range: `Visitors!AU${visitorRowIndex}`, // Column AU - Voucher Code
+                values: [[voucherCode]],
+              },
+            ],
+          },
+        });
+        console.log('✅ Updated Visitors sheet row', visitorRowIndex, 'with email:', email, 'and voucher code:', voucherCode);
+      }
+    } catch (error) {
+      console.error('Error updating Visitors sheet:', error);
+      // Don't fail the whole request if this fails
+    }
 
     // If this signup was referred, update referrer's stats
     if (referredBy) {
