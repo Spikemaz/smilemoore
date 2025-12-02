@@ -22,6 +22,33 @@ function getGoogleSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
+// Get Email metrics from EMAIL sheet
+async function getEmailMetricsFromSheet(sheets: any) {
+  try {
+    const emailResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'EMAIL!A2:AL',
+    });
+    const emailData = emailResponse.data.values || [];
+    const sent = emailData.length;
+    const delivered = emailData.filter(row => row[11] === 'Yes').length; // Column L
+    const opened = emailData.filter(row => row[12] === 'Yes').length; // Column M
+    const clicked = emailData.filter(row => row[13] === 'Yes').length; // Column N
+
+    return {
+      totalSent: sent,
+      totalDelivered: delivered,
+      totalOpened: opened,
+      totalClicked: clicked,
+      openRate: sent > 0 ? ((opened / sent) * 100).toFixed(1) : '0.0',
+      clickRate: sent > 0 ? ((clicked / sent) * 100).toFixed(1) : '0.0',
+    };
+  } catch (error) {
+    console.log('EMAIL sheet not yet populated, using fallback logic');
+    return null; // Return null to use existing logic
+  }
+}
+
 // Get WhatsApp metrics from WA sheet
 async function getWhatsAppMetrics(sheets: any) {
   try {
@@ -303,14 +330,20 @@ export async function GET() {
       },
     ];
 
+    // Try to get email metrics from EMAIL sheet, fallback to existing logic
+    const emailSheetMetrics = await getEmailMetricsFromSheet(sheets);
+    const emailMetrics = emailSheetMetrics || {
+      totalSent: totalEmailsSent,
+      totalOpened: totalEmailsOpened,
+      totalClicked: totalEmailsClicked,
+      openRate: emailOpenRate.toFixed(1),
+      clickRate: emailClickRate.toFixed(1),
+    };
+
     return NextResponse.json({
       success: true,
       email: {
-        totalSent: totalEmailsSent,
-        totalOpened: totalEmailsOpened,
-        totalClicked: totalEmailsClicked,
-        openRate: emailOpenRate.toFixed(1),
-        clickRate: emailClickRate.toFixed(1),
+        ...emailMetrics,
         conversionRate: emailConversionRate.toFixed(1),
         templates: emailTemplatePerformance,
       },

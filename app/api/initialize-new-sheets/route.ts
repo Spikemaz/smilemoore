@@ -38,6 +38,9 @@ export async function POST(request: Request) {
 
     // Create missing sheets
     const sheetsToCreate = [];
+    if (!existingSheets.includes('EMAIL')) {
+      sheetsToCreate.push({ addSheet: { properties: { title: 'EMAIL' } } });
+    }
     if (!existingSheets.includes('WA')) {
       sheetsToCreate.push({ addSheet: { properties: { title: 'WA' } } });
     }
@@ -54,6 +57,27 @@ export async function POST(request: Request) {
         requestBody: { requests: sheetsToCreate },
       });
     }
+
+    // Initialize EMAIL sheet headers
+    const emailHeaders = [[
+      'Email ID', 'Timestamp', 'Customer ID', 'Email Address', 'Name', 'Phone',
+      'Campaign Type', 'Template Name', 'Subject Line', 'Email Content Preview',
+      'Sent Status', 'Delivered Status', 'Opened Status', 'Clicked Status',
+      'Bounced Status', 'Unsubscribed Status', 'Spam Reported', 'Send Date/Time',
+      'Delivered Date/Time', 'First Opened Date/Time', 'Last Opened Date/Time',
+      'Total Opens Count', 'Click Date/Time', 'Total Clicks Count', 'Links Clicked',
+      'Time to First Open (minutes)', 'Time to Click (minutes)', 'Conversion',
+      'Conversion Type', 'Error Message', 'Retry Count', 'Final Status',
+      'ESP Provider', 'ESP Message ID', 'Device Opened On', 'Email Client',
+      'Location', 'A/B Test Variant'
+    ]];
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'EMAIL!A1:AL1',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: emailHeaders },
+    });
 
     // Initialize WA sheet headers
     const waHeaders = [[
@@ -115,7 +139,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'WA, SMS, and FUNNEL sheets initialized with headers',
+      message: 'EMAIL, WA, SMS, and FUNNEL sheets initialized with headers',
       sheetsCreated: sheetsToCreate.map(s => s.addSheet.properties.title),
     });
   } catch (error) {
