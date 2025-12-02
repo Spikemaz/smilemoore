@@ -40,6 +40,7 @@ export async function POST(request: Request) {
       preventingVisits,
       cosmeticImportance,
       preferredContact,
+      dentalExperience,
       additionalFeedback
     } = await request.json();
 
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
           preventingVisits || '',    // X - Q12: What prevents visits?
           cosmeticImportance || '',  // Y - Q13: Cosmetic importance?
           preferredContact || '',    // Z - Q14: Preferred contact?
-          '',                        // AA - Q15: (placeholder for future question)
+          dentalExperience || '',    // AA - Q15: Previous dental experience?
           additionalFeedback || '',  // AB - Additional Feedback
         ]],
       },

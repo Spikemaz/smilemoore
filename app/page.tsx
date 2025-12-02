@@ -57,7 +57,7 @@ export default function LandingPage() {
     previousExperience: '', // Q5: Single choice (reason for new dentist)
   });
   const [extendedSurvey, setExtendedSurvey] = useState({
-    previousExperience: '',
+    dentalExperience: '',
     mostImportantFactor: '',
     smileConfidence: '',
     sameClinician: '',
@@ -1163,13 +1163,13 @@ export default function LandingPage() {
                     'I feel nervous about dental visits'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: extendedSurvey.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: extendedSurvey.dentalExperience === option ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="radio"
-                        name="previousExperience"
+                        name="dentalExperience"
                         value={option}
-                        checked={extendedSurvey.previousExperience === option}
-                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, previousExperience: e.target.value })}
+                        checked={extendedSurvey.dentalExperience === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, dentalExperience: e.target.value })}
                         required
                         className="mr-3 w-5 h-5"
                       />
