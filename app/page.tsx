@@ -822,8 +822,11 @@ export default function LandingPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-3" style={{ color: '#1f3a33' }}>
               Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
             </h1>
-            <p className="text-xl mb-6" style={{ color: '#666' }}>
-              Early Bird Special - Valid Towards Dental Treatment
+            <p className="text-xl mb-2" style={{ color: '#666' }}>
+              Early Bird Special
+            </p>
+            <p className="text-lg mb-6" style={{ color: '#666' }}>
+              Valid Towards Dental Treatment
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
