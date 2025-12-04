@@ -95,8 +95,87 @@ export default function JumperPage() {
     if (storedCustomerId) {
       setCustomerId(storedCustomerId);
       console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+
+      // Fetch existing customer data and pre-fill form
+      fetchAndPrefillCustomerData(storedCustomerId);
     }
   }, []);
+
+  // Fetch customer data and pre-fill the form
+  async function fetchAndPrefillCustomerData(customerId: string) {
+    try {
+      const response = await fetch(`/api/get-customer-data?customerId=${customerId}`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const data = result.data;
+        console.log('📋 Pre-filling form with existing customer data:', data);
+
+        // Pre-fill basic info
+        if (data.email) {
+          setFormData(prev => ({
+            ...prev,
+            email: data.email,
+            name: data.name || '',
+            phone: data.phone || '',
+            address: data.postcode || '',
+          }));
+        }
+
+        // Pre-fill survey data if exists
+        if (data.appointmentTimes) {
+          setSurveyData(prev => ({
+            ...prev,
+            appointmentTimes: data.appointmentTimes.split(', '),
+            timeline: data.timeline || '',
+            dentalCare: data.dentalCare.split(', '),
+            importantFactors: data.importantFactors || '',
+            previousExperience: data.previousExperience || '',
+          }));
+        }
+
+        // Pre-fill extended survey if exists
+        if (data.dentalExperience) {
+          setExtendedSurvey(prev => ({
+            ...prev,
+            dentalExperience: data.dentalExperience || '',
+            mostImportantFactor: data.mostImportantFactor || '',
+            smileConfidence: data.smileConfidence || '',
+            sameClinician: data.sameClinician || '',
+            neededTreatments: data.neededTreatments.split(', '),
+            beforeAppointment: data.beforeAppointment || '',
+            stayLongTerm: data.stayLongTerm || '',
+            preventingVisits: data.preventingVisits || '',
+            cosmeticImportance: data.cosmeticImportance || '',
+            preferredContact: data.preferredContact || '',
+            additionalFeedback: data.additionalFeedback || '',
+          }));
+        }
+
+        // Skip to the appropriate step based on what data is missing
+        if (data.hasExtendedSurvey) {
+          // They've completed everything - show final page
+          setStep(7);
+        } else if (data.hasSurveyQ1to5) {
+          // They have basic survey, need extended survey
+          setStep(6);
+        } else if (data.hasPhoneAddress) {
+          // They have contact info, need to do 5 questions
+          setStep(5);
+        } else if (data.hasBasicInfo) {
+          // They have email/name, need phone/address
+          setStep(3);
+        } else {
+          // Start from beginning
+          setStep(1);
+        }
+
+        console.log('✅ Form pre-filled and skipped to step', step);
+      }
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
+    }
+  }
 
   // Track first interaction (mouse move, scroll, click, touch, or keyboard)
   useEffect(() => {
