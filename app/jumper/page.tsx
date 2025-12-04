@@ -823,7 +823,7 @@ export default function JumperPage() {
               Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
             </h1>
             <p className="text-xl mb-2" style={{ color: '#666' }}>
-              Early Bird Special
+              Early Bird Survey
             </p>
             <p className="text-lg mb-6" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
