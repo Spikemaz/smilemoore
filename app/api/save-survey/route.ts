@@ -123,8 +123,8 @@ export async function POST(request: Request) {
           range: `Home!A${rowIndex}:L${rowIndex}`,
         });
         const originalRow = originalData.data.values?.[0] || [];
-        const originalCampaignSource = originalRow[6] || campaignSource; // Column G
-        const originalReferredBy = originalRow[11] || referredBy; // Column L
+        const originalCampaignSource = originalRow[6] || ''; // Column G
+        const originalReferredBy = originalRow[11] || ''; // Column L
 
         // Call submit-voucher API for each household member
         const householdVouchers = [];
