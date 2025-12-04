@@ -17,9 +17,11 @@ declare global {
     };
     mozConnection?: {
       effectiveType?: string;
+      type?: string;
     };
     webkitConnection?: {
       effectiveType?: string;
+      type?: string;
     };
   }
 }
