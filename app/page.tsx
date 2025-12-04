@@ -72,8 +72,9 @@ export default function LandingPage() {
     appointmentTimes: [] as string[], // Q2: Multiple choice
     timeline: '', // Q3: Single choice
     importantFactors: '', // Q4: Single choice (how they feel about dentist)
-    previousExperience: '', // Q5: Single choice (reason for new dentist)
+    previousExperience: '', // Q5: Single choice (household size)
   });
+  const [householdNames, setHouseholdNames] = useState<string[]>([]);
   const [extendedSurvey, setExtendedSurvey] = useState({
     dentalExperience: '',
     mostImportantFactor: '',
@@ -1000,6 +1001,9 @@ export default function LandingPage() {
               <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Help us build your perfect dental practice
               </p>
+              <p className="text-xs mt-2" style={{ color: '#999' }}>
+                Subject to terms and conditions.
+              </p>
             </div>
 
             <form onSubmit={async (e) => {
@@ -1165,19 +1169,17 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 5: Single choice */}
+              {/* Question 5: Household members */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  5. What's the main reason for looking for a new dentist?
+                  5. How many people in your household would potentially join the practice?
                 </label>
                 <div className="space-y-3">
                   {[
-                    'I\'m new to the area',
-                    'Dissatisfied with my current dentist',
-                    'Looking for better prices or payment plans',
-                    'Need a specific treatment or specialist',
-                    'My previous practice closed or stopped taking NHS patients',
-                    'Other'
+                    'Just me',
+                    '2 people',
+                    '3-4 people',
+                    '5+ people'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
                       style={{ borderColor: surveyData.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
@@ -1186,7 +1188,19 @@ export default function LandingPage() {
                         name="previousExperience"
                         value={option}
                         checked={surveyData.previousExperience === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, previousExperience: e.target.value })}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          // Initialize name fields based on selection
+                          if (e.target.value === 'Just me') {
+                            setHouseholdNames([]);
+                          } else if (e.target.value === '2 people') {
+                            setHouseholdNames(['']);
+                          } else if (e.target.value === '3-4 people') {
+                            setHouseholdNames(['', '', '']);
+                          } else if (e.target.value === '5+ people') {
+                            setHouseholdNames(['', '', '', '', '']);
+                          }
+                        }}
                         required
                         className="mr-3 w-5 h-5"
                       />
@@ -1194,6 +1208,49 @@ export default function LandingPage() {
                     </label>
                   ))}
                 </div>
+
+                {/* Show info popup when option is selected */}
+                {surveyData.previousExperience && surveyData.previousExperience !== 'Just me' && (
+                  <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                    <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                      💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                    </p>
+
+                    <div className="space-y-3">
+                      {householdNames.map((name, index) => (
+                        <div key={index}>
+                          <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                            Person {index + 2} Full Name
+                          </label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => {
+                              const newNames = [...householdNames];
+                              newNames[index] = e.target.value;
+                              setHouseholdNames(newNames);
+                            }}
+                            className="w-full px-4 py-2 border-2 rounded-lg"
+                            style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                            placeholder="Enter full name"
+                          />
+                        </div>
+                      ))}
+
+                      {/* Add more button for 5+ people */}
+                      {surveyData.previousExperience === '5+ people' && (
+                        <button
+                          type="button"
+                          onClick={() => setHouseholdNames([...householdNames, ''])}
+                          className="px-4 py-2 rounded-lg font-medium text-sm"
+                          style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                        >
+                          + Add More
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button
@@ -1217,6 +1274,9 @@ export default function LandingPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Can we ask for a little more feedback?
               </h3>
+              <p className="text-xs mt-2" style={{ color: '#999' }}>
+                Subject to terms and conditions.
+              </p>
             </div>
 
             <form onSubmit={async (e) => {
@@ -1584,40 +1644,30 @@ export default function LandingPage() {
                 <span className="text-6xl">🎉</span>
               </div>
               <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-                Congratulations!
+                Congratulations {formData.name}!
               </h2>
-              <p className="text-2xl mb-4" style={{ color: '#70d490' }}>
-                You're Now Eligible for Your £{voucherValue} Voucher!
+              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
+                You have now received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
               </p>
-              <div className="rounded-xl p-4 mb-4 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
-                <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                  🎟️ You have 3 entries in the prize draw worth up to £5,000!
-                </p>
-                <p className="text-sm" style={{ color: '#666' }}>
-                  • 1 entry for claiming your voucher<br/>
-                  • 1 entry for answering 4 questions<br/>
-                  • 1 entry for completing extended survey
-                </p>
-              </div>
-              <p className="text-base mb-8" style={{ color: '#666' }}>
-                Thank you for completing the survey. Your feedback helps us create the perfect dental practice for you.
+              <p className="text-lg mb-6" style={{ color: '#666' }}>
+                🎁 Worth up to £5,000!
               </p>
             </div>
 
-            {/* Share Section */}
+            {/* Share Section - NOW FIRST */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                🎄 Want Even More Entries?
+                🎄 Would you be kind enough to share with family, friends and neighbours?
               </h3>
-              <p className="text-lg mb-2" style={{ color: '#1f3a33' }}>
-                Who else do you know would like a £50 voucher, especially before Christmas?
+              <p className="text-lg mb-3" style={{ color: '#1f3a33' }}>
+                Give them the chance to win and get a £50 voucher before Christmas!
               </p>
-              <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
-                Share your unique link and receive <span className="font-bold">+10 bonus entries</span> for every friend who claims their voucher!
+              <p className="text-base mb-4" style={{ color: '#1f3a33' }}>
+                Share your unique link by copy and pasting or posting on your social media:
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
-                <p className="text-sm mb-2" style={{ color: '#666' }}>Your referral link:</p>
+                <p className="text-sm mb-2 font-semibold" style={{ color: '#1f3a33' }}>Your referral link:</p>
                 <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
                   {typeof window !== 'undefined' ? `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
                 </p>
@@ -1629,7 +1679,7 @@ export default function LandingPage() {
                   const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
-                    alert('Copied, Now Share To Give Someone £50 Voucher');
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
                   } catch (err) {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -1638,17 +1688,29 @@ export default function LandingPage() {
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('Copied, Now Share To Give Someone £50 Voucher');
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
                   }
                 }}
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                📋 Copy Share Link
+                📋 Copy & Share Link
               </button>
 
-              <p className="text-sm" style={{ color: '#1f3a33', opacity: 0.8 }}>
-                The more friends you share with, the better your chances!
+              <p className="text-sm font-semibold" style={{ color: '#1f3a33' }}>
+                ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
+              </p>
+            </div>
+
+            {/* Prize Draw Details */}
+            <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+              <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                🎟️ You currently have 3 entries in the prize draw
+              </p>
+              <p className="text-sm" style={{ color: '#666' }}>
+                • 1 entry for claiming your voucher<br/>
+                • 1 entry for answering 5 questions<br/>
+                • 1 entry for completing extended survey
               </p>
             </div>
 
