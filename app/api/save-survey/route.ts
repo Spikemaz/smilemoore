@@ -192,7 +192,7 @@ export async function POST(request: Request) {
         winningVariation = 'Referral';
       }
       // Check if they came from QR code
-      else if (campaignSource === 'QR Scan') {
+      else if (campaignSource === 'QR Leaflet 1 Scan' || campaignSource === 'QR Jumper Scan' || campaignSource === 'QR Scan') {
         winningVariation = 'QR';
       }
       // Check follow-up emails
@@ -235,7 +235,7 @@ export async function POST(request: Request) {
         winningVariation = 'Referral';
       }
       // Check if they came from QR code
-      else if (campaignSource === 'QR Scan') {
+      else if (campaignSource === 'QR Leaflet 1 Scan' || campaignSource === 'QR Jumper Scan' || campaignSource === 'QR Scan') {
         winningVariation = 'QR';
       }
       // Check follow-up emails

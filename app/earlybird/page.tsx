@@ -64,7 +64,7 @@ export default function EarlyBirdPage() {
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [totalSignups, setTotalSignups] = useState<number>(0);
   const [referredBy, setReferredBy] = useState<string>('');
-  const [campaignSource, setCampaignSource] = useState<string>('QR Scan');
+  const [campaignSource, setCampaignSource] = useState<string>('QR Leaflet 1 Scan');
   const [customerId, setCustomerId] = useState<string>('');
   const [firstInteractionTime, setFirstInteractionTime] = useState<number>(0);
   const [surveyData, setSurveyData] = useState({
@@ -324,8 +324,8 @@ export default function EarlyBirdPage() {
         const emailVariation = urlParams.get('email') || '';
         const smsVariation = urlParams.get('sms') || '';
 
-        // Get campaign source - prioritize referral, email, SMS, then UTM, then keep default 'QR Scan'
-        let sourceName = 'QR Scan'; // Default for /earlybird page
+        // Get campaign source - prioritize referral, email, SMS, then UTM, then keep default 'QR Leaflet 1 Scan'
+        let sourceName = 'QR Leaflet 1 Scan'; // Default for /earlybird page
         if (ref) {
           sourceName = `Referral: ${ref}`;
         } else if (emailVariation) {
