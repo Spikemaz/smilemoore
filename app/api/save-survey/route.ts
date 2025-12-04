@@ -117,12 +117,13 @@ export async function POST(request: Request) {
       if (householdNames && Array.isArray(householdNames) && householdNames.length > 0) {
         console.log(`👨‍👩‍👧‍👦 Creating vouchers for ${householdNames.length} household members`);
 
-        // Get the original customer's data to copy referral info
+        // Get the original customer's data to copy campaign source and referral info
         const originalData = await sheets.spreadsheets.values.get({
           spreadsheetId: SPREADSHEET_ID,
           range: `Home!A${rowIndex}:L${rowIndex}`,
         });
         const originalRow = originalData.data.values?.[0] || [];
+        const originalCampaignSource = originalRow[6] || 'URL Direct'; // Column G - Campaign Source
         const originalReferredBy = originalRow[11] || ''; // Column L
 
         // Call submit-voucher API for each household member
@@ -130,6 +131,9 @@ export async function POST(request: Request) {
         for (const memberName of householdNames) {
           if (memberName && memberName.trim()) {
             try {
+              // Combine original source with Q5 marker: "QR Leaflet 1 Scan - Q5 Additional Person"
+              const householdCampaignSource = `${originalCampaignSource} - Q5 Additional Person`;
+
               const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/submit-voucher`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -138,7 +142,7 @@ export async function POST(request: Request) {
                   name: memberName.trim(),
                   phone: '', // Will be filled later if needed
                   address: '', // Will be filled later if needed
-                  campaignSource: 'Q5 Additional Person', // Mark as household member for easy data filtering
+                  campaignSource: householdCampaignSource, // Preserves original source + Q5 marker
                   timeToSubmit: 0,
                   scrollDepth: 0,
                   referredBy: originalReferredBy,
