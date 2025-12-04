@@ -824,15 +824,11 @@ export default function JumperPage() {
               Claim Your £{voucherValue}<br />Voucher
             </h1>
 
-            <p className="text-xl mb-2" style={{ color: '#666' }}>
-              Early Bird Survey
-            </p>
-
             <p className="text-sm mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="text-center">
                 <label htmlFor="email" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
                   Enter Your Email Below
@@ -859,7 +855,7 @@ export default function JumperPage() {
               </button>
 
               {/* Footer */}
-              <div className="mt-6 pt-4 border-t text-center" style={{ borderColor: '#e0e0e0' }}>
+              <div className="mt-3 pt-3 border-t text-center" style={{ borderColor: '#e0e0e0' }}>
                 <p className="text-sm" style={{ color: '#666' }}>
                   🔒 We never share your information. You'll receive your voucher instantly.
                 </p>
