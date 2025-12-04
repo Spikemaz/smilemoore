@@ -974,13 +974,13 @@ export default function EarlyBirdPage() {
             {/* Prize Draw Banner at Top */}
             <div className="rounded-xl p-6 mb-8 text-center" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
               <h3 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                🏆 Win 1 Year of FREE Dentistry
+                Would you like the chance to Win 1 Year Of FREE Dentistry?
               </h3>
               <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
-                Worth up to £5,000!
+                Worth Up To £5000!
               </p>
               <p className="text-lg" style={{ color: '#666' }}>
-                Takes 20 seconds. Join {totalSignups} others.
+                {totalSignups} Others In The Draw & Only Takes "20" Seconds
               </p>
             </div>
 
