@@ -1352,16 +1352,94 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 6: Extended Survey Questions */}
+        {/* Step 6: Congratulations + Referral + Bonus Questions */}
         {step === 6 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-6">
+            {/* Congratulations Section */}
+            <div className="text-center mb-8">
+              <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-6xl">🎉</span>
+              </div>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+                Congratulations {formData.name}!
+              </h2>
+              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
+                You have now received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
+              </p>
+              <p className="text-lg mb-4" style={{ color: '#666' }}>
+                🎁 Worth up to £5,000!
+              </p>
+
+              {/* Prize Draw Entries */}
+              <div className="rounded-xl p-4 mb-6 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You currently have 2 entries in the prize draw
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 5 questions
+                </p>
+              </div>
+            </div>
+
+            {/* Referral Section */}
+            <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: '#cfe8d7' }}>
+              <h3 className="text-2xl font-bold mb-3 text-center" style={{ color: '#1f3a33' }}>
+                🎄 Would you be kind enough to share with family, friends and neighbours?
+              </h3>
+              <p className="text-lg mb-3 text-center" style={{ color: '#1f3a33' }}>
+                Give them the chance to win and get a £50 voucher before Christmas!
+              </p>
+              <p className="text-base mb-4 text-center" style={{ color: '#1f3a33' }}>
+                Share your unique link by copy and pasting or posting on your social media:
+              </p>
+
+              <div className="bg-white p-4 rounded-lg mb-4">
+                <p className="text-sm mb-2 font-semibold" style={{ color: '#1f3a33' }}>Your referral link:</p>
+                <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${customerId}` : 'Loading...'}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  const referralLink = `${window.location.origin}?ref=${customerId}`;
+                  try {
+                    await navigator.clipboard.writeText(referralLink);
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                  } catch (err) {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = referralLink;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                  }
+                }}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                📋 Copy & Share Link
+              </button>
+
+              <p className="text-sm font-semibold text-center" style={{ color: '#1f3a33' }}>
+                ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
+              </p>
+            </div>
+
+            {/* Bonus Questions Section */}
+            <div className="text-center mb-6 mt-12">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                 🔥 BONUS QUESTIONS
               </span>
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Can we ask for a little more feedback?
+                Would you be kind enough to answer a few more questions?
               </h3>
+              <p className="text-base mb-2" style={{ color: '#666' }}>
+                Help us create your perfect dental practice
+              </p>
               <p className="text-xs mt-2" style={{ color: '#999' }}>
                 Subject to terms and conditions.
               </p>
@@ -1724,34 +1802,40 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 7: Congratulations & Share */}
+        {/* Step 7: Final Thank You & Share Again */}
         {step === 7 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-6">
               <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-6xl">🎉</span>
+                <span className="text-6xl">🙏</span>
               </div>
               <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-                Congratulations {formData.name}!
+                Thank You {formData.name}!
               </h2>
-              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
-                You have now received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
+              <p className="text-xl mb-4" style={{ color: '#1f3a33' }}>
+                Your feedback is invaluable in helping us create the perfect dental practice for you.
               </p>
-              <p className="text-lg mb-6" style={{ color: '#666' }}>
-                🎁 Worth up to £5,000!
-              </p>
+
+              {/* Final Prize Draw Count */}
+              <div className="rounded-xl p-4 mb-6 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You now have 3 entries in the prize draw!
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 5 questions<br/>
+                  • 1 entry for completing bonus questions
+                </p>
+              </div>
             </div>
 
-            {/* Share Section - NOW FIRST */}
+            {/* Share Again Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                🎄 Would you be kind enough to share with family, friends and neighbours?
+                🎄 One More Thing... Share Again?
               </h3>
               <p className="text-lg mb-3" style={{ color: '#1f3a33' }}>
-                Give them the chance to win and get a £50 voucher before Christmas!
-              </p>
-              <p className="text-base mb-4" style={{ color: '#1f3a33' }}>
-                Share your unique link by copy and pasting or posting on your social media:
+                Know anyone else who'd love a £50 voucher before Christmas?
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
@@ -1766,16 +1850,15 @@ export default function LandingPage() {
                   const referralLink = `${window.location.origin}?ref=${customerId}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
-                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                    alert('Copied! Share to give more people a £50 voucher 🎄');
                   } catch (err) {
-                    // Fallback for older browsers
                     const textArea = document.createElement('textarea');
                     textArea.value = referralLink;
                     document.body.appendChild(textArea);
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                    alert('Copied! Share to give more people a £50 voucher 🎄');
                   }
                 }}
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
@@ -1785,19 +1868,7 @@ export default function LandingPage() {
               </button>
 
               <p className="text-sm font-semibold" style={{ color: '#1f3a33' }}>
-                ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
-              </p>
-            </div>
-
-            {/* Prize Draw Details */}
-            <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
-              <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                🎟️ You currently have 3 entries in the prize draw
-              </p>
-              <p className="text-sm" style={{ color: '#666' }}>
-                • 1 entry for claiming your voucher<br/>
-                • 1 entry for answering 5 questions<br/>
-                • 1 entry for completing extended survey
+                ⭐ +10 extra entries for every friend who claims!
               </p>
             </div>
 
