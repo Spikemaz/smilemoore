@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
-    const { email, householdVouchers, primaryName } = await request.json();
+    const { email, householdVouchers, primaryName, customerId } = await request.json();
 
     if (!email || !householdVouchers || householdVouchers.length === 0) {
       return NextResponse.json(
@@ -14,10 +14,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate referral link using primary person's name
+    // Generate referral link using primary person's name + Customer ID for tracking
     const referralName = primaryName || householdVouchers[0]?.name || 'Friend';
     const randomNum = Math.floor(100 + Math.random() * 900);
-    const referralLink = `https://smilemoore.co.uk?ref=${encodeURIComponent(referralName.split(' ')[0])}-${randomNum}`;
+    const cidParam = customerId ? `&cid=${customerId}` : '';
+    const referralLink = `https://smilemoore.co.uk?ref=${encodeURIComponent(referralName.split(' ')[0])}-${randomNum}${cidParam}`;
 
     // Build HTML for voucher codes table
     const voucherRows = householdVouchers.map((member: any) => `

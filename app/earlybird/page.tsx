@@ -145,6 +145,14 @@ export default function EarlyBirdPage() {
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
 
+        // Extract Customer ID from URL (for email follow-ups)
+        const customerIdFromUrl = urlParams.get('cid') || '';
+        if (customerIdFromUrl) {
+          setCustomerId(customerIdFromUrl);
+          localStorage.setItem('smilemoore_customer_id', customerIdFromUrl);
+          console.log('🆔 Customer ID from email link:', customerIdFromUrl);
+        }
+
         // Extract UTM parameters
         const utmSource = urlParams.get('utm_source') || '';
         const utmMedium = urlParams.get('utm_medium') || '';
