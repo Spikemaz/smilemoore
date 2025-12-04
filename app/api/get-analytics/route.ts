@@ -31,9 +31,9 @@ async function getEmailMetricsFromSheet(sheets: any) {
     });
     const emailData = emailResponse.data.values || [];
     const sent = emailData.length;
-    const delivered = emailData.filter(row => row[11] === 'Yes').length; // Column L
-    const opened = emailData.filter(row => row[12] === 'Yes').length; // Column M
-    const clicked = emailData.filter(row => row[13] === 'Yes').length; // Column N
+    const delivered = emailData.filter((row: any[]) => row[11] === 'Yes').length; // Column L
+    const opened = emailData.filter((row: any[]) => row[12] === 'Yes').length; // Column M
+    const clicked = emailData.filter((row: any[]) => row[13] === 'Yes').length; // Column N
 
     return {
       totalSent: sent,
@@ -58,8 +58,8 @@ async function getWhatsAppMetrics(sheets: any) {
     });
     const waData = waResponse.data.values || [];
     const sent = waData.length;
-    const read = waData.filter(row => row[11] === 'Yes').length; // Column L
-    const replied = waData.filter(row => row[12] === 'Yes').length; // Column M
+    const read = waData.filter((row: any[]) => row[11] === 'Yes').length; // Column L
+    const replied = waData.filter((row: any[]) => row[12] === 'Yes').length; // Column M
 
     return {
       totalSent: sent,
@@ -81,7 +81,7 @@ async function getFunnelMetrics(sheets: any, totalVisitors: number, stage1: numb
     });
     const funnelData = funnelResponse.data.values || [];
     const funnelTotal = funnelData.length;
-    const funnelCompleted = funnelData.filter(row => row[35] === 'Completed').length; // Column AJ
+    const funnelCompleted = funnelData.filter((row: any[]) => row[35] === 'Completed').length; // Column AJ
 
     // Use FUNNEL sheet data if available, otherwise fallback to existing logic
     const visitors = funnelTotal > 0 ? funnelTotal : totalVisitors;
