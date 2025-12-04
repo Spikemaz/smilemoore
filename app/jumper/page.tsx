@@ -754,7 +754,7 @@ export default function JumperPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          Congratulations On Receiving Your Voucher
+          🎉 Congratulations On Receiving Your Voucher
         </span>
       );
     }
@@ -974,10 +974,10 @@ export default function JumperPage() {
             {/* Prize Draw Banner at Top */}
             <div className="rounded-xl p-6 mb-8 text-center" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
               <h3 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                Would you like the chance to Win 1 Year Of FREE Dentistry?
+                🏆 Would you like the chance to Win 1 Year Of FREE Dentistry?
               </h3>
               <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
-                Worth Up To £5000!
+                🏆 Worth Up To £5000!
               </p>
               <p className="text-lg" style={{ color: '#666' }}>
                 {totalSignups} Others In The Draw & Only Takes "20" Seconds
