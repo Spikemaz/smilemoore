@@ -15,9 +15,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine which file to update
-    const filePath = funnel === 'main'
-      ? path.join(process.cwd(), 'app', 'page.tsx')
-      : path.join(process.cwd(), 'app', 'earlybird', 'page.tsx');
+    let filePath: string;
+    if (funnel === 'main') {
+      filePath = path.join(process.cwd(), 'app', 'page.tsx');
+    } else if (funnel === 'earlybird') {
+      filePath = path.join(process.cwd(), 'app', 'earlybird', 'page.tsx');
+    } else if (funnel === 'jumper') {
+      filePath = path.join(process.cwd(), 'app', 'jumper', 'page.tsx');
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid funnel type' },
+        { status: 400 }
+      );
+    }
 
     // Read the current file
     let fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -86,9 +96,10 @@ export async function POST(request: NextRequest) {
     // Write the updated content back to the file
     fs.writeFileSync(filePath, fileContent, 'utf-8');
 
+    const funnelName = funnel === 'main' ? 'Main' : funnel === 'earlybird' ? 'Early Bird' : 'Jumper';
     return NextResponse.json({
       success: true,
-      message: `${funnel === 'main' ? 'Main' : 'Early Bird'} funnel updated successfully`,
+      message: `${funnelName} funnel updated successfully`,
       file: filePath
     });
 
