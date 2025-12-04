@@ -75,7 +75,7 @@ export default function EarlyBirdPage() {
     previousExperience: '', // Q5: Single choice (reason for new dentist)
   });
   const [extendedSurvey, setExtendedSurvey] = useState({
-    previousExperience: '',
+    dentalExperience: '',
     mostImportantFactor: '',
     smileConfidence: '',
     sameClinician: '',
@@ -87,6 +87,15 @@ export default function EarlyBirdPage() {
     preferredContact: '',
     additionalFeedback: '',
   });
+
+  // Retrieve customerId from localStorage on mount (for family signups with same email)
+  useEffect(() => {
+    const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
+    if (storedCustomerId) {
+      setCustomerId(storedCustomerId);
+      console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+    }
+  }, []);
 
   // Track first interaction (mouse move, scroll, click, touch, or keyboard)
   useEffect(() => {
@@ -311,10 +320,41 @@ export default function EarlyBirdPage() {
         if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
         if (!mucAds) console.warn('⚠️ Twitter/X muc_ads cookie not found after 5 seconds');
 
-        // Get campaign source - prioritize referral, then UTM, then default to QR Scan
-        let sourceName = 'QR Scan';
+        // Extract email and SMS campaign parameters
+        const emailVariation = urlParams.get('email') || '';
+        const smsVariation = urlParams.get('sms') || '';
+
+        // Get campaign source - prioritize referral, email, SMS, then UTM, then default to URL Direct
+        let sourceName = 'URL Direct';
         if (ref) {
-          sourceName = 'Referral';
+          sourceName = `Referral: ${ref}`;
+        } else if (emailVariation) {
+          // Map email template names to readable format
+          const emailNames: { [key: string]: string } = {
+            'voucher-single': 'Email: Voucher Single',
+            'voucher-family': 'Email: Voucher Family',
+            '4q-1': 'Email: 4Q Follow-up #1',
+            '4q-2': 'Email: 4Q Follow-up #2',
+            '4q-3': 'Email: 4Q Follow-up #3',
+            '10q-1': 'Email: 10Q Follow-up #1',
+            '10q-2': 'Email: 10Q Follow-up #2',
+            '10q-3': 'Email: 10Q Follow-up #3',
+            'christmas': 'Email: Christmas Sharing',
+            'referral': 'Email: Referral Follow-up',
+          };
+          sourceName = emailNames[emailVariation] || `Email: ${emailVariation}`;
+        } else if (smsVariation) {
+          // Map SMS template names to readable format
+          const smsNames: { [key: string]: string } = {
+            '4q-1': 'SMS: 4Q Follow-up #1',
+            '4q-2': 'SMS: 4Q Follow-up #2',
+            '4q-3': 'SMS: 4Q Follow-up #3',
+            '10q-1': 'SMS: 10Q Follow-up #1',
+            '10q-2': 'SMS: 10Q Follow-up #2',
+            '10q-3': 'SMS: 10Q Follow-up #3',
+            'referral': 'SMS: Referral Follow-up',
+          };
+          sourceName = smsNames[smsVariation] || `SMS: ${smsVariation}`;
         } else if (utmSource) {
           sourceName = utmSource;
         }
@@ -559,10 +599,15 @@ export default function EarlyBirdPage() {
         ? Math.round((firstInteractionTime - pageLoadTimestamp) / 1000)
         : 0;
 
+      // ALWAYS clear customerId when submitting step 1 (email)
+      localStorage.removeItem('smilemoore_customer_id');
+      localStorage.removeItem('smilemoore_last_email');
+      setCustomerId('');
+
       // Get SmileMoore Universal ID from localStorage
       const smUniversalId = localStorage.getItem('sm_universal_id');
 
-      // Submit email in background
+      // Submit email in background to Google Sheets
       fetch('/api/submit-voucher', {
         method: 'POST',
         headers: {
@@ -591,6 +636,8 @@ export default function EarlyBirdPage() {
           }
           if (data.customerId) {
             setCustomerId(data.customerId);
+            localStorage.setItem('smilemoore_customer_id', data.customerId.toString());
+            localStorage.setItem('smilemoore_last_email', formData.email);
           }
 
           // Track email submission
@@ -774,8 +821,8 @@ export default function EarlyBirdPage() {
                   value={formData.email}
                   onChange={(e) => updateField('email', e.target.value)}
                   required
-                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all placeholder-gray-500 text-center"
-                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
+                  className="w-full px-6 py-4 text-lg border-2 rounded-xl focus:ring-4 transition-all text-center"
+                  style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7', color: '#1f3a33' }}
                   placeholder="your@email.com"
                   autoFocus
                 />
@@ -969,6 +1016,22 @@ export default function EarlyBirdPage() {
                 alert('Please select at least one preferred appointment time.');
                 return;
               }
+
+              // Save the first 5 questions to Google Sheets immediately
+              try {
+                await fetch('/api/save-survey', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: formData.email,
+                    ...surveyData,
+                  }),
+                });
+                console.log('✅ First 5 questions saved to Google Sheets');
+              } catch (error) {
+                console.error('Error saving first 5 questions:', error);
+              }
+
               // Move to extended survey (step 6)
               setStep(6);
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1160,21 +1223,18 @@ export default function EarlyBirdPage() {
               <p className="text-lg mb-2" style={{ color: '#666' }}>
                 It takes 20 seconds and it will really shape your dental experience.
               </p>
-              <p className="text-base font-semibold" style={{ color: '#1f3a33' }}>
-                Complete to earn +1 entry (3 entries total) 🎟️
-              </p>
             </div>
 
             <form onSubmit={async (e) => {
               e.preventDefault();
-              // Save all survey responses
+              // Save only the extended survey responses (Q6-Q15 + Additional Feedback)
+              // Q1-Q5 were already saved in step 5
               try {
                 await fetch('/api/save-survey', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     email: formData.email,
-                    ...surveyData,
                     ...extendedSurvey,
                   }),
                 });
@@ -1200,13 +1260,13 @@ export default function EarlyBirdPage() {
                     'I feel nervous about dental visits'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: extendedSurvey.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: extendedSurvey.dentalExperience === option ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="radio"
-                        name="previousExperience"
+                        name="dentalExperience"
                         value={option}
-                        checked={extendedSurvey.previousExperience === option}
-                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, previousExperience: e.target.value })}
+                        checked={extendedSurvey.dentalExperience === option}
+                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, dentalExperience: e.target.value })}
                         required
                         className="mr-3 w-5 h-5"
                       />
@@ -1565,14 +1625,14 @@ export default function EarlyBirdPage() {
               <div className="bg-white p-4 rounded-lg mb-4">
                 <p className="text-sm mb-2" style={{ color: '#666' }}>Your referral link:</p>
                 <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
-                  {typeof window !== 'undefined' ? `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
                 </p>
               </div>
 
               <button
                 onClick={async () => {
                   const randomNum = Math.floor(100 + Math.random() * 900);
-                  const referralLink = `${window.location.origin}/earlybird?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${randomNum}`;
+                  const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${randomNum}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
                     alert('Copied, Now Share To Give Someone £50 Voucher');
