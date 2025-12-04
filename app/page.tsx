@@ -1079,8 +1079,8 @@ export default function LandingPage() {
                     'Within the last 6 months',
                     '6 months to 1 year ago',
                     '1-2 years ago',
-                    'More than 2 years ago',
-                    'I\'ve never been to the dentist'
+                    '2-5 years',
+                    '5+ Years'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
                       style={{ borderColor: surveyData.timeline === option ? '#1f3a33' : '#cfe8d7' }}>
