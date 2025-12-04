@@ -783,17 +783,6 @@ export default function EarlyBirdPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-      {/* Custom animation for pulsing number */}
-      <style jsx>{`
-        @keyframes colorPulse {
-          0%, 100% { color: #1f3a33; }
-          50% { color: #ffffff; }
-        }
-        .pulse-color {
-          animation: colorPulse 2s ease-in-out infinite;
-        }
-      `}</style>
-
       {/* Voucher Counter Header */}
       <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto">
