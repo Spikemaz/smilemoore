@@ -814,15 +814,15 @@ export default function LandingPage() {
         {/* Step 1: Email */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-              Due To Popular Demand Only {vouchersRemaining} Vouchers Remaining!
-            </h1>
-
             <div className="mb-3">
               <span className="inline-block px-4 py-2 rounded-full text-sm font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                ✓ LIMITED TIME OFFER
+                Due To Popular Demand Only {vouchersRemaining} Vouchers Remaining!
               </span>
             </div>
+
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+              Claim Your<br />£{voucherValue} Voucher
+            </h1>
 
             <p className="text-sm mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
