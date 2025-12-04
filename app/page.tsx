@@ -784,7 +784,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Voucher Counter Header */}
-      <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#70d490', color: '#1f3a33' }}>
+      <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto">
           {getBannerMessage()}
         </div>
