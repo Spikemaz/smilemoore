@@ -681,6 +681,12 @@ export default function EarlyBirdPage() {
       // Move to next step IMMEDIATELY
       const finalTime = Date.now();
       setStep(4);
+
+      // Decrement voucher counter when voucher is claimed
+      if (vouchersRemaining > 0) {
+        setVouchersRemaining(vouchersRemaining - 1);
+      }
+
       window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Calculate time between name submit and final submit
@@ -744,6 +750,16 @@ export default function EarlyBirdPage() {
   };
 
   const getBannerMessage = () => {
+    // Simplified message for step 4+ (success page and beyond)
+    if (step >= 4) {
+      return (
+        <span className="text-lg md:text-xl">
+          Live Count of Vouchers Remaining: <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span>
+        </span>
+      );
+    }
+
+    // Detailed messages for steps 1-3
     if (vouchersRemaining <= 3) {
       return (
         <span className="text-lg md:text-xl">
@@ -774,8 +790,8 @@ export default function EarlyBirdPage() {
         </div>
       </div>
 
-      {/* Progress Bar - Only show after step 1 */}
-      {step > 1 && step <= 4 && (
+      {/* Progress Bar - Only show after step 1 and before step 4 */}
+      {step > 1 && step < 4 && (
         <div className="shadow-sm sticky top-0 z-50" style={{ backgroundColor: '#1f3a33' }}>
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex justify-center items-center mb-2">
