@@ -754,7 +754,7 @@ export default function LandingPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          🎉 Congratulations On Receiving Your Voucher. Only {totalSignups} Other Entries
+          🎉 Congratulations On Receiving Your Voucher
         </span>
       );
     }
@@ -977,7 +977,10 @@ export default function LandingPage() {
                 🏆 Would you like the chance to Win 1 Year Of FREE Dentistry?
               </h3>
               <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
-                🏆 Worth Up To £5000!
+                Worth Up To £5000!
+              </p>
+              <p className="text-lg" style={{ color: '#666' }}>
+                Help us build your perfect dental practice, join {totalSignups} other Early Birds which have entered the chance to win!
               </p>
             </div>
 
