@@ -678,9 +678,9 @@ export default function JumperPage() {
         console.error('Error updating name:', error);
       });
     } else if (step === 3) {
-      // Move to next step IMMEDIATELY
+      // Move directly to step 5 (survey) - skip step 4
       const finalTime = Date.now();
-      setStep(4);
+      setStep(5);
 
       // Decrement voucher counter when voucher is claimed
       if (vouchersRemaining > 0) {
@@ -959,60 +959,41 @@ export default function JumperPage() {
           </div>
         )}
 
-        {/* Step 4: Prize Draw First, Then Success Message */}
-        {step === 4 && (
-          <div>
-            {/* Prize Draw CTA - NOW AT TOP */}
-            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white mb-6" style={{ backgroundColor: '#1f3a33' }}>
-              <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
-                <h3 className="text-3xl font-bold mb-3">
-                  🏆 Win 1 Year of FREE Dentistry
-                </h3>
-                <p className="text-2xl mb-2" style={{ color: '#FFD700' }}>
-                  Worth up to £5,000!
-                </p>
-              </div>
-
-              <p className="text-xl mb-6">
+        {/* Step 5: Survey Questions with Prize Draw Banner (Step 4 removed - goes directly here) */}
+        {step === 5 && (
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            {/* Prize Draw Banner at Top */}
+            <div className="rounded-xl p-6 mb-8 text-center" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
+              <h3 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                🏆 Win 1 Year of FREE Dentistry
+              </h3>
+              <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
+                Worth up to £5,000!
+              </p>
+              <p className="text-lg" style={{ color: '#666' }}>
                 Takes 20 seconds. Join {totalSignups} others.
               </p>
-
-              <button
-                onClick={() => setStep(5)}
-                className="w-full px-10 py-6 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl animate-pulse"
-                style={{ backgroundColor: '#70d490', color: '#1f3a33' }}
-              >
-                Continue to Prize Draw →
-              </button>
             </div>
 
-            {/* Success Message - NOW AT BOTTOM */}
-            <div className="rounded-2xl shadow-2xl p-6 md:p-8 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
-              <div className="inline-block rounded-full p-4 mb-3" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-4xl">✓</span>
+            {/* Success Message */}
+            <div className="text-center mb-6 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4' }}>
+              <div className="inline-block rounded-full p-3 mb-2" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-3xl">✓</span>
               </div>
-              <h2 className="text-2xl font-bold mb-2">
+              <h3 className="text-xl font-bold mb-1" style={{ color: '#1f3a33' }}>
                 Success, {formData.name}!
-              </h2>
-              <p className="text-lg" style={{ color: '#cfe8d7' }}>
+              </h3>
+              <p className="text-sm" style={{ color: '#666' }}>
                 Your £{voucherValue} voucher code has been sent to your email
               </p>
             </div>
-          </div>
-        )}
 
-        {/* Step 5: Survey Questions */}
-        {step === 5 && (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             <div className="text-center mb-6">
-              <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                📋 RESEARCH SURVEY
-              </span>
-              <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                We Want to Get to Know You
+              <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                Answer 5 Quick Questions
               </h3>
               <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Help us build your perfect dental practice - your answers enter you for 1 year of FREE dentistry worth up to £5,000!
+                Help us build your perfect dental practice
               </p>
             </div>
 
