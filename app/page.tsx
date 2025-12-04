@@ -814,25 +814,32 @@ export default function LandingPage() {
         {/* Step 1: Email */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-            <div className="mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+              Claim Your £{voucherValue} Voucher
+            </h1>
+
+            <div className="mb-3">
               <span className="inline-block px-4 py-2 rounded-full text-sm font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                 ✓ LIMITED TIME OFFER
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-              Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
-            </h1>
-            <p className="text-xl mb-2" style={{ color: '#666' }}>
-              Early Bird Survey
-            </p>
-            <p className="text-lg mb-4" style={{ color: '#666' }}>
+
+            <p className="text-sm mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+              Due to popular demand only {vouchersRemaining} vouchers remaining
+            </h2>
+
+            <p className="text-xl mb-4" style={{ color: '#666' }}>
+              Early Bird Survey
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="email" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
-                  Enter your email below
+                  Enter Your Email Below
                 </label>
                 <input
                   type="email"
