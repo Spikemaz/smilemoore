@@ -867,14 +867,14 @@ export default function LandingPage() {
         {/* Step 2: Name */}
         {step === 2 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
+            <div className="text-center mb-4">
+              <div className="inline-block p-4 rounded-full mb-2" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">✓</span>
               </div>
-              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
                 Great! Your voucher is reserved
               </h2>
-              <p className="text-lg" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Let's personalise your voucher...
               </p>
             </div>
