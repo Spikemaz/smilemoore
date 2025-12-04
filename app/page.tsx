@@ -973,11 +973,8 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <p className="text-xl mb-4">
-                Join {totalSignups} others competing for this prize
-              </p>
-              <p className="text-lg mb-6 opacity-90">
-                Answer a couple questions to claim your entry
+              <p className="text-xl mb-6">
+                Takes 20 seconds. Join {totalSignups} others.
               </p>
 
               <button
