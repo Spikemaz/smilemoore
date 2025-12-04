@@ -1757,14 +1757,13 @@ export default function LandingPage() {
               <div className="bg-white p-4 rounded-lg mb-4">
                 <p className="text-sm mb-2 font-semibold" style={{ color: '#1f3a33' }}>Your referral link:</p>
                 <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
-                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${Math.floor(100 + Math.random() * 900)}` : 'Loading...'}
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${customerId}` : 'Loading...'}
                 </p>
               </div>
 
               <button
                 onClick={async () => {
-                  const randomNum = Math.floor(100 + Math.random() * 900);
-                  const referralLink = `${window.location.origin}?ref=${encodeURIComponent(formData.name.split(' ')[0])}-${randomNum}`;
+                  const referralLink = `${window.location.origin}?ref=${customerId}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
                     alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
