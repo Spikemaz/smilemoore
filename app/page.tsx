@@ -959,49 +959,47 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Step 4: Success + Continue to Prize Draw */}
+        {/* Step 4: Prize Draw First, Then Success Message */}
         {step === 4 && (
           <div>
-            {/* Success Message with Bonus Offer */}
-            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
-              <div className="mb-8">
-                <div className="inline-block rounded-full p-6 mb-4 animate-bounce" style={{ backgroundColor: '#cfe8d7' }}>
-                  <span className="text-6xl">🎉</span>
-                </div>
-                <h2 className="text-4xl font-bold mb-4">
-                  Success, {formData.name}!
-                </h2>
-                <p className="text-xl mb-4" style={{ color: '#cfe8d7' }}>
-                  Your £{voucherValue} voucher code has been sent to your email
+            {/* Prize Draw CTA - NOW AT TOP */}
+            <div className="rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white mb-6" style={{ backgroundColor: '#1f3a33' }}>
+              <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
+                <h3 className="text-3xl font-bold mb-3">
+                  🏆 Win 1 Year of FREE Dentistry
+                </h3>
+                <p className="text-2xl mb-2" style={{ color: '#FFD700' }}>
+                  Worth up to £5,000!
                 </p>
               </div>
 
-              {/* Prize Draw CTA */}
-              <div className="border-t pt-8" style={{ borderColor: 'rgba(207, 232, 215, 0.3)' }}>
-                <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: 'rgba(255, 215, 0, 0.15)', border: '2px solid rgba(255, 215, 0, 0.5)' }}>
-                  <h3 className="text-3xl font-bold mb-3">
-                    🏆 Win 1 Year of FREE Dentistry
-                  </h3>
-                  <p className="text-2xl mb-2" style={{ color: '#FFD700' }}>
-                    Worth up to £5,000!
-                  </p>
-                </div>
+              <p className="text-xl mb-4">
+                Join {totalSignups} others competing for this prize
+              </p>
+              <p className="text-lg mb-6 opacity-90">
+                Answer a couple questions to claim your entry
+              </p>
 
-                <p className="text-xl mb-4">
-                  Join {totalSignups} others competing for this prize
-                </p>
-                <p className="text-lg mb-6 opacity-90">
-                  Answer a couple questions to claim your entry
-                </p>
+              <button
+                onClick={() => setStep(5)}
+                className="w-full px-10 py-6 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl animate-pulse"
+                style={{ backgroundColor: '#70d490', color: '#1f3a33' }}
+              >
+                Continue to Prize Draw →
+              </button>
+            </div>
 
-                <button
-                  onClick={() => setStep(5)}
-                  className="w-full px-10 py-6 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl animate-pulse"
-                  style={{ backgroundColor: '#70d490', color: '#1f3a33' }}
-                >
-                  Continue to Prize Draw →
-                </button>
+            {/* Success Message - NOW AT BOTTOM */}
+            <div className="rounded-2xl shadow-2xl p-6 md:p-8 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
+              <div className="inline-block rounded-full p-4 mb-3" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-4xl">✓</span>
               </div>
+              <h2 className="text-2xl font-bold mb-2">
+                Success, {formData.name}!
+              </h2>
+              <p className="text-lg" style={{ color: '#cfe8d7' }}>
+                Your £{voucherValue} voucher code has been sent to your email
+              </p>
             </div>
           </div>
         )}
