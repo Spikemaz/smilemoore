@@ -814,25 +814,25 @@ export default function EarlyBirdPage() {
         {/* Step 1: Email */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-            <div className="mb-3">
-              <span className="inline-block px-4 py-2 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
+            <div className="mb-4">
+              <span className="inline-block px-4 py-2 rounded-full text-sm font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                 ✓ LIMITED TIME OFFER
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
               Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
             </h1>
             <p className="text-xl mb-2" style={{ color: '#666' }}>
               Early Bird Survey
             </p>
-            <p className="text-lg mb-6" style={{ color: '#666' }}>
+            <p className="text-lg mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="text-center">
                 <label htmlFor="email" className="block text-lg font-semibold mb-3" style={{ color: '#1f3a33' }}>
-                  Enter your email to claim your voucher
+                  Enter your email below
                 </label>
                 <input
                   type="email"
