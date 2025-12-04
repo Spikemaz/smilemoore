@@ -769,7 +769,7 @@ export default function LandingPage() {
     } else if (vouchersRemaining <= 100) {
       return (
         <span className="text-lg md:text-xl">
-          Due to popular demand only <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
+          Due To Popular Demand Only <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span> Vouchers Remaining!
         </span>
       );
     } else {
