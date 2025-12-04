@@ -1077,8 +1077,8 @@ export default function LandingPage() {
                 <div className="space-y-3">
                   {[
                     'Within the last 6 months',
-                    '6 months to 1 year ago',
-                    '1-2 years ago',
+                    '6 months to 1 year',
+                    '1-2 years',
                     '2-5 years',
                     '5+ Years'
                   ].map((option) => (
