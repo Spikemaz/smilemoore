@@ -1999,13 +1999,9 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <button
-              onClick={() => window.location.href = '/home'}
-              className="text-white px-8 py-4 rounded-xl text-lg font-bold transition-all"
-              style={{ backgroundColor: '#70d490' }}
-            >
-              Continue to Website →
-            </button>
+            <p className="text-sm text-center" style={{ color: '#999' }}>
+              <a href="/terms" className="underline hover:text-gray-700">Terms and Conditions</a>
+            </p>
           </div>
         )}
       </div>
