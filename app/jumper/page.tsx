@@ -1263,77 +1263,209 @@ export default function JumperPage() {
                   5. How many people in your household would potentially join the practice?
                 </label>
                 <div className="space-y-3">
-                  {[
-                    'Just me',
-                    '2 people',
-                    '3-4 people',
-                    '5+ people'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                  {/* Just me option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === 'Just me' ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="radio"
                         name="previousExperience"
-                        value={option}
-                        checked={surveyData.previousExperience === option}
+                        value="Just me"
+                        checked={surveyData.previousExperience === 'Just me'}
                         onChange={(e) => {
-                          const value = e.target.value;
-                          setSurveyData({ ...surveyData, previousExperience: value });
-
-                          // Set up household name fields based on selection
-                          if (value === 'Just me') {
-                            setHouseholdNames([]);
-                          } else if (value === '2 people') {
-                            setHouseholdNames(['']);
-                          } else if (value === '3-4 people') {
-                            setHouseholdNames(['', '', '']);
-                          } else if (value === '5+ people') {
-                            setHouseholdNames(['', '', '', '', '']);
-                          }
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames([]);
                         }}
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>Just me</span>
                     </label>
-                  ))}
-                </div>
-
-                {/* Show household name fields if not "Just me" */}
-                {surveyData.previousExperience && surveyData.previousExperience !== 'Just me' && (
-                  <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
-                    <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
-                      💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
-                    </p>
-                    <div className="space-y-3">
-                      {householdNames.map((name, index) => (
-                        <input
-                          key={index}
-                          type="text"
-                          value={name}
-                          onChange={(e) => {
-                            const newNames = [...householdNames];
-                            newNames[index] = e.target.value;
-                            setHouseholdNames(newNames);
-                          }}
-                          placeholder="Enter full name"
-                          className="w-full px-4 py-3 text-base border-2 rounded-lg focus:ring-2 transition-all"
-                          style={{ borderColor: '#cfe8d7', outlineColor: '#cfe8d7' }}
-                        />
-                      ))}
-                      {surveyData.previousExperience === '5+ people' && (
-                        <button
-                          type="button"
-                          onClick={() => setHouseholdNames([...householdNames, ''])}
-                          className="w-full px-4 py-3 text-base border-2 rounded-lg transition-all font-semibold"
-                          style={{ borderColor: '#1f3a33', color: '#1f3a33', backgroundColor: 'white' }}
-                        >
-                          + Add More
-                        </button>
-                      )}
-                    </div>
                   </div>
-                )}
+
+                  {/* 2 people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '2 people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="2 people"
+                        checked={surveyData.previousExperience === '2 people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-2');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>2 people</span>
+                    </label>
+                    {surveyData.previousExperience === '2 people' && (
+                      <div id="household-names-2" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 3-4 people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '3-4 people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="3-4 people"
+                        checked={surveyData.previousExperience === '3-4 people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['', '', '']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-3');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>3-4 people</span>
+                    </label>
+                    {surveyData.previousExperience === '3-4 people' && (
+                      <div id="household-names-3" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus={index === 0}
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 5+ people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '5+ people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="5+ people"
+                        checked={surveyData.previousExperience === '5+ people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['', '', '', '', '']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-5');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>5+ people</span>
+                    </label>
+                    {surveyData.previousExperience === '5+ people' && (
+                      <div id="household-names-5" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus={index === 0}
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <button
@@ -1347,9 +1479,82 @@ export default function JumperPage() {
           </div>
         )}
 
-        {/* Step 6: Extended Survey Questions */}
+        {/* Step 6: Congratulations + Referral FIRST, then Bonus Questions */}
         {step === 6 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            {/* Congratulations Section */}
+            <div className="text-center mb-8">
+              <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-6xl">🎉</span>
+              </div>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+                Congratulations {formData.name}!
+              </h2>
+              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
+                You have received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
+              </p>
+              <p className="text-lg mb-4" style={{ color: '#666' }}>
+                🎁 Worth up to £5,000!
+              </p>
+              <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-lg font-bold mb-1" style={{ color: '#1f3a33' }}>
+                  🎟️ You currently have 2 entries in the prize draw
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 5 questions
+                </p>
+              </div>
+            </div>
+
+            {/* Share Section - NOW FIRST, BEFORE BONUS QUESTIONS */}
+            <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: '#cfe8d7' }}>
+              <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+                🎄 Would you be kind enough to share with family, friends and neighbours?
+              </h3>
+              <p className="text-lg mb-3" style={{ color: '#1f3a33' }}>
+                Give them the chance to win and get a £50 voucher before Christmas!
+              </p>
+              <p className="text-base mb-4" style={{ color: '#1f3a33' }}>
+                Share your unique link by copy and pasting or posting on your social media:
+              </p>
+
+              <div className="bg-white p-4 rounded-lg mb-4">
+                <p className="text-sm mb-2 font-semibold" style={{ color: '#1f3a33' }}>Your referral link:</p>
+                <p className="text-base font-mono break-all mb-3" style={{ color: '#1f3a33' }}>
+                  {typeof window !== 'undefined' ? `${window.location.origin}?ref=${customerId}` : 'Loading...'}
+                </p>
+              </div>
+
+              <button
+                onClick={async () => {
+                  const referralLink = `${window.location.origin}?ref=${customerId}`;
+                  try {
+                    await navigator.clipboard.writeText(referralLink);
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                  } catch (err) {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = referralLink;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                  }
+                }}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
+                style={{ backgroundColor: '#1f3a33' }}
+              >
+                📋 Copy & Share Link
+              </button>
+
+              <p className="text-sm font-semibold" style={{ color: '#1f3a33' }}>
+                ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
+              </p>
+            </div>
+
+            {/* Bonus Questions Section - NOW BELOW */}
             <div className="text-center mb-6">
               <span className="inline-block px-6 py-3 rounded-full text-sm font-bold mb-3" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
                 🔥 BONUS QUESTIONS
@@ -1357,6 +1562,9 @@ export default function JumperPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Can we ask for a little more feedback?
               </h3>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
+                Earn +1 extra prize draw entry!
+              </p>
               <p className="text-xs mt-2" style={{ color: '#999' }}>
                 Subject to terms and conditions.
               </p>
@@ -1719,34 +1927,40 @@ export default function JumperPage() {
           </div>
         )}
 
-        {/* Step 7: Congratulations & Share */}
+        {/* Step 7: Thank You & Share Again */}
         {step === 7 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-6">
               <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-6xl">🎉</span>
+                <span className="text-6xl">✨</span>
               </div>
               <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-                Congratulations {formData.name}!
+                Thank You {formData.name}!
               </h2>
-              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
-                You have now received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
+              <p className="text-xl mb-4" style={{ color: '#1f3a33' }}>
+                Your feedback is invaluable in helping us build the perfect dental practice.
               </p>
-              <p className="text-lg mb-6" style={{ color: '#666' }}>
-                🎁 Worth up to £5,000!
-              </p>
+
+              {/* Prize Draw Summary */}
+              <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You now have 3 entries in the prize draw
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 5 questions<br/>
+                  • 1 entry for completing extended survey
+                </p>
+              </div>
             </div>
 
-            {/* Share Section - NOW FIRST */}
+            {/* Share Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                🎄 Would you be kind enough to share with family, friends and neighbours?
+                🎄 One More Time - Help Friends & Family Get Their £50 Voucher!
               </h3>
-              <p className="text-lg mb-3" style={{ color: '#1f3a33' }}>
-                Give them the chance to win and get a £50 voucher before Christmas!
-              </p>
-              <p className="text-base mb-4" style={{ color: '#1f3a33' }}>
-                Share your unique link by copy and pasting or posting on your social media:
+              <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
+                Share your referral link and earn +10 bonus entries for each friend who claims!
               </p>
 
               <div className="bg-white p-4 rounded-lg mb-4">
@@ -1773,27 +1987,11 @@ export default function JumperPage() {
                     alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
                   }
                 }}
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 📋 Copy & Share Link
               </button>
-
-              <p className="text-sm font-semibold" style={{ color: '#1f3a33' }}>
-                ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
-              </p>
-            </div>
-
-            {/* Prize Draw Details */}
-            <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
-              <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                🎟️ You currently have 3 entries in the prize draw
-              </p>
-              <p className="text-sm" style={{ color: '#666' }}>
-                • 1 entry for claiming your voucher<br/>
-                • 1 entry for answering 5 questions<br/>
-                • 1 entry for completing extended survey
-              </p>
             </div>
 
             <button

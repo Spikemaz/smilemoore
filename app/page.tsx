@@ -1263,82 +1263,209 @@ export default function LandingPage() {
                   5. How many people in your household would potentially join the practice?
                 </label>
                 <div className="space-y-3">
-                  {[
-                    'Just me',
-                    '2 people',
-                    '3-4 people',
-                    '5+ people'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.previousExperience === option ? '#1f3a33' : '#cfe8d7' }}>
+                  {/* Just me option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === 'Just me' ? '#1f3a33' : '#cfe8d7' }}>
                       <input
                         type="radio"
                         name="previousExperience"
-                        value={option}
-                        checked={surveyData.previousExperience === option}
+                        value="Just me"
+                        checked={surveyData.previousExperience === 'Just me'}
                         onChange={(e) => {
                           setSurveyData({ ...surveyData, previousExperience: e.target.value });
-                          // Initialize name fields based on selection
-                          if (e.target.value === 'Just me') {
-                            setHouseholdNames([]);
-                          } else if (e.target.value === '2 people') {
-                            setHouseholdNames(['']);
-                          } else if (e.target.value === '3-4 people') {
-                            setHouseholdNames(['', '', '']);
-                          } else if (e.target.value === '5+ people') {
-                            setHouseholdNames(['', '', '', '', '']);
-                          }
+                          setHouseholdNames([]);
                         }}
                         required
                         className="mr-3 w-5 h-5"
                       />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                      <span className="text-base" style={{ color: '#1f3a33' }}>Just me</span>
                     </label>
-                  ))}
-                </div>
-
-                {/* Show info popup when option is selected */}
-                {surveyData.previousExperience && surveyData.previousExperience !== 'Just me' && (
-                  <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
-                    <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
-                      💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
-                    </p>
-
-                    <div className="space-y-3">
-                      {householdNames.map((name, index) => (
-                        <div key={index}>
-                          <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
-                            Person {index + 2} Full Name
-                          </label>
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => {
-                              const newNames = [...householdNames];
-                              newNames[index] = e.target.value;
-                              setHouseholdNames(newNames);
-                            }}
-                            className="w-full px-4 py-2 border-2 rounded-lg"
-                            style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
-                            placeholder="Enter full name"
-                          />
-                        </div>
-                      ))}
-
-                      {/* Add more button for 5+ people */}
-                      {surveyData.previousExperience === '5+ people' && (
-                        <button
-                          type="button"
-                          onClick={() => setHouseholdNames([...householdNames, ''])}
-                          className="px-4 py-2 rounded-lg font-medium text-sm"
-                          style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
-                        >
-                          + Add More
-                        </button>
-                      )}
-                    </div>
                   </div>
-                )}
+
+                  {/* 2 people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '2 people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="2 people"
+                        checked={surveyData.previousExperience === '2 people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-2');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>2 people</span>
+                    </label>
+                    {surveyData.previousExperience === '2 people' && (
+                      <div id="household-names-2" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 3-4 people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '3-4 people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="3-4 people"
+                        checked={surveyData.previousExperience === '3-4 people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['', '', '']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-3');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>3-4 people</span>
+                    </label>
+                    {surveyData.previousExperience === '3-4 people' && (
+                      <div id="household-names-3" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus={index === 0}
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 5+ people option */}
+                  <div>
+                    <label className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.previousExperience === '5+ people' ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="previousExperience"
+                        value="5+ people"
+                        checked={surveyData.previousExperience === '5+ people'}
+                        onChange={(e) => {
+                          setSurveyData({ ...surveyData, previousExperience: e.target.value });
+                          setHouseholdNames(['', '', '', '', '']);
+                          setTimeout(() => {
+                            const element = document.getElementById('household-names-5');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }, 100);
+                        }}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>5+ people</span>
+                    </label>
+                    {surveyData.previousExperience === '5+ people' && (
+                      <div id="household-names-5" className="mt-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4', border: '2px solid #cfe8d7' }}>
+                        <p className="text-sm font-semibold mb-3" style={{ color: '#1f3a33' }}>
+                          💡 Also Claim the Voucher for other people in your household whilst they are available - first come first serve!
+                        </p>
+                        <div className="space-y-3">
+                          {householdNames.map((name, index) => (
+                            <div key={index}>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#1f3a33' }}>
+                                Person {index + 2} Full Name
+                              </label>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                  const newNames = [...householdNames];
+                                  newNames[index] = e.target.value;
+                                  setHouseholdNames(newNames);
+                                }}
+                                className="w-full px-4 py-2 border-2 rounded-lg"
+                                style={{ borderColor: '#cfe8d7', color: '#1f3a33' }}
+                                placeholder="Enter full name"
+                                autoFocus={index === 0}
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setHouseholdNames([...householdNames, ''])}
+                            className="px-4 py-2 rounded-lg font-medium text-sm"
+                            style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}
+                          >
+                            + Add More
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <button
