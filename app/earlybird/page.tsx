@@ -754,7 +754,7 @@ export default function EarlyBirdPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          Live Count of Vouchers Remaining: <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span>
+          Live Count of Vouchers Remaining: <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span>
         </span>
       );
     }
@@ -763,19 +763,19 @@ export default function EarlyBirdPage() {
     if (vouchersRemaining <= 3) {
       return (
         <span className="text-lg md:text-xl">
-          Final <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> vouchers available last chance!
+          Final <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> vouchers available last chance!
         </span>
       );
     } else if (vouchersRemaining <= 100) {
       return (
         <span className="text-lg md:text-xl">
-          Due to popular demand only <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
+          Due to popular demand only <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
         </span>
       );
     } else {
       return (
         <span className="text-lg md:text-xl">
-          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="text-white underline font-extrabold text-3xl md:text-4xl">{vouchersRemaining}</span> Are Taken.
+          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> Are Taken.
         </span>
       );
     }
