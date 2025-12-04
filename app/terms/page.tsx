@@ -7,7 +7,7 @@ export default function TermsPage() {
       <div className="py-6 px-4 text-center text-white" style={{ backgroundColor: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold">Terms & Conditions</h1>
-          <p className="text-lg mt-2" style={{ color: '#cfe8d7' }}>Your Local Marketing Company – Pre-Opening Giveaway</p>
+          <p className="text-lg mt-2" style={{ color: '#cfe8d7' }}>Your Local Research Survey Company – Pre-Opening Giveaway</p>
         </div>
       </div>
 
@@ -16,7 +16,7 @@ export default function TermsPage() {
         <div className="bg-white rounded-2xl shadow-lg p-6 md:p-12">
           <p className="text-sm mb-6" style={{ color: '#666' }}>Last updated: 15/11/2025</p>
           <p className="mb-6" style={{ color: '#333' }}>
-            <strong>Promoter:</strong> Your Local Marketing Company, a UK-based trading name ("the Promoter", "we", "our", "us").<br/>
+            <strong>Promoter:</strong> Your Local Research Survey Company, a UK-based trading name ("the Promoter", "we", "our", "us").<br/>
             <strong>Geographical Location:</strong> United Kingdom.
           </p>
 
@@ -25,7 +25,7 @@ export default function TermsPage() {
           {/* Section 1 */}
           <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>1. Introduction</h2>
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
-            <p>1.1 These Terms & Conditions ("Terms") govern participation in the Your Local Marketing Company Pre-Opening Giveaway ("the Promotion").</p>
+            <p>1.1 These Terms & Conditions ("Terms") govern participation in the Your Local Research Survey Company Pre-Opening Giveaway ("the Promotion").</p>
             <p>1.2 By entering the Promotion, entrants agree to be bound by these Terms in full.</p>
             <p>1.3 No purchase is necessary to enter or win.</p>
             <p>1.4 Bonus entries may be awarded for optional actions.</p>

@@ -75,6 +75,7 @@ export default function EarlyBirdPage() {
     previousExperience: '', // Q5: Single choice (household size)
   });
   const [householdNames, setHouseholdNames] = useState<string[]>([]);
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [extendedSurvey, setExtendedSurvey] = useState({
     dentalExperience: '',
     mostImportantFactor: '',
@@ -943,6 +944,22 @@ export default function EarlyBirdPage() {
                 />
               </div>
 
+              {/* Terms and Conditions Checkbox */}
+              <div className="flex items-start gap-3 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4' }}>
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required
+                  className="mt-1 w-5 h-5 flex-shrink-0"
+                  style={{ accentColor: '#1f3a33' }}
+                />
+                <label htmlFor="terms" className="text-sm text-left" style={{ color: '#1f3a33' }}>
+                  I agree to the <a href="/terms" target="_blank" className="underline font-semibold hover:text-green-700">Terms and Conditions</a> and understand that my data will be used to administer this promotion.
+                </label>
+              </div>
+
               <button
                 type="submit"
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -955,6 +972,9 @@ export default function EarlyBirdPage() {
               <div className="mt-3 pt-3 border-t text-center" style={{ borderColor: '#e0e0e0' }}>
                 <p className="text-sm" style={{ color: '#666' }}>
                   🔒 We never share your information. You'll receive your voucher instantly.
+                </p>
+                <p className="text-xs mt-2" style={{ color: '#999' }}>
+                  <a href="/terms" target="_blank" className="underline hover:text-gray-700">Terms and Conditions</a>
                 </p>
               </div>
             </form>
