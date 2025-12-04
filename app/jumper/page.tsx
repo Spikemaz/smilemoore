@@ -1214,9 +1214,6 @@ export default function JumperPage() {
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Can we ask for a little more feedback?
               </h3>
-              <p className="text-lg mb-2" style={{ color: '#666' }}>
-                It takes 20 seconds and it will really shape your dental experience.
-              </p>
             </div>
 
             <form onSubmit={async (e) => {
