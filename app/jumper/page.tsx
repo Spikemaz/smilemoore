@@ -324,8 +324,8 @@ export default function JumperPage() {
         const emailVariation = urlParams.get('email') || '';
         const smsVariation = urlParams.get('sms') || '';
 
-        // Get campaign source - prioritize referral, email, SMS, then UTM, then default to URL Direct
-        let sourceName = 'URL Direct';
+        // Get campaign source - prioritize referral, email, SMS, then UTM, then keep default 'QR Jumper Scan'
+        let sourceName = 'QR Jumper Scan'; // Default for /jumper page
         if (ref) {
           sourceName = `Referral: ${ref}`;
         } else if (emailVariation) {

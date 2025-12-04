@@ -324,8 +324,8 @@ export default function EarlyBirdPage() {
         const emailVariation = urlParams.get('email') || '';
         const smsVariation = urlParams.get('sms') || '';
 
-        // Get campaign source - prioritize referral, email, SMS, then UTM, then default to URL Direct
-        let sourceName = 'URL Direct';
+        // Get campaign source - prioritize referral, email, SMS, then UTM, then keep default 'QR Scan'
+        let sourceName = 'QR Scan'; // Default for /earlybird page
         if (ref) {
           sourceName = `Referral: ${ref}`;
         } else if (emailVariation) {
