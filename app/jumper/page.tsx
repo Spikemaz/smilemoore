@@ -991,11 +991,14 @@ export default function JumperPage() {
             </div>
 
             <div className="text-center mb-6">
+              <p className="text-lg mb-3" style={{ color: '#666' }}>
+                So Far Only <span className="underline font-extrabold pulse-color">{totalSignups}</span> People Have Entered This Draw
+              </p>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Answer 5 Quick Questions
               </h3>
               <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Help us build your perfect dental practice, join {totalSignups} other Early Birds which have entered the chance to win!
+                Help us build your perfect dental practice
               </p>
             </div>
 
