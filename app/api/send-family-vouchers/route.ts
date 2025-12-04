@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
-    const { email, householdVouchers } = await request.json();
+    const { email, householdVouchers, primaryName } = await request.json();
 
     if (!email || !householdVouchers || householdVouchers.length === 0) {
       return NextResponse.json(
@@ -13,6 +13,11 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Generate referral link using primary person's name
+    const referralName = primaryName || householdVouchers[0]?.name || 'Friend';
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const referralLink = `https://smilemoore.co.uk?ref=${encodeURIComponent(referralName.split(' ')[0])}-${randomNum}`;
 
     // Build HTML for voucher codes table
     const voucherRows = householdVouchers.map((member: any) => `
@@ -91,8 +96,40 @@ export async function POST(request: Request) {
           <!-- Prize Draw Reminder -->
           <div style="background-color: #f0f8f4; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
             <p style="margin: 0; font-size: 16px; color: #1f3a33;">
-              🏆 <strong>Don't forget!</strong> You're entered to win a year's worth of FREE dentistry (worth up to £5,000)
+              🏆 <strong>Each family member has 3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
             </p>
+          </div>
+
+          <!-- Referral Section -->
+          <div style="background-color: #cfe8d7; padding: 25px; border-radius: 8px; margin: 30px 0;">
+            <h2 style="color: #1f3a33; font-size: 20px; margin: 0 0 15px 0; text-align: center;">
+              🎄 Share with Friends & Family
+            </h2>
+            <p style="font-size: 15px; color: #1f3a33; margin-bottom: 15px; text-align: center;">
+              Give them the chance to win and get a £50 voucher before Christmas!
+            </p>
+            <div style="background-color: #ffffff; padding: 15px; border-radius: 6px; margin: 15px 0;">
+              <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600; color: #1f3a33;">Your referral link:</p>
+              <p style="margin: 0; font-family: 'Courier New', monospace; font-size: 14px; color: #1f3a33; word-break: break-all;">
+                ${referralLink}
+              </p>
+            </div>
+            <p style="font-size: 13px; color: #1f3a33; margin: 10px 0 0 0; text-align: center; font-weight: 600;">
+              ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
+            </p>
+          </div>
+
+          <!-- What Happens Next -->
+          <div style="margin: 30px 0;">
+            <h2 style="color: #1f3a33; font-size: 20px; margin-bottom: 15px;">📋 What Happens Next?</h2>
+            <ul style="color: #666; line-height: 1.8; padding-left: 20px; margin: 0;">
+              <li><strong>Keep this voucher code safe</strong> - you'll need it when we open!</li>
+              <li>We'll keep you updated as we complete our CQC approval process</li>
+              <li>You'll receive updates throughout our practice fit-out</li>
+              <li>Once we're ready to see our first patients, we'll send you a booking link</li>
+              <li>Use your voucher code when booking to redeem your £50 discount</li>
+              <li><strong>Bonus:</strong> Receive +100 prize draw entries when you redeem your voucher!</li>
+            </ul>
           </div>
 
           <!-- CTA Button -->

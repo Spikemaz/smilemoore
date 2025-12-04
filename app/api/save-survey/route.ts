@@ -168,12 +168,16 @@ export async function POST(request: Request) {
         // Send family email with all voucher codes
         if (householdVouchers.length > 0) {
           try {
+            // Get primary person's name for referral link
+            const primaryName = originalRow[3] || ''; // Column D - Name
+
             await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-family-vouchers`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 email,
                 householdVouchers,
+                primaryName, // Include primary person's name for referral link
               }),
             });
             console.log(`📧 Sent family voucher email to ${email}`);
