@@ -854,6 +854,13 @@ export default function JumperPage() {
               >
                 Submit
               </button>
+
+              {/* Footer */}
+              <div className="mt-6 pt-4 border-t text-center" style={{ borderColor: '#e0e0e0' }}>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  🔒 We never share your information. You'll receive your voucher instantly.
+                </p>
+              </div>
             </form>
           </div>
         )}
