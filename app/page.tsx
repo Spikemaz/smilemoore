@@ -820,11 +820,11 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+            <h1 className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#1f3a33' }}>
               Claim Your £{voucherValue}<br />Voucher
             </h1>
 
-            <p className="text-sm mb-4" style={{ color: '#666' }}>
+            <p className="text-lg mb-2" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
             </p>
 
