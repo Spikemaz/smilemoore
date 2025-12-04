@@ -754,7 +754,7 @@ export default function LandingPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          🎉 Congratulations On Receiving Your Voucher
+          🎉 Congratulations On Receiving Your Voucher. Only {totalSignups} Other Entries
         </span>
       );
     }
@@ -978,9 +978,6 @@ export default function LandingPage() {
               </h3>
               <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
                 🏆 Worth Up To £5000!
-              </p>
-              <p className="text-lg" style={{ color: '#666' }}>
-                {totalSignups} Others In The Draw & Only Takes "20" Seconds
               </p>
             </div>
 
