@@ -754,7 +754,7 @@ export default function LandingPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          Live Count of Vouchers Remaining: <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span>
+          Live Count of Vouchers Remaining: <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span>
         </span>
       );
     }
@@ -763,19 +763,19 @@ export default function LandingPage() {
     if (vouchersRemaining <= 3) {
       return (
         <span className="text-lg md:text-xl">
-          Final <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> vouchers available last chance!
+          Final <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span> vouchers available last chance!
         </span>
       );
     } else if (vouchersRemaining <= 100) {
       return (
         <span className="text-lg md:text-xl">
-          Due to popular demand only <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
+          Due to popular demand only <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span> more £{voucherValue} vouchers remaining!
         </span>
       );
     } else {
       return (
         <span className="text-lg md:text-xl">
-          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="underline font-extrabold text-3xl md:text-4xl" style={{ color: '#1f3a33' }}>{vouchersRemaining}</span> Are Taken.
+          You've Found Us Early Claim Your £{voucherValue} Voucher Before the Final <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span> Are Taken.
         </span>
       );
     }
@@ -783,6 +783,17 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+      {/* Custom animation for pulsing number */}
+      <style jsx>{`
+        @keyframes colorPulse {
+          0%, 100% { color: #1f3a33; }
+          50% { color: #ffffff; }
+        }
+        .pulse-color {
+          animation: colorPulse 2s ease-in-out infinite;
+        }
+      `}</style>
+
       {/* Voucher Counter Header */}
       <div className="py-4 px-4 text-center font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
         <div className="max-w-4xl mx-auto">
