@@ -25,6 +25,7 @@ function getGoogleSheetsClient() {
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json();
     const {
       email,
       dentalCare,
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
       preferredContact,
       dentalExperience,
       additionalFeedback
-    } = await request.json();
+    } = body;
 
     if (!email) {
       return NextResponse.json(
@@ -82,8 +83,10 @@ export async function POST(request: Request) {
     }
 
     // Determine if this is step 5 (first 5 questions) or step 6 (extended 10 questions)
-    const isStep5 = appointmentTimes && !dentalExperience; // Step 5 has Q1-Q5, no extended fields
-    const isStep6 = dentalExperience; // Step 6 has extended fields
+    // Check if the field exists in the request body, not if it's truthy (empty string '' is valid)
+    const hasExtendedFields = 'dentalExperience' in body || 'mostImportantFactor' in body || 'smileConfidence' in body;
+    const isStep5 = appointmentTimes !== undefined && !hasExtendedFields; // Step 5 has Q1-Q5, no extended fields
+    const isStep6 = hasExtendedFields; // Step 6 has extended fields
 
     if (isStep5) {
       // Step 5: Save only Q1-Q5 (columns M-Q)
