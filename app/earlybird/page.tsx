@@ -984,19 +984,6 @@ export default function EarlyBirdPage() {
               </p>
             </div>
 
-            {/* Success Message */}
-            <div className="text-center mb-6 p-4 rounded-lg" style={{ backgroundColor: '#f0f8f4' }}>
-              <div className="inline-block rounded-full p-3 mb-2" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-3xl">✓</span>
-              </div>
-              <h3 className="text-xl font-bold mb-1" style={{ color: '#1f3a33' }}>
-                Success, {formData.name}!
-              </h3>
-              <p className="text-sm" style={{ color: '#666' }}>
-                Your £{voucherValue} voucher code has been sent to your email
-              </p>
-            </div>
-
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
                 Answer 5 Quick Questions
