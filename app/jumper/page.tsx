@@ -821,15 +821,15 @@ export default function JumperPage() {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-              Claim Your<br />£{voucherValue} Voucher
+              Claim Your £{voucherValue}<br />Voucher
             </h1>
+
+            <p className="text-xl mb-2" style={{ color: '#666' }}>
+              Early Bird Survey
+            </p>
 
             <p className="text-sm mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
-            </p>
-
-            <p className="text-xl mb-4" style={{ color: '#666' }}>
-              Early Bird Survey
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
