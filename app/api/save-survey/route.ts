@@ -117,13 +117,12 @@ export async function POST(request: Request) {
       if (householdNames && Array.isArray(householdNames) && householdNames.length > 0) {
         console.log(`👨‍👩‍👧‍👦 Creating vouchers for ${householdNames.length} household members`);
 
-        // Get the original customer's data to copy campaign source, etc.
+        // Get the original customer's data to copy referral info
         const originalData = await sheets.spreadsheets.values.get({
           spreadsheetId: SPREADSHEET_ID,
           range: `Home!A${rowIndex}:L${rowIndex}`,
         });
         const originalRow = originalData.data.values?.[0] || [];
-        const originalCampaignSource = originalRow[6] || ''; // Column G
         const originalReferredBy = originalRow[11] || ''; // Column L
 
         // Call submit-voucher API for each household member
@@ -139,7 +138,7 @@ export async function POST(request: Request) {
                   name: memberName.trim(),
                   phone: '', // Will be filled later if needed
                   address: '', // Will be filled later if needed
-                  campaignSource: originalCampaignSource,
+                  campaignSource: 'Q5 Additional Person', // Mark as household member for easy data filtering
                   timeToSubmit: 0,
                   scrollDepth: 0,
                   referredBy: originalReferredBy,
