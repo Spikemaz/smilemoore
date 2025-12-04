@@ -38,7 +38,13 @@
       "Bash(git checkout:*)",
       "Bash(cat:*)",
       "Bash(git restore:*)",
-      "Bash(copy email-manager.html publicemail-manager.html)"
+      "Bash(copy email-manager.html publicemail-manager.html)",
+      "Bash(netstat:*)",
+      "Bash(node:*)",
+      "Bash(del test-check-sheet.js)",
+      "Bash(python:*)",
+      "Bash(if not exist \"c:\\Users\\marcu\\Desktop\\SmileMoore\\app\\jumper\" mkdir \"c:\\Users\\marcu\\Desktop\\SmileMoore\\app\\jumper\")",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

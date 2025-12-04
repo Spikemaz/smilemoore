@@ -87,6 +87,7 @@ export async function addSignup(data: {
   batchNumber: number;
   ipAddress?: string;
   referredBy?: string;
+  smUniversalId?: string;
 }): Promise<{ success: boolean; customerId?: string }> {
   try {
     const sheets = getGoogleSheetsClient();
@@ -98,7 +99,7 @@ export async function addSignup(data: {
     // All signups go to Home tab, but with different source labels
     const sourceLabel = data.campaignSource === 'earlybird-qr' ? 'QR Scan' : 'Home';
 
-    // Prepare row data (A-L for basic info, initialize AE-AF with 0 referrals and 3 base entries)
+    // Prepare row data (A-L for basic info + column BD for SmileMoore Universal ID)
     const values = [[
       customerId,
       timestamp,
@@ -120,6 +121,23 @@ export async function addSignup(data: {
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });
+
+    // Add SmileMoore Universal ID to column BD if provided
+    if (data.smUniversalId) {
+      const rowNumber = (await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'Home!A:A',
+      })).data.values?.length || 1;
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!BD${rowNumber}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[data.smUniversalId]],
+        },
+      });
+    }
 
     // Initialize Total Referrals (0) and Total Draw Entries (1 - awarded for submitting basic info)
     const rowNumber = (await sheets.spreadsheets.values.get({

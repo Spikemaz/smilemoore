@@ -38,7 +38,7 @@ export async function updateCustomerIDSheet(): Promise<void> {
     // Unique visitors by SmileMoore Universal ID (column AR - index 43)
     const uniqueIds = new Set();
     visitorsData.forEach(row => {
-      const smId = row[43];
+      const smId = row[43]; // Column AR: A=0, AR=43 (A is column 0, so AR is 0+17=43 in 0-indexed)
       if (smId) uniqueIds.add(smId);
     });
     const uniqueVisitors = uniqueIds.size;

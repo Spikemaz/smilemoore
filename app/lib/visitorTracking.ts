@@ -39,7 +39,7 @@ export async function updateVisitorStatus(
     // Find the visitor row by IP address (most recent within last 30 minutes)
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AN',
+      range: 'Visitors!A:BC',
     });
 
     const rows = response.data.values;
@@ -61,12 +61,39 @@ export async function updateVisitorStatus(
       }
     }
 
-    if (matchRowIndex === -1) return false; // No matching visitor found
+    if (matchRowIndex === -1) {
+      console.log('⚠️ No matching visitor found for IP:', ipAddress, 'within last 30 min');
+
+      // Fallback: If we have an email, try to find visitor by empty email column
+      if (email) {
+        console.log('🔍 Attempting fallback: searching for visitor with empty email...');
+        for (let i = rows.length - 1; i >= 1; i--) {
+          const row = rows[i];
+          const rowEmail = row[9]; // Column J = Email (0-indexed, so J=9)
+          const rowTimestamp = new Date(row[1]); // Column B = Timestamp
+
+          // Find most recent visitor without an email (within last 2 hours)
+          const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+          if (!rowEmail && rowTimestamp >= twoHoursAgo) {
+            matchRowIndex = i + 1; // +1 because sheets are 1-indexed
+            console.log('✅ Found visitor via fallback at row', matchRowIndex);
+            break;
+          }
+        }
+      }
+
+      if (matchRowIndex === -1) {
+        return false; // Still no match found
+      }
+    } else {
+      console.log('✅ Found visitor at row', matchRowIndex, 'for IP:', ipAddress);
+    }
 
     // Update the row
     const updates: any[] = [];
 
     if (email) {
+      console.log('📧 Updating email in Visitors!J' + matchRowIndex + ':', email);
       updates.push({
         range: `Visitors!J${matchRowIndex}`, // Column J = Email
         values: [[email]],
@@ -89,42 +116,42 @@ export async function updateVisitorStatus(
 
     if (timeToEmailSubmit !== undefined) {
       updates.push({
-        range: `Visitors!AI${matchRowIndex}`, // Column AI = Time to Email Submit
+        range: `Visitors!AL${matchRowIndex}`, // Column AL = Time to Email Submit
         values: [[timeToEmailSubmit]],
       });
     }
 
     if (maxScrollDepth !== undefined) {
       updates.push({
-        range: `Visitors!AJ${matchRowIndex}`, // Column AJ = Max Scroll Depth
+        range: `Visitors!AM${matchRowIndex}`, // Column AM = Max Scroll Depth
         values: [[maxScrollDepth]],
       });
     }
 
     if (emailToName !== undefined) {
       updates.push({
-        range: `Visitors!AK${matchRowIndex}`, // Column AK = Email to Name time
+        range: `Visitors!AN${matchRowIndex}`, // Column AN = Email to Name time
         values: [[emailToName]],
       });
     }
 
     if (nameToPhone !== undefined) {
       updates.push({
-        range: `Visitors!AL${matchRowIndex}`, // Column AL = Name to Phone time
+        range: `Visitors!AO${matchRowIndex}`, // Column AO = Name to Phone time
         values: [[nameToPhone]],
       });
     }
 
     if (phoneToPostcode !== undefined) {
       updates.push({
-        range: `Visitors!AM${matchRowIndex}`, // Column AM = Phone to Postcode time
+        range: `Visitors!AP${matchRowIndex}`, // Column AP = Phone to Postcode time
         values: [[phoneToPostcode]],
       });
     }
 
     if (totalTime !== undefined) {
       updates.push({
-        range: `Visitors!AN${matchRowIndex}`, // Column AN = Total Time
+        range: `Visitors!AQ${matchRowIndex}`, // Column AQ = Total Time
         values: [[totalTime]],
       });
     }

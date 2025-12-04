@@ -2739,14 +2739,14 @@ Smile Moore Team`
             btn.innerHTML = '<span class="loading"></span> Loading...';
 
             try {
-                const response = await fetch('http://localhost:3000/api/get-analytics');
+                const response = await fetch('/api/get-analytics');
                 const result = await response.json();
 
-                if (!response.ok) {
+                if (!result.success) {
                     throw new Error(result.error || 'Failed to fetch analytics');
                 }
 
-                const data = result.data;
+                const data = result;
 
                 // Update Email metrics
                 document.getElementById('email-sent-count').textContent = data.email.totalSent;
@@ -2756,64 +2756,16 @@ Smile Moore Team`
 
                 // Update Email template table
                 const tbody = document.getElementById('email-template-stats');
-                tbody.innerHTML = `
+                tbody.innerHTML = data.email.templates.map(template => `
                     <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">✉️ Voucher Single</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherSingle.sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherSingle.opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherSingle.clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherSingle.openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherSingle.clickRate}%</td>
+                        <td style="padding: 12px;">${template.template}</td>
+                        <td style="padding: 12px; text-align: center;">${template.sent}</td>
+                        <td style="padding: 12px; text-align: center;">${template.opened}</td>
+                        <td style="padding: 12px; text-align: center;">${template.clicked}</td>
+                        <td style="padding: 12px; text-align: center;">${template.openRate}%</td>
+                        <td style="padding: 12px; text-align: center;">${template.clickRate}%</td>
                     </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">👨‍👩‍👧 Voucher Family</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherFamily.sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherFamily.opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherFamily.clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherFamily.openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.voucherFamily.clickRate}%</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">📬 4Q Follow-up #1</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q1'].sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q1'].opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q1'].clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q1'].openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q1'].clickRate}%</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">📬 4Q Follow-up #2</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q2'].sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q2'].opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q2'].clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q2'].openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q2'].clickRate}%</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">📬 4Q Follow-up #3</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q3'].sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q3'].opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q3'].clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q3'].openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['4q3'].clickRate}%</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">📮 10Q Follow-up #1</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['10q1'].sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['10q1'].opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['10q1'].clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['10q1'].openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates['10q1'].clickRate}%</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                        <td style="padding: 12px;">🎄 Christmas</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.christmas.sent}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.christmas.opened}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.christmas.clicked}</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.christmas.openRate}%</td>
-                        <td style="padding: 12px; text-align: center;">${data.email.templates.christmas.clickRate}%</td>
-                    </tr>
-                `;
+                `).join('');
 
                 // Update WhatsApp metrics
                 document.getElementById('whatsapp-sent-count').textContent = data.whatsapp.totalSent;

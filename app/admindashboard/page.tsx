@@ -52,8 +52,8 @@ export default function AdminDashboard() {
     // Fetch tracking stats initially
     fetchStats();
 
-    // Refresh stats every 5 seconds
-    const interval = setInterval(fetchStats, 5000);
+    // Refresh stats every 5 minutes (300000ms)
+    const interval = setInterval(fetchStats, 300000);
 
     return () => clearInterval(interval);
   }, [isAuthenticated]);

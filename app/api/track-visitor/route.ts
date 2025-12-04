@@ -97,12 +97,44 @@ export async function POST(request: Request) {
       firstVisitDate,
       dayOfWeek,
       hourOfDay,
+      networkType,
     } = await request.json();
 
     // Get IP address from request headers
-    const ip = request.headers.get('x-forwarded-for') ||
-               request.headers.get('x-real-ip') ||
-               'unknown';
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const ip = forwardedFor
+      ? forwardedFor.split(',')[0].trim() // Take first IP if multiple
+      : request.headers.get('x-real-ip') || 'unknown';
+
+    // Get geographic location from IP using ip-api.com (free, no API key required)
+    let geoCity = '';
+    let geoRegion = '';
+    let geoCountry = '';
+    let geoLatitude = '';
+    let geoLongitude = '';
+
+    if (ip !== 'unknown' && ip !== '127.0.0.1' && !ip.startsWith('192.168.')) {
+      try {
+        const geoResponse = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,lat,lon`, {
+          headers: { 'User-Agent': 'SmileMoore-Visitor-Tracker' }
+        });
+        if (geoResponse.ok) {
+          const geoData = await geoResponse.json();
+          if (geoData.status === 'success') {
+            geoCountry = geoData.country || '';
+            geoRegion = geoData.regionName || '';
+            geoCity = geoData.city || '';
+            geoLatitude = geoData.lat?.toString() || '';
+            geoLongitude = geoData.lon?.toString() || '';
+            console.log('🌍 Geographic location:', { geoCity, geoRegion, geoCountry, ip });
+          }
+        }
+      } catch (geoError) {
+        console.error('❌ Failed to fetch geolocation:', geoError);
+      }
+    } else {
+      console.log('⚠️ Skipping geolocation for local/private IP:', ip);
+    }
 
     // Get unique visitor ID
     const visitorId = await getNextVisitorId();
@@ -121,7 +153,7 @@ export async function POST(request: Request) {
 
     const allCookiesCaptured = cookieQualityScore === 6 ? 'Yes' : 'No';
 
-    // Prepare row data matching Visitors sheet headers (columns A-AT)
+    // Prepare row data matching Visitors sheet headers (columns A-BA)
     const values = [[
       visitorId, // A - Visitor ID
       timestamp, // B - Timestamp
@@ -169,11 +201,20 @@ export async function POST(request: Request) {
       smUniversalId || '', // AR - SmileMoore Universal ID
       cookieQualityScore, // AS - Cookie Quality Score
       allCookiesCaptured, // AT - All Cookies Captured
+      '', // AU - Voucher Code (added when email submitted)
+      geoCity || '', // AV - Geo City
+      geoRegion || '', // AW - Geo Region/State
+      geoCountry || '', // AX - Geo Country
+      geoLatitude || '', // AY - Geo Latitude
+      geoLongitude || '', // AZ - Geo Longitude
+      networkType || '', // BA - Network Type (WiFi/4G/3G/etc)
+      '', // BB - Time to First Interaction (seconds)
+      '', // BC - Session Duration (seconds)
     ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Visitors!A:AT',
+      range: 'Visitors!A:BC',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values },
     });
