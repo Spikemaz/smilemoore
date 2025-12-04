@@ -750,7 +750,16 @@ export default function LandingPage() {
   };
 
   const getBannerMessage = () => {
-    // Simplified message for step 4+ (success page and beyond)
+    // Message for step 6 (final questions page)
+    if (step === 6) {
+      return (
+        <span className="text-lg md:text-xl">
+          🎉 You have been entered into our draw and have been sent your voucher code via email
+        </span>
+      );
+    }
+
+    // Simplified message for step 4-5 (success page and survey)
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
