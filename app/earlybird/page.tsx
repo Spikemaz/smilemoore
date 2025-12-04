@@ -1026,6 +1026,7 @@ export default function EarlyBirdPage() {
                   body: JSON.stringify({
                     email: formData.email,
                     ...surveyData,
+                    householdNames, // Include household member names
                   }),
                 });
                 console.log('✅ First 5 questions saved to Google Sheets');

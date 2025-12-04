@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       appointmentTimes,
       importantFactors,
       previousExperience,
+      householdNames, // NEW: Array of household member names
       mostImportantFactor,
       smileConfidence,
       sameClinician,
@@ -111,6 +112,73 @@ export async function POST(request: Request) {
 
       // Update CustomerID sheet with live-calculated metrics
       await updateCustomerIDSheet();
+
+      // HOUSEHOLD MEMBERS: Create voucher entries for each household member
+      if (householdNames && Array.isArray(householdNames) && householdNames.length > 0) {
+        console.log(`👨‍👩‍👧‍👦 Creating vouchers for ${householdNames.length} household members`);
+
+        // Get the original customer's data to copy campaign source, etc.
+        const originalData = await sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `Home!A${rowIndex}:L${rowIndex}`,
+        });
+        const originalRow = originalData.data.values?.[0] || [];
+        const originalCampaignSource = originalRow[6] || campaignSource; // Column G
+        const originalReferredBy = originalRow[11] || referredBy; // Column L
+
+        // Call submit-voucher API for each household member
+        const householdVouchers = [];
+        for (const memberName of householdNames) {
+          if (memberName && memberName.trim()) {
+            try {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/submit-voucher`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email, // Same email as primary user
+                  name: memberName.trim(),
+                  phone: '', // Will be filled later if needed
+                  address: '', // Will be filled later if needed
+                  campaignSource: originalCampaignSource,
+                  timeToSubmit: 0,
+                  scrollDepth: 0,
+                  referredBy: originalReferredBy,
+                  smUniversalId: '', // Could use same or generate new
+                }),
+              });
+
+              const result = await response.json();
+              if (result.voucherCode) {
+                householdVouchers.push({
+                  name: memberName.trim(),
+                  voucherCode: result.voucherCode,
+                  customerId: result.customerId,
+                });
+                console.log(`✅ Created voucher for ${memberName}: ${result.voucherCode}`);
+              }
+            } catch (error) {
+              console.error(`❌ Failed to create voucher for ${memberName}:`, error);
+            }
+          }
+        }
+
+        // Send family email with all voucher codes
+        if (householdVouchers.length > 0) {
+          try {
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-family-vouchers`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                householdVouchers,
+              }),
+            });
+            console.log(`📧 Sent family voucher email to ${email}`);
+          } catch (error) {
+            console.error('❌ Failed to send family voucher email:', error);
+          }
+        }
+      }
     } else if (isStep6) {
       // Step 6: Save only Q6-Q15 + Additional Feedback (columns R-AB)
       const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';

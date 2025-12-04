@@ -44,7 +44,10 @@
       "Bash(del test-check-sheet.js)",
       "Bash(python:*)",
       "Bash(if not exist \"c:\\Users\\marcu\\Desktop\\SmileMoore\\app\\jumper\" mkdir \"c:\\Users\\marcu\\Desktop\\SmileMoore\\app\\jumper\")",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npm outdated:*)",
+      "Bash(npm audit:*)",
+      "Bash(copy apppage.tsx appjumperpage.tsx)"
     ],
     "deny": [],
     "ask": []
