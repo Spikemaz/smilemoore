@@ -815,7 +815,7 @@ export default function EarlyBirdPage() {
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-              Claim Your £{voucherValue} Voucher
+              Due To Popular Demand Only {vouchersRemaining} Vouchers Remaining!
             </h1>
 
             <div className="mb-3">
@@ -827,10 +827,6 @@ export default function EarlyBirdPage() {
             <p className="text-sm mb-4" style={{ color: '#666' }}>
               Valid Towards Dental Treatment
             </p>
-
-            <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-              Due to popular demand only {vouchersRemaining} vouchers remaining
-            </h2>
 
             <p className="text-xl mb-4" style={{ color: '#666' }}>
               Early Bird Survey
