@@ -754,7 +754,7 @@ export default function EarlyBirdPage() {
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
-          Live Count of Vouchers Remaining: <span className="underline font-extrabold text-4xl md:text-5xl pulse-color">{vouchersRemaining}</span>
+          Congratulations On Receiving Your Voucher
         </span>
       );
     }
