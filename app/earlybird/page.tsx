@@ -911,19 +911,19 @@ export default function EarlyBirdPage() {
         {/* Step 3: Phone + Postcode (Combined Final Step) */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="text-center mb-6">
-              <div className="inline-block p-4 rounded-full mb-3" style={{ backgroundColor: '#cfe8d7' }}>
+            <div className="text-center mb-4">
+              <div className="inline-block p-4 rounded-full mb-2" style={{ backgroundColor: '#cfe8d7' }}>
                 <span className="text-4xl">🎁</span>
               </div>
-              <h2 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+              <h2 className="text-3xl font-bold mb-2" style={{ color: '#1f3a33' }}>
                 Almost There, {formData.name}!
               </h2>
-              <p className="text-lg" style={{ color: '#666' }}>
+              <p className="text-lg mb-2" style={{ color: '#666' }}>
                 Just 2 more details to claim your £{voucherValue} voucher
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="text-center">
                 <label htmlFor="phone" className="block text-lg font-semibold mb-3 text-center" style={{ color: '#1f3a33' }}>
                   Your mobile number
