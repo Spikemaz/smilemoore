@@ -823,7 +823,7 @@ export default function EarlyBirdPage() {
               Claim Your <span style={{ color: '#1f3a33' }}>£{voucherValue} Voucher</span>
             </h1>
             <p className="text-xl mb-6" style={{ color: '#666' }}>
-              New patient special - Valid for dental treatments
+              Early Bird Special - Valid Towards Dental Treatment
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
