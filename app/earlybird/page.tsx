@@ -979,9 +979,6 @@ export default function EarlyBirdPage() {
               <p className="text-2xl mb-2" style={{ color: '#d4af37' }}>
                 Worth Up To £5000!
               </p>
-              <p className="text-lg" style={{ color: '#666' }}>
-                Help us build your perfect dental practice, join {totalSignups} other Early Birds which have entered the chance to win!
-              </p>
             </div>
 
             <div className="text-center mb-6">
@@ -989,7 +986,7 @@ export default function EarlyBirdPage() {
                 Answer 5 Quick Questions
               </h3>
               <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Help us build your perfect dental practice
+                Help us build your perfect dental practice, join {totalSignups} other Early Birds which have entered the chance to win!
               </p>
             </div>
 
