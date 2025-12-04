@@ -816,7 +816,7 @@ export default function EarlyBirdPage() {
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
             <div className="mb-3">
               <span className="inline-block px-4 py-2 rounded-full text-sm font-bold" style={{ backgroundColor: '#cfe8d7', color: '#1f3a33' }}>
-                Due To Popular Demand Only {vouchersRemaining} Vouchers Remaining!
+                ✓ LIMITED TIME OFFER
               </span>
             </div>
 
