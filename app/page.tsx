@@ -2,10 +2,27 @@
 
 import { useState, useEffect } from 'react';
 
-// Declare dataLayer for GTM
+// Declare dataLayer for GTM and Navigator types
 declare global {
   interface Window {
     dataLayer: any[];
+  }
+  interface Navigator {
+    connection?: {
+      effectiveType?: string;
+      type?: string;
+      downlink?: number;
+      rtt?: number;
+      saveData?: boolean;
+    };
+    mozConnection?: {
+      effectiveType?: string;
+      type?: string;
+    };
+    webkitConnection?: {
+      effectiveType?: string;
+      type?: string;
+    };
   }
 }
 
@@ -49,6 +66,7 @@ export default function LandingPage() {
   const [referredBy, setReferredBy] = useState<string>('');
   const [campaignSource, setCampaignSource] = useState<string>('URL Direct');
   const [customerId, setCustomerId] = useState<string>('');
+  const [firstInteractionTime, setFirstInteractionTime] = useState<number>(0);
   const [surveyData, setSurveyData] = useState({
     dentalCare: [] as string[], // Q1: Multiple choice
     appointmentTimes: [] as string[], // Q2: Multiple choice
@@ -78,6 +96,32 @@ export default function LandingPage() {
       console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
     }
   }, []);
+
+  // Track first interaction (mouse move, scroll, click, touch, or keyboard)
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (firstInteractionTime === 0) {
+        const interactionTime = Date.now();
+        setFirstInteractionTime(interactionTime);
+        const timeToInteraction = Math.round((interactionTime - pageLoadTimestamp) / 1000);
+        console.log(`⏱️ First interaction after ${timeToInteraction} seconds`);
+      }
+    };
+
+    window.addEventListener('mousemove', handleFirstInteraction, { once: true });
+    window.addEventListener('scroll', handleFirstInteraction, { once: true });
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('mousemove', handleFirstInteraction);
+      window.removeEventListener('scroll', handleFirstInteraction);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, [firstInteractionTime, pageLoadTimestamp]);
 
   // Track visitor immediately on page load
   useEffect(() => {
@@ -198,6 +242,18 @@ export default function LandingPage() {
         // Get language and timezone
         const language = navigator.language || 'unknown';
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+
+        // Detect network type (WiFi vs mobile data)
+        let networkType = 'Unknown';
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+          if (connection.effectiveType) {
+            networkType = connection.effectiveType; // '4g', '3g', '2g', 'slow-2g'
+          } else if (connection.type) {
+            networkType = connection.type; // 'wifi', 'cellular', 'bluetooth', etc.
+          }
+          console.log('📶 Network type:', networkType, 'Connection details:', connection);
+        }
 
         // Get retargeting cookies for Facebook and Google
         const getCookie = (name: string) => {
@@ -365,6 +421,7 @@ export default function LandingPage() {
             firstVisitDate,
             dayOfWeek,
             hourOfDay,
+            networkType, // NEW: Network connection type
           }),
         });
 
@@ -460,6 +517,32 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [maxScrollDepth]);
 
+  // Track session duration on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const sessionDuration = Math.round((Date.now() - pageLoadTimestamp) / 1000);
+      const timeToFirstInteraction = firstInteractionTime > 0
+        ? Math.round((firstInteractionTime - pageLoadTimestamp) / 1000)
+        : 0;
+
+      console.log(`📊 Session ending - Duration: ${sessionDuration}s, Time to first interaction: ${timeToFirstInteraction}s`);
+
+      // Send session data using sendBeacon (works even when page is closing)
+      if (visitorId && navigator.sendBeacon) {
+        const sessionData = JSON.stringify({
+          visitorId,
+          sessionDuration,
+          timeToFirstInteraction,
+          maxScrollDepth,
+        });
+        navigator.sendBeacon('/api/update-session-data', sessionData);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [visitorId, pageLoadTimestamp, firstInteractionTime, maxScrollDepth]);
+
   // Fetch initial voucher status
   useEffect(() => {
     async function fetchVoucherStatus() {
@@ -512,6 +595,9 @@ export default function LandingPage() {
 
       // Calculate time from page load to email submission (in seconds)
       const timeToSubmit = Math.round((emailTime - pageLoadTimestamp) / 1000);
+      const timeToFirstInteraction = firstInteractionTime > 0
+        ? Math.round((firstInteractionTime - pageLoadTimestamp) / 1000)
+        : 0;
 
       // ALWAYS clear customerId when submitting step 1 (email)
       localStorage.removeItem('smilemoore_customer_id');
@@ -537,6 +623,7 @@ export default function LandingPage() {
           scrollDepth: maxScrollDepth,
           referredBy,
           smUniversalId,
+          timeToFirstInteraction, // NEW: Time to first user interaction
         }),
       }).then(async (response) => {
         if (response.ok) {
