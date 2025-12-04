@@ -1099,10 +1099,39 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Question 3: Multiple choice (was Q1) */}
+              {/* Question 3: Single choice */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  3. What type of dental care are you most interested in?
+                  3. How do you feel about visiting the dentist?
+                </label>
+                <div className="space-y-3">
+                  {[
+                    'I feel comfortable and relaxed',
+                    'I feel slightly anxious',
+                    'I feel very nervous or anxious',
+                    'I avoid it due to fear or bad experiences'
+                  ].map((option) => (
+                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
+                      style={{ borderColor: surveyData.importantFactors === option ? '#1f3a33' : '#cfe8d7' }}>
+                      <input
+                        type="radio"
+                        name="importantFactors"
+                        value={option}
+                        checked={surveyData.importantFactors === option}
+                        onChange={(e) => setSurveyData({ ...surveyData, importantFactors: e.target.value })}
+                        required
+                        className="mr-3 w-5 h-5"
+                      />
+                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 4: Multiple choice (was Q1) */}
+              <div className="text-left">
+                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
+                  4. What type of dental care are you most interested in?
                   <span className="block text-sm font-normal mt-1" style={{ color: '#666' }}>(Select all that apply)</span>
                 </label>
                 <div className="space-y-3">
@@ -1128,35 +1157,6 @@ export default function LandingPage() {
                             setSurveyData({ ...surveyData, dentalCare: surveyData.dentalCare.filter(c => c !== value) });
                           }
                         }}
-                        className="mr-3 w-5 h-5"
-                      />
-                      <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Question 4: Single choice */}
-              <div className="text-left">
-                <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  4. How do you feel about visiting the dentist?
-                </label>
-                <div className="space-y-3">
-                  {[
-                    'I feel comfortable and relaxed',
-                    'I feel slightly anxious',
-                    'I feel very nervous or anxious',
-                    'I avoid it due to fear or bad experiences'
-                  ].map((option) => (
-                    <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: surveyData.importantFactors === option ? '#1f3a33' : '#cfe8d7' }}>
-                      <input
-                        type="radio"
-                        name="importantFactors"
-                        value={option}
-                        checked={surveyData.importantFactors === option}
-                        onChange={(e) => setSurveyData({ ...surveyData, importantFactors: e.target.value })}
-                        required
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
