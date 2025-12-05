@@ -113,9 +113,18 @@ export async function POST(request: Request) {
                 ${referralLink}
               </p>
             </div>
-            <p style="font-size: 13px; color: #1f3a33; margin: 10px 0 0 0; text-align: center; font-weight: 600;">
+            <p style="font-size: 13px; color: #1f3a33; margin: 10px 0 15px 0; text-align: center; font-weight: 600;">
               ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
             </p>
+
+            <!-- Social Share Buttons -->
+            <div style="text-align: center; margin-top: 15px;">
+              <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁" style="display: inline-block; background-color: #1877f2; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">📘 Facebook</a>
+              <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">𝕏 Twitter</a>
+              <br/>
+              <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0A${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #25d366; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">💬 WhatsApp</a>
+              <span style="display: inline-block; background-color: #E1306C; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; font-size: 13px; font-weight: bold;">📸 Instagram</span>
+            </div>
           </div>
 
           <!-- What Happens Next -->

@@ -1587,7 +1587,7 @@ export default function EarlyBirdPage() {
               </button>
 
               {/* Social Media Share Buttons */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <button
                   type="button"
                   onClick={() => {
@@ -1623,6 +1623,18 @@ export default function EarlyBirdPage() {
                   style={{ backgroundColor: '#25d366' }}
                 >
                   💬 WhatsApp
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const referralLink = `${window.location.origin}?ref=${customerId}`;
+                    navigator.clipboard.writeText(referralLink);
+                    alert('✨ Instagram doesn\'t support direct sharing, but your link is copied! Open Instagram and paste it in your Story or post.');
+                  }}
+                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  style={{ backgroundColor: '#E1306C' }}
+                >
+                  📸 Instagram
                 </button>
               </div>
 
