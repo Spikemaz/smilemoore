@@ -86,10 +86,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // If updating name, generate and store referral link
+    // If updating name, generate and store referral link using Customer ID
     if (field === 'name' && value) {
-      const randomCode = Math.floor(100 + Math.random() * 900);
-      const referralLink = `https://smilemoore.co.uk/api/track-referral-click?email=${encodeURIComponent(email)}&ref=${encodeURIComponent(value)}-${randomCode}`;
+      // Get Customer ID from column A of this row
+      const customerIdResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!A${rowIndex + 1}`,
+      });
+      const customerId = customerIdResponse.data.values?.[0]?.[0] || '';
+
+      // Use Customer ID for referral link (same format as send-family-vouchers)
+      const referralLink = `https://www.smilemoore.co.uk?ref=${customerId}`;
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
@@ -162,13 +169,13 @@ export async function POST(request: NextRequest) {
       // Get all voucher details from the row to send confirmation email
       const voucherDetailsResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!C${rowIndex + 1}:AH${rowIndex + 1}`, // Email through Referal Link
+        range: `Home!A${rowIndex + 1}:AH${rowIndex + 1}`, // Customer ID through Referal Link
       });
 
       const voucherDetails = voucherDetailsResponse.data.values?.[0];
       if (voucherDetails) {
-        const [emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
-        const referralLink = voucherDetails[31]; // Column AH (index 31 from C)
+        const [customerId, timestamp, emailAddr, name, phone, postcode, source, voucherValue, voucherCode, batchNumber, ipAddress, referredBy, ...surveyAnswers] = voucherDetails;
+        const referralLink = voucherDetails[33]; // Column AH (index 33 from A)
 
         // Check if this email has multiple signups - if so, group them
         const allRowsResponse = await sheets.spreadsheets.values.get({
@@ -353,7 +360,7 @@ export async function POST(request: NextRequest) {
                                     <td style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; border: 2px solid #cfe8d7;">
                                       <p style="margin: 0 0 10px 0; color: #1f3a33; font-size: 14px; font-weight: bold;">YOUR REFERRAL LINK</p>
                                       <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 14px; word-break: break-all;">
-                                        ${referralLink || `https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}`}
+                                        ${referralLink || `https://www.smilemoore.co.uk?ref=${customerId}`}
                                       </p>
                                       <p style="margin: 0; color: #666666; font-size: 13px; line-height: 20px;">
                                         Share this link and get <strong>+10 entries</strong> for every friend who claims their voucher!
