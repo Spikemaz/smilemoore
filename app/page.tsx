@@ -156,13 +156,21 @@ export default function LandingPage() {
 
         // Skip to the appropriate step based on what data is missing
         if (data.hasExtendedSurvey) {
-          // They've completed everything - show final page
-          setStep(7);
-          // Scroll to top when showing final page
-          setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
+          // They've completed everything - clear localStorage and start fresh
+          // This allows them to use their phone to fill out friends' details
+          console.log('✅ Survey complete - clearing localStorage to allow fresh signups');
+          localStorage.removeItem('smilemoore_customer_id');
+          localStorage.removeItem('smilemoore_last_email');
+          // Don't auto-resume, let them start fresh
+          setStep(1);
         } else if (data.hasSurveyQ1to5) {
-          // They have basic survey, need extended survey
-          setStep(6);
+          // They have basic survey (5Q complete) - clear localStorage and start fresh
+          // This allows them to sign up friends/family after completing 5 questions
+          console.log('✅ 5 questions complete - clearing localStorage to allow fresh signups');
+          localStorage.removeItem('smilemoore_customer_id');
+          localStorage.removeItem('smilemoore_last_email');
+          // Don't auto-resume, let them start fresh
+          setStep(1);
         } else if (data.hasPhoneAddress) {
           // They have contact info, need to do 5 questions
           setStep(5);
@@ -1185,6 +1193,11 @@ export default function LandingPage() {
 
               setIsSubmitting(true);
 
+              // Clear localStorage after 5 questions - allow fresh signups for friends/family
+              console.log('✅ Completed 5 questions - clearing localStorage for fresh signups');
+              localStorage.removeItem('smilemoore_customer_id');
+              localStorage.removeItem('smilemoore_last_email');
+
               // Move to next step immediately for instant UX
               setStep(6);
               setIsSubmitting(false);
@@ -1721,6 +1734,11 @@ export default function LandingPage() {
             <form onSubmit={async (e) => {
               e.preventDefault();
               setIsSubmitting(true);
+
+              // Clear localStorage after all questions - allow fresh signups for friends/family
+              console.log('✅ Completed all questions - clearing localStorage for fresh signups');
+              localStorage.removeItem('smilemoore_customer_id');
+              localStorage.removeItem('smilemoore_last_email');
 
               // Scroll to top FIRST (before state change) for mobile reliability
               window.scrollTo({ top: 0, behavior: 'instant' });
