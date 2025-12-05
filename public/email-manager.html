@@ -502,6 +502,7 @@
 
         <div class="nav">
             <button class="active" onclick="showMainSection('overview')">📊 Overview</button>
+            <button onclick="showMainSection('mass-send')">📣 Mass Send</button>
             <button onclick="showMainSection('email')">📧 Email</button>
             <button onclick="showMainSection('whatsapp')">💬 WhatsApp</button>
             <button onclick="showMainSection('sms')">📱 SMS</button>
@@ -690,6 +691,65 @@
                     <button class="btn btn-primary" onclick="refreshAnalytics()" style="margin-top: 10px;">
                         🔄 Refresh Now
                     </button>
+                </div>
+            </div>
+
+            <!-- MASS SEND SECTION -->
+            <div id="mass-send" class="email-card" style="display: none;">
+                <h2 style="color: #1f3a33; margin-bottom: 20px;">📣 Mass Send to Database</h2>
+
+                <div class="info-box" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-left: 4px solid #ff9800;">
+                    <h3>⚠️ Important: Mass Communication</h3>
+                    <p>Send emails or WhatsApp messages to your entire customer database. Use responsibly and ensure compliance with data protection regulations.</p>
+                </div>
+
+                <!-- Mass Email Section -->
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 30px 0; border: 2px solid #e0e0e0;">
+                    <h3 style="color: #1f3a33; margin-bottom: 20px;">📧 Mass Email Campaign</h3>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f3a33;">Email Subject:</label>
+                        <input type="text" id="mass-email-subject" placeholder="e.g., 🎄 Merry Christmas from Smile Moore!"
+                            style="width: 100%; padding: 12px; border: 2px solid #cfe8d7; border-radius: 6px; font-size: 14px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f3a33;">Email Body (HTML):</label>
+                        <textarea id="mass-email-body" rows="12" placeholder="Use {name} for personalization. Example: Hi {name}, ..."
+                            style="width: 100%; padding: 12px; border: 2px solid #cfe8d7; border-radius: 6px; font-size: 14px; font-family: 'Courier New', monospace;"></textarea>
+                        <p style="font-size: 13px; color: #666; margin-top: 8px;">💡 Tip: Use {name} to personalize with customer names. HTML tags supported.</p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="mass-email-filter-phone">
+                            <span style="font-size: 14px; color: #666;">Only send to customers with phone numbers</span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="sendMassEmail()" style="background: #1877f2; width: 100%;">
+                        📧 Send Mass Email Campaign
+                    </button>
+
+                    <div id="mass-email-results" style="margin-top: 20px; display: none;"></div>
+                </div>
+
+                <!-- Mass WhatsApp Section -->
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 30px 0; border: 2px solid #e0e0e0;">
+                    <h3 style="color: #1f3a33; margin-bottom: 20px;">💬 Mass WhatsApp Campaign</h3>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1f3a33;">WhatsApp Message:</label>
+                        <textarea id="mass-whatsapp-message" rows="8" placeholder="Use {name} for personalization. Example: Hi {name}, Merry Christmas from Smile Moore! 🎄"
+                            style="width: 100%; padding: 12px; border: 2px solid #cfe8d7; border-radius: 6px; font-size: 14px;"></textarea>
+                        <p style="font-size: 13px; color: #666; margin-top: 8px;">💡 Tip: Use {name} to personalize with customer names.</p>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="generateWhatsAppLinks()" style="background: #25d366; width: 100%;">
+                        💬 Generate WhatsApp Links for All Customers
+                    </button>
+
+                    <div id="mass-whatsapp-results" style="margin-top: 20px; display: none;"></div>
                 </div>
             </div>
 
@@ -2981,6 +3041,126 @@ Smile Moore Team`
                 }
             }, 1000);
         });
+
+        // Mass Send Functions
+        async function sendMassEmail() {
+            const subject = document.getElementById('mass-email-subject').value;
+            const htmlContent = document.getElementById('mass-email-body').value;
+            const filterPhone = document.getElementById('mass-email-filter-phone').checked;
+
+            if (!subject || !htmlContent) {
+                showAlert('Please fill in both subject and body', 'error');
+                return;
+            }
+
+            if (!confirm('⚠️ Are you sure you want to send this email to ALL customers in your database? This action cannot be undone.')) {
+                return;
+            }
+
+            const resultsDiv = document.getElementById('mass-email-results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<p style="text-align: center;">⏳ Sending emails... Please wait.</p>';
+
+            try {
+                const response = await fetch('/api/mass-send-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject,
+                        htmlContent,
+                        filters: { hasPhone: filterPhone }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div style="background: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: #155724; margin-bottom: 10px;">✅ Mass Email Campaign Complete!</h4>
+                            <p><strong>Total Recipients:</strong> ${data.results.total}</p>
+                            <p><strong>Successfully Sent:</strong> ${data.results.sent}</p>
+                            <p><strong>Failed:</strong> ${data.results.failed}</p>
+                            ${data.results.errors.length > 0 ? `
+                                <details style="margin-top: 10px;">
+                                    <summary style="cursor: pointer; font-weight: 600;">View Errors</summary>
+                                    <pre style="background: white; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto;">${data.results.errors.join('\n')}</pre>
+                                </details>
+                            ` : ''}
+                        </div>
+                    `;
+                    showAlert('Mass email campaign completed!', 'success');
+                } else {
+                    throw new Error(data.message || 'Failed to send emails');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div style="background: #f8d7da; border: 2px solid #dc3545; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #721c24;">❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                showAlert('Failed to send mass email', 'error');
+            }
+        }
+
+        async function generateWhatsAppLinks() {
+            const message = document.getElementById('mass-whatsapp-message').value;
+
+            if (!message) {
+                showAlert('Please enter a WhatsApp message', 'error');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('mass-whatsapp-results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<p style="text-align: center;">⏳ Generating WhatsApp links... Please wait.</p>';
+
+            try {
+                const response = await fetch('/api/mass-send-whatsapp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const links = data.results.whatsappLinks;
+                    resultsDiv.innerHTML = `
+                        <div style="background: #d1f2eb; border: 2px solid #25d366; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: #0c5460; margin-bottom: 15px;">✅ WhatsApp Links Generated!</h4>
+                            <p style="margin-bottom: 15px;"><strong>Total Recipients:</strong> ${links.length}</p>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Click each link to open WhatsApp with the pre-filled message. You'll need to manually send each message.</p>
+                            <div style="max-height: 400px; overflow-y: auto; background: white; padding: 15px; border-radius: 6px;">
+                                ${links.map(link => `
+                                    <div style="padding: 10px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong>${link.name}</strong><br>
+                                            <span style="font-size: 13px; color: #666;">${link.phone}</span>
+                                        </div>
+                                        <a href="${link.link}" target="_blank" style="background: #25d366; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; white-space: nowrap;">
+                                            💬 Open WhatsApp
+                                        </a>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    showAlert('WhatsApp links generated successfully!', 'success');
+                } else {
+                    throw new Error(data.message || 'Failed to generate links');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div style="background: #f8d7da; border: 2px solid #dc3545; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #721c24;">❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                showAlert('Failed to generate WhatsApp links', 'error');
+            }
+        }
     </script>
 </body>
 </html>
