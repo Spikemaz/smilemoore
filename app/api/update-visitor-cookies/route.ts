@@ -33,7 +33,6 @@ export async function POST(request: Request) {
       muid,
       ttp,
       tta,
-      mucAds,
       smUniversalId
     } = await request.json();
 
@@ -121,13 +120,6 @@ export async function POST(request: Request) {
       });
     }
 
-    if (mucAds) {
-      updates.push({
-        range: `Visitors!AE${rowIndex}`, // LinkedIn/Twitter ID (for now using LinkedIn column)
-        values: [[mucAds]],
-      });
-    }
-
     if (smUniversalId) {
       updates.push({
         range: `Visitors!AR${rowIndex}`, // SmileMoore Universal ID
@@ -135,13 +127,12 @@ export async function POST(request: Request) {
       });
     }
 
-    // Recalculate cookie quality score
+    // Recalculate cookie quality score (4 platforms: Facebook, Google, Microsoft, TikTok)
     let cookieQualityScore = 0;
     if (fbp) cookieQualityScore++;
     if (gaClientId) cookieQualityScore++;
     if (muid) cookieQualityScore++;
     if (ttp || tta) cookieQualityScore++;
-    if (mucAds) cookieQualityScore++;
 
     updates.push({
       range: `Visitors!AS${rowIndex}`, // Cookie Quality Score
@@ -150,7 +141,7 @@ export async function POST(request: Request) {
 
     updates.push({
       range: `Visitors!AT${rowIndex}`, // All Cookies Captured
-      values: [[cookieQualityScore === 6 ? 'Yes' : 'No']],
+      values: [[cookieQualityScore === 4 ? 'Yes' : 'No']],
     });
 
     if (updates.length > 0) {

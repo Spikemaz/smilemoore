@@ -48,7 +48,8 @@
       "Bash(npm outdated:*)",
       "Bash(npm audit:*)",
       "Bash(copy apppage.tsx appjumperpage.tsx)",
-      "Bash(copy applibgoogleSheets.ts applibgoogleSheets.ts.backup)"
+      "Bash(copy applibgoogleSheets.ts applibgoogleSheets.ts.backup)",
+      "Bash(vercel:*)"
     ],
     "deny": [],
     "ask": []

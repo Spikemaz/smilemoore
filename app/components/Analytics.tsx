@@ -32,18 +32,44 @@ export default function Analytics() {
         `}
       </Script>
 
-      {/* Microsoft UET Tag */}
-      <Script id="microsoft-uet" strategy="afterInteractive">
+      {/* Microsoft Clarity + UET Tag - Combined for better cookie tracking */}
+      <Script id="microsoft-clarity" strategy="afterInteractive">
         {`
-          (function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"187223299", enableAutoSpaTracking: true};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "placeholder");
         `}
       </Script>
 
-      {/* Twitter/X Pixel - DISABLED (Events Manager not accessible yet) */}
-      {/* To enable: Add payment method to Twitter Ads, then get Pixel ID from Events Manager */}
-
-      {/* FALLBACK COOKIES DISABLED - Only capturing REAL platform pixels for retargeting */}
-      {/* To enable retargeting, add real Pixel IDs above for TikTok, LinkedIn, Microsoft, Twitter */}
+      {/* Microsoft UET Tag - Improved cookie generation */}
+      <Script id="microsoft-uet" strategy="afterInteractive">
+        {`
+          (function(w,d,t,r,u){
+            var f,n,i;
+            w[u]=w[u]||[];
+            f=function(){
+              var o={ti:"187223299", enableAutoSpaTracking: true};
+              o.q=w[u];
+              w[u]=new UET(o);
+              w[u].push("pageLoad");
+            };
+            n=d.createElement(t);
+            n.src=r;
+            n.async=1;
+            n.onload=n.onreadystatechange=function(){
+              var s=this.readyState;
+              if(!s || s==="loaded" || s==="complete"){
+                f();
+                n.onload=n.onreadystatechange=null;
+              }
+            };
+            i=d.getElementsByTagName(t)[0];
+            i.parentNode.insertBefore(n,i);
+          })(window,document,"script","//bat.bing.com/bat.js","uetq");
+        `}
+      </Script>
     </>
   );
 }

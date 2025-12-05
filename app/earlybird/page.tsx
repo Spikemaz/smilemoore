@@ -248,12 +248,11 @@ export default function EarlyBirdPage() {
           setReferredBy(ref);
         }
 
-        // Extract click IDs for ad platforms
+        // Extract click IDs for ad platforms (Facebook, Google, Microsoft, TikTok)
         const fbclid = urlParams.get('fbclid') || '';
         const gclid = urlParams.get('gclid') || '';
         const msclkid = urlParams.get('msclkid') || ''; // Microsoft Ads
         const ttclid = urlParams.get('ttclid') || ''; // TikTok
-        const li_fat_id = urlParams.get('li_fat_id') || ''; // LinkedIn
 
         // Enhanced device detection
         const userAgent = navigator.userAgent;
@@ -361,7 +360,6 @@ export default function EarlyBirdPage() {
         let muid = '';
         let ttp = '';
         let tta = '';
-        let mucAds = '';
 
         // Try to get cookies, retry up to 5 times over 5 seconds
         for (let attempt = 0; attempt < 5; attempt++) {
@@ -374,7 +372,6 @@ export default function EarlyBirdPage() {
           muid = getCookie('MUID');
           ttp = getCookie('_ttp');
           tta = getCookie('_tta');
-          mucAds = getCookie('muc_ads');
 
           console.log(`Attempt ${attempt + 1}: Cookies:`, {
             fbp,
@@ -384,7 +381,6 @@ export default function EarlyBirdPage() {
             muid,
             ttp,
             tta,
-            mucAds,
             allCookies: document.cookie
           });
 
@@ -394,11 +390,10 @@ export default function EarlyBirdPage() {
           if (gaClientId) platformCount++;
           if (muid) platformCount++;
           if (ttp || tta) platformCount++;
-          if (mucAds) platformCount++;
 
-          // If we have most cookies (4+), stop trying
+          // If we have all 4 cookies, stop trying
           if (platformCount >= 4) {
-            console.log(`✅ Found ${platformCount}/6 platform tracking cookies!`);
+            console.log(`✅ Found ${platformCount}/4 platform tracking cookies!`);
             break;
           }
         }
@@ -408,7 +403,6 @@ export default function EarlyBirdPage() {
         if (!gaClientId) console.warn('⚠️ Google _ga cookie not found after 5 seconds');
         if (!muid) console.warn('⚠️ Microsoft MUID cookie not found after 5 seconds');
         if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
-        if (!mucAds) console.warn('⚠️ Twitter/X muc_ads cookie not found after 5 seconds');
 
         // Extract email and SMS campaign parameters
         const emailVariation = urlParams.get('email') || '';
@@ -499,11 +493,9 @@ export default function EarlyBirdPage() {
             gclid,
             msclkid,
             ttclid,
-            li_fat_id,
             muid,
             ttp,
             tta,
-            mucAds,
             smUniversalId,
             pageLoadTime: Math.round(loadTime),
             isReturningVisitor,
@@ -540,7 +532,6 @@ export default function EarlyBirdPage() {
             const delayedMuid = getCookie('MUID');
             const delayedTtp = getCookie('_ttp');
             const delayedTta = getCookie('_tta');
-            const delayedMucAds = getCookie('muc_ads');
 
             console.log('🔄 Updating visitor with delayed cookies:', {
               visitorId: data.visitorId,
@@ -551,13 +542,12 @@ export default function EarlyBirdPage() {
               muid: delayedMuid,
               ttp: delayedTtp,
               tta: delayedTta,
-              mucAds: delayedMucAds,
               smUniversalId,
               allCookies: document.cookie
             });
 
             // Update the visitor row with all cookies
-            if (delayedFbp || delayedGa || delayedMuid || delayedTtp || delayedMucAds) {
+            if (delayedFbp || delayedGa || delayedMuid || delayedTtp) {
               try {
                 await fetch('/api/update-visitor-cookies', {
                   method: 'POST',
@@ -571,7 +561,6 @@ export default function EarlyBirdPage() {
                     muid: delayedMuid,
                     ttp: delayedTtp,
                     tta: delayedTta,
-                    mucAds: delayedMucAds,
                     smUniversalId,
                   }),
                 });

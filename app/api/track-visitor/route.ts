@@ -85,11 +85,9 @@ export async function POST(request: Request) {
       gclid,
       msclkid,
       ttclid,
-      li_fat_id,
       muid,
       ttp,
       tta,
-      mucAds,
       smUniversalId,
       pageLoadTime,
       isReturningVisitor,
@@ -142,16 +140,14 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
-    // Calculate cookie quality score (how many real platform IDs we captured)
+    // Calculate cookie quality score (how many real platform IDs we captured - 4 platforms total)
     let cookieQualityScore = 0;
     if (fbp) cookieQualityScore++;
     if (gaClientId) cookieQualityScore++;
     if (muid) cookieQualityScore++;
     if (ttp) cookieQualityScore++;
-    if (li_fat_id) cookieQualityScore++;
-    if (mucAds) cookieQualityScore++;
 
-    const allCookiesCaptured = cookieQualityScore === 6 ? 'Yes' : 'No';
+    const allCookiesCaptured = cookieQualityScore === 4 ? 'Yes' : 'No';
 
     // Prepare row data matching Visitors sheet headers (columns A-BA)
     const values = [[
@@ -185,7 +181,7 @@ export async function POST(request: Request) {
       msclkid || '', // AB - Microsoft Click ID (msclkid)
       ttp || '', // AC - TikTok Browser ID (_ttp)
       ttclid || '', // AD - TikTok Click ID (ttclid)
-      li_fat_id || '', // AE - LinkedIn ID (li_fat_id)
+      '', // AE - LinkedIn ID (removed - not tracking)
       pageLoadTime || 0, // AF - Page Load Time
       isReturningVisitor ? 'Yes' : 'No', // AG - Returning Visitor
       sessionCount || 1, // AH - Session Count
