@@ -1169,6 +1169,8 @@ export default function LandingPage() {
                 return;
               }
 
+              setIsSubmitting(true);
+
               // Save the first 5 questions to Google Sheets immediately
               try {
                 await fetch('/api/save-survey', {
@@ -1185,9 +1187,12 @@ export default function LandingPage() {
                 console.error('Error saving first 5 questions:', error);
               }
 
-              // Move to extended survey (step 6)
-              setStep(6);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // Move to extended survey (step 6) with animation delay
+              setTimeout(() => {
+                setStep(6);
+                setIsSubmitting(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 600);
             }} className="space-y-8">
               {/* Question 1: Multiple choice (was Q2) */}
               <div className="text-left">
@@ -1534,10 +1539,19 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                disabled={isSubmitting}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                Submit & Enter Prize Draw →
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : 'Submit & Enter Prize Draw →'}
               </button>
             </form>
           </div>
@@ -1678,6 +1692,8 @@ export default function LandingPage() {
 
             <form onSubmit={async (e) => {
               e.preventDefault();
+              setIsSubmitting(true);
+
               // Save only the extended survey responses (Q6-Q15 + Additional Feedback)
               // Q1-Q5 were already saved in step 5
               try {
@@ -1689,12 +1705,19 @@ export default function LandingPage() {
                     ...extendedSurvey,
                   }),
                 });
-                setStep(7);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                setTimeout(() => {
+                  setStep(7);
+                  setIsSubmitting(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 600);
               } catch (error) {
                 console.error('Survey submission error:', error);
-                setStep(7);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
+                  setStep(7);
+                  setIsSubmitting(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 600);
               }
             }} className="space-y-8">
               {/* Question 1 */}
@@ -2024,10 +2047,19 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                disabled={isSubmitting}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                Complete Survey & Confirm Entry →
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : 'Complete Survey & Confirm Entry →'}
               </button>
             </form>
           </div>
