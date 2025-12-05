@@ -47,7 +47,8 @@
       "Bash(mkdir:*)",
       "Bash(npm outdated:*)",
       "Bash(npm audit:*)",
-      "Bash(copy apppage.tsx appjumperpage.tsx)"
+      "Bash(copy apppage.tsx appjumperpage.tsx)",
+      "Bash(copy applibgoogleSheets.ts applibgoogleSheets.ts.backup)"
     ],
     "deny": [],
     "ask": []

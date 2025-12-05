@@ -23,36 +23,70 @@ function getGoogleSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
-// Get next customer ID from CustomerID sheet
+// Get next customer ID from CustomerID sheet with retry logic for race conditions
 async function getNextCustomerId(): Promise<string> {
-  try {
-    const sheets = getGoogleSheetsClient();
+  const maxRetries = 5;
 
-    // Read current counter from CustomerID sheet
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'CustomerID!A2',
-    });
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const sheets = getGoogleSheetsClient();
 
-    const currentId = response.data.values?.[0]?.[0];
-    const nextId = currentId ? parseInt(currentId) + 1 : 1;
+      // CRITICAL: Use timestamp-based ID to prevent race conditions
+      // Format: YYMMDDHHMMSSSSS (15 digits) -> then convert to base 36 for shorter ID
+      const now = new Date();
+      const year = now.getFullYear().toString().slice(-2);
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const hour = now.getHours().toString().padStart(2, '0');
+      const minute = now.getMinutes().toString().padStart(2, '0');
+      const second = now.getSeconds().toString().padStart(2, '0');
+      const ms = now.getMilliseconds().toString().padStart(3, '0');
 
-    // Update the counter
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: 'CustomerID!A2',
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [[nextId]],
-      },
-    });
+      // Add random 2 digits to handle same-millisecond submissions
+      const random = Math.floor(Math.random() * 100).toString().padStart(2, '0');
 
-    // Format as 00001, 00002, etc.
-    return nextId.toString().padStart(5, '0');
-  } catch (error) {
-    console.error('Error getting next customer ID:', error);
-    throw error;
+      // Create unique ID: YYMMDDHHMMSSMSRand
+      const timestampId = `${year}${month}${day}${hour}${minute}${second}${ms}${random}`;
+
+      // Convert to base 36 for shorter format (10-11 chars instead of 17)
+      const customerId = parseInt(timestampId).toString(36).toUpperCase().padStart(10, '0');
+
+      // Update the counter to track total (for analytics only)
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'CustomerID!A2',
+      });
+
+      const currentCount = response.data.values?.[0]?.[0];
+      const nextCount = currentCount ? parseInt(currentCount) + 1 : 1;
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: 'CustomerID!A2',
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[nextCount]],
+        },
+      });
+
+      return customerId;
+    } catch (error) {
+      console.error(`Error getting customer ID (attempt ${attempt + 1}/${maxRetries}):`, error);
+
+      if (attempt === maxRetries - 1) {
+        // Last attempt failed - use fallback timestamp ID
+        const fallbackId = Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase();
+        console.error('⚠️ Using fallback customer ID:', fallbackId);
+        return fallbackId;
+      }
+
+      // Wait briefly before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+    }
   }
+
+  // Should never reach here due to fallback, but TypeScript requires it
+  throw new Error('Failed to generate customer ID');
 }
 
 // Get total number of signups - all in Home tab now
@@ -96,8 +130,6 @@ export async function addSignup(data: {
     // Get unique customer ID
     const customerId = await getNextCustomerId();
 
-    // All signups go to Home tab, but with different source labels
-    const sourceLabel = data.campaignSource === 'earlybird-qr' ? 'QR Scan' : 'Home';
 
     // Prepare row data (A-L for basic info + column BD for SmileMoore Universal ID)
     const values = [[
@@ -107,7 +139,7 @@ export async function addSignup(data: {
       data.name,
       data.phone,
       data.postcode,
-      sourceLabel,
+      data.campaignSource, // Use actual campaign source from data
       data.voucherValue,
       data.voucherCode,
       data.batchNumber,

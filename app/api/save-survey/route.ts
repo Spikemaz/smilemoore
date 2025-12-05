@@ -171,6 +171,7 @@ export async function POST(request: Request) {
             // Get primary person's name and Customer ID for referral link
             const primaryName = originalRow[3] || ''; // Column D - Name
             const primaryCustomerId = originalRow[0] || ''; // Column A - Customer ID
+            const primaryPhone = originalRow[4] || ''; // Column E - Phone
 
             await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-family-vouchers`, {
               method: 'POST',
@@ -183,6 +184,26 @@ export async function POST(request: Request) {
               }),
             });
             console.log(`📧 Sent family voucher email to ${email}`);
+
+            // Send WhatsApp messages for each household member (using primary phone number)
+            if (primaryPhone) {
+              for (const member of householdVouchers) {
+                try {
+                  await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-whatsapp-voucher`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      phone: primaryPhone,
+                      voucherCode: member.voucherCode,
+                      firstName: member.name.split(' ')[0], // Get first name only
+                    }),
+                  });
+                  console.log(`📱 WhatsApp voucher sent for ${member.name}: ${member.voucherCode}`);
+                } catch (error) {
+                  console.error(`❌ Failed to send WhatsApp for ${member.name}:`, error);
+                }
+              }
+            }
           } catch (error) {
             console.error('❌ Failed to send family voucher email:', error);
           }
@@ -191,6 +212,9 @@ export async function POST(request: Request) {
     } else if (isStep6) {
       // Step 6: Save only Q6-Q15 + Additional Feedback (columns R-AB)
       const treatmentsString = Array.isArray(neededTreatments) ? neededTreatments.join(', ') : '';
+      const stayLongTermString = Array.isArray(stayLongTerm) ? stayLongTerm.join(', ') : stayLongTerm;
+
+      console.log(`💾 Saving extended survey for ${email}`);
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
@@ -204,7 +228,7 @@ export async function POST(request: Request) {
             sameClinician || '',       // U - Q9: Same clinician important?
             treatmentsString,          // V - Q10: Treatments needed?
             beforeAppointment || '',   // W - Q11: Feel before appointment?
-            stayLongTerm || '',        // X - Q12: Stay long-term?
+            stayLongTermString,        // X - Q12: Stay long-term?
             preventingVisits || '',    // Y - Q13: What prevents visits?
             cosmeticImportance || '',  // Z - Q14: Cosmetic importance?
             preferredContact || '',    // AA - Q15: Preferred contact?
@@ -214,6 +238,8 @@ export async function POST(request: Request) {
       });
 
       // Update CustomerID sheet with live-calculated metrics
+      console.log(`✅ Extended survey saved successfully to row ${rowIndex}`);
+
       await updateCustomerIDSheet();
     }
 
@@ -375,6 +401,8 @@ export async function POST(request: Request) {
         ? Math.round((Date.now() - new Date(voucherTimestamp).getTime()) / 60000)
         : parseInt(rowData[49]) || 0;
 
+      console.log(`📧 Sending ${notificationType} notification for ${email}`);
+
       await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -389,8 +417,9 @@ export async function POST(request: Request) {
           },
         }),
       });
+      console.log(`✅ ${notificationType} notification sent successfully`);
     } catch (error) {
-      console.error('Failed to send notification:', error);
+      console.error(`❌ Failed to send ${notificationType || 'survey'} notification:`, error);
     }
 
     return NextResponse.json({ success: true });

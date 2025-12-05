@@ -841,6 +841,25 @@ export default function LandingPage() {
       }).catch(error => {
         console.error('Error updating address:', error);
       });
+
+      // Send SMS voucher message in background
+      if (formData.phone && voucherCode) {
+        fetch('/api/send-sms-voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            phone: formData.phone,
+            voucherCode: voucherCode,
+            firstName: formData.name.split(' ')[0], // Get first name only
+          }),
+        }).then(() => {
+          console.log('✅ SMS voucher sent');
+        }).catch(error => {
+          console.error('Error sending SMS voucher:', error);
+        });
+      }
     }
   };
 

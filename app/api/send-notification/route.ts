@@ -15,36 +15,79 @@ export async function POST(request: Request) {
     let color = 0x70d490; // Default green
 
     switch (type) {
+      // 1. Email submitted (first contact)
       case 'email_submitted':
-        message = `🎉 New Email Signup!\n\nEmail: ${data.email}\nVoucher: £${data.voucherValue}\nCode: ${data.voucherCode}\nTotal Signups: ${data.totalSignups}`;
-        color = 0x1f3a33;
+        message = `📧 **New Email Signup!**
+
+Email: ${data.email}
+Source: ${data.campaignSource || 'Unknown'}
+Total Signups: ${data.totalSignups}`;
+        color = 0x70d490; // Green
         break;
 
+      // 2. Phone & Address complete (voucher claimed)
       case 'voucher_claimed':
-        message = `✅ Voucher Claimed!\n\nName: ${data.name}\nEmail: ${data.email}\nPostcode: ${data.postcode}\nVoucher: ${data.voucherCode} (£${data.voucherValue})\nDraw Entries: ${data.entries}`;
-        color = 0x70d490;
+        message = `✅ **Voucher Claimed!**
+
+Name: ${data.name}
+Phone: ${data.phone}
+Address: ${data.address}
+Voucher: ${data.voucherCode} (£${data.voucherValue})`;
+        color = 0x4a90e2; // Blue
         break;
 
+      // 3. First 5 questions completed
       case 'survey_4q_completed':
-        message = `📋 4 Questions Completed!\n\nName: ${data.name}\nEmail: ${data.email}\nEntries: 2\nTime to complete: ${data.timeToComplete} minutes`;
-        color = 0x70d490;
+        message = `📋 **5 Questions Complete!**
+
+Name: ${data.name}
+Email: ${data.email}
+Draw Entries: 2
+Time: ${data.timeToComplete} min`;
+        color = 0xf39c12; // Orange
         break;
 
+      // 4. All 10 questions completed
       case 'survey_10q_completed':
-        message = `✅ Full Survey Completed!\n\nName: ${data.name}\nEmail: ${data.email}\nEntries: 3\nDevice: ${data.device}\nTotal time: ${data.totalTime} minutes`;
-        color = 0xffd700;
+        message = `🏆 **FULL SURVEY COMPLETE!**
+
+Name: ${data.name}
+Email: ${data.email}
+Draw Entries: 3
+Device: ${data.device}
+Total Time: ${data.totalTime} min`;
+        color = 0x9b59b6; // Purple
         break;
 
+      // 5. Milestone every 10 signups
+      case 'milestone_signups':
+        message = `🎯 **MILESTONE: ${data.totalSignups} SIGNUPS!**
+
+Latest: ${data.latestName}
+Source: ${data.campaignSource}
+
+🚀 Keep going!`;
+        color = 0xffd700; // Gold
+        break;
+
+      // 6. Referral conversion
       case 'referral_conversion':
-        message = `🎁 Referral Converted!\n\nReferrer: ${data.referrerName}\nNew signup: ${data.newEmail}\nReferrer now has: ${data.totalReferrals} referrals\nBonus entries: +10 (${data.totalEntries} total)`;
-        color = 0xff6b6b;
+        message = `🎁 **Referral Success!**
+
+Referrer: ${data.referrerName}
+New Signup: ${data.newEmail}
+Total Referrals: ${data.totalReferrals}
+Bonus Entries: +10 (${data.totalEntries} total)`;
+        color = 0xff6b6b; // Red
         break;
 
       default:
-        message = `📢 Event: ${type}\n\nData: ${JSON.stringify(data, null, 2)}`;
+        message = `📢 Event: ${type}
+
+Data: ${JSON.stringify(data, null, 2)}`;
     }
 
-    // Send to Discord/Slack webhook format
+    // Send to Discord webhook
     const payload = {
       embeds: [{
         title: getTitle(type),
@@ -52,7 +95,7 @@ export async function POST(request: Request) {
         color: color,
         timestamp: new Date().toISOString(),
         footer: {
-          text: 'Smile Moore Dashboard',
+          text: 'SmileMoore Campaign Tracker',
         },
       }],
     };
@@ -77,11 +120,12 @@ export async function POST(request: Request) {
 
 function getTitle(type: string): string {
   const titles: Record<string, string> = {
-    'email_submitted': '📧 New Email Signup',
+    'email_submitted': '📧 New Email',
     'voucher_claimed': '✅ Voucher Claimed',
-    'survey_4q_completed': '📋 Survey Progress',
-    'survey_10q_completed': '✅ Full Survey Complete',
-    'referral_conversion': '🎁 Referral Success',
+    'survey_4q_completed': '📋 5 Questions Done',
+    'survey_10q_completed': '🏆 Full Survey Complete',
+    'milestone_signups': '🎯 MILESTONE!',
+    'referral_conversion': '🎁 Referral',
   };
-  return titles[type] || '📢 System Notification';
+  return titles[type] || '📢 Notification';
 }

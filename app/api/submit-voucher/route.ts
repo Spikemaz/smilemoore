@@ -221,6 +221,8 @@ export async function POST(request: Request) {
 
     // Send real-time notification
     try {
+      const newTotalSignups = totalSignups + 1;
+
       await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -230,10 +232,26 @@ export async function POST(request: Request) {
             email,
             voucherValue: tier.value,
             voucherCode,
-            totalSignups: totalSignups + 1,
+            totalSignups: newTotalSignups,
           },
         }),
       });
+
+      // Send milestone notification every 10 signups
+      if (newTotalSignups % 10 === 0) {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://smilemoore.co.uk'}/api/send-notification`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'milestone_signups',
+            data: {
+              totalSignups: newTotalSignups,
+              latestName: name || email,
+              campaignSource: campaignSource || 'Unknown',
+            },
+          }),
+        });
+      }
     } catch (error) {
       console.error('Failed to send notification:', error);
     }
