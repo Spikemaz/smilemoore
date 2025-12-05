@@ -1543,43 +1543,18 @@ export default function JumperPage() {
           </div>
         )}
 
-        {/* Step 6: Congratulations + Referral FIRST, then Bonus Questions */}
+        {/* Step 6: Referral FIRST + Congratulations + Bonus Questions */}
         {step === 6 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-            {/* Congratulations Section */}
-            <div className="text-center mb-8">
-              <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
-                <span className="text-6xl">🎉</span>
-              </div>
-              <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
-                Congratulations {formData.name}!
-              </h2>
-              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
-                You have received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
-              </p>
-              <p className="text-lg mb-4" style={{ color: '#666' }}>
-                🎁 Worth up to £5,000!
-              </p>
-              <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
-                <p className="text-lg font-bold mb-1" style={{ color: '#1f3a33' }}>
-                  🎟️ You currently have 2 entries in the prize draw
-                </p>
-                <p className="text-sm" style={{ color: '#666' }}>
-                  • 1 entry for claiming your voucher<br/>
-                  • 1 entry for answering 5 questions
-                </p>
-              </div>
-            </div>
-
-            {/* Share Section - NOW FIRST, BEFORE BONUS QUESTIONS */}
+            {/* Referral Section - PRIORITY #1 */}
             <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: '#cfe8d7' }}>
-              <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
+              <h3 className="text-2xl font-bold mb-3 text-center" style={{ color: '#1f3a33' }}>
                 🎄 Would you be kind enough to share with family, friends and neighbours?
               </h3>
-              <p className="text-lg mb-3" style={{ color: '#1f3a33' }}>
+              <p className="text-lg mb-3 text-center" style={{ color: '#1f3a33' }}>
                 Give them the chance to win and get a £50 voucher before Christmas!
               </p>
-              <p className="text-base mb-4" style={{ color: '#1f3a33' }}>
+              <p className="text-base mb-4 text-center" style={{ color: '#1f3a33' }}>
                 Share your unique link by copy and pasting or posting on your social media:
               </p>
 
@@ -1591,13 +1566,13 @@ export default function JumperPage() {
               </div>
 
               <button
+                type="button"
                 onClick={async () => {
                   const referralLink = `${window.location.origin}?ref=${customerId}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
                     alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
                   } catch (err) {
-                    // Fallback for older browsers
                     const textArea = document.createElement('textarea');
                     textArea.value = referralLink;
                     document.body.appendChild(textArea);
@@ -1607,15 +1582,82 @@ export default function JumperPage() {
                     alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
                   }
                 }}
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-4"
                 style={{ backgroundColor: '#1f3a33' }}
               >
                 📋 Copy & Share Link
               </button>
 
-              <p className="text-sm font-semibold" style={{ color: '#1f3a33' }}>
+              {/* Social Media Share Buttons */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const referralLink = `${window.location.origin}?ref=${customerId}`;
+                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
+                  }}
+                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  style={{ backgroundColor: '#1877f2' }}
+                >
+                  📘 Facebook
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const referralLink = `${window.location.origin}?ref=${customerId}`;
+                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
+                  }}
+                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  style={{ backgroundColor: '#000000' }}
+                >
+                  𝕏 Twitter
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const referralLink = `${window.location.origin}?ref=${customerId}`;
+                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                  }}
+                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  style={{ backgroundColor: '#25d366' }}
+                >
+                  💬 WhatsApp
+                </button>
+              </div>
+
+              <p className="text-sm font-semibold text-center" style={{ color: '#1f3a33' }}>
                 ⭐ Bonus: Receive +10 extra prize draw entries for every friend who claims their voucher!
               </p>
+            </div>
+
+            {/* Congratulations Section - AFTER Referral */}
+            <div className="text-center mb-8">
+              <div className="inline-block rounded-full p-6 mb-4" style={{ backgroundColor: '#cfe8d7' }}>
+                <span className="text-6xl">🎉</span>
+              </div>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: '#1f3a33' }}>
+                Congratulations {formData.name}!
+              </h2>
+              <p className="text-xl mb-3" style={{ color: '#1f3a33' }}>
+                You have now received your £{voucherValue} voucher and been entered into winning a year's worth of FREE dentistry!
+              </p>
+              <p className="text-lg mb-4" style={{ color: '#666' }}>
+                🎁 Worth up to £5,000!
+              </p>
+
+              {/* Prize Draw Entries */}
+              <div className="rounded-xl p-4 mb-6 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-xl font-bold mb-2" style={{ color: '#1f3a33' }}>
+                  🎟️ You currently have 2 entries in the prize draw
+                </p>
+                <p className="text-sm" style={{ color: '#666' }}>
+                  • 1 entry for claiming your voucher<br/>
+                  • 1 entry for answering 5 questions
+                </p>
+              </div>
             </div>
 
             {/* Bonus Questions Section - NOW BELOW */}
