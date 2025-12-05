@@ -1685,6 +1685,11 @@ export default function LandingPage() {
               <p className="text-base mb-2" style={{ color: '#666' }}>
                 Help us create your perfect dental practice
               </p>
+              <div className="rounded-xl p-4 mt-4 mb-2 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-lg font-bold" style={{ color: '#1f3a33' }}>
+                  🎟️ Complete these bonus questions to earn a 3rd entry into the prize draw!
+                </p>
+              </div>
               <p className="text-xs mt-2" style={{ color: '#999' }}>
                 Subject to terms and conditions.
               </p>

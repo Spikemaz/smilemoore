@@ -1680,11 +1680,16 @@ export default function JumperPage() {
                 🔥 BONUS QUESTIONS
               </span>
               <h3 className="text-3xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                Can we ask for a little more feedback?
+                Would you be kind enough to answer a few more questions?
               </h3>
-              <p className="text-lg mb-2" style={{ color: '#666' }}>
-                Earn +1 extra prize draw entry!
+              <p className="text-base mb-2" style={{ color: '#666' }}>
+                Help us create your perfect dental practice
               </p>
+              <div className="rounded-xl p-4 mt-4 mb-2 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
+                <p className="text-lg font-bold" style={{ color: '#1f3a33' }}>
+                  🎟️ Complete these bonus questions to earn a 3rd entry into the prize draw!
+                </p>
+              </div>
               <p className="text-xs mt-2" style={{ color: '#999' }}>
                 Subject to terms and conditions.
               </p>
