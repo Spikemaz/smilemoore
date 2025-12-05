@@ -682,12 +682,10 @@ export default function EarlyBirdPage() {
       const emailTime = Date.now();
       setEmailSubmitTime(emailTime);
 
-      // Small delay for animation visibility
-      setTimeout(() => {
-        setStep(2);
-        setIsSubmitting(false);
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }, 600);
+      // Instant transition for better UX
+      setStep(2);
+      setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Calculate time from page load to email submission (in seconds)
       const timeToSubmit = Math.round((emailTime - pageLoadTimestamp) / 1000);
@@ -751,12 +749,10 @@ export default function EarlyBirdPage() {
       const nameTime = Date.now();
       setNameSubmitTime(nameTime);
 
-      // Small delay for animation visibility
-      setTimeout(() => {
-        setStep(3);
-        setIsSubmitting(false);
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }, 600);
+      // Instant transition for better UX
+      setStep(3);
+      setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Calculate time between email submit and name submit
       const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
@@ -782,18 +778,15 @@ export default function EarlyBirdPage() {
       // Move directly to step 5 (survey) - skip step 4
       const finalTime = Date.now();
 
-      // Small delay for animation visibility
-      setTimeout(() => {
-        setStep(5);
-        setIsSubmitting(false);
-      }, 600);
+      // Instant transition for better UX
+      setStep(5);
+      setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Decrement voucher counter when voucher is claimed
       if (vouchersRemaining > 0) {
         setVouchersRemaining(vouchersRemaining - 1);
       }
-
-      window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Calculate time between name submit and final submit
       const nameToFinal = Math.round((finalTime - nameSubmitTime) / 1000);
