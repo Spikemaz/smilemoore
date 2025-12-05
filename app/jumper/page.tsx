@@ -675,13 +675,19 @@ export default function JumperPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (step === 1) {
       // Move to next step IMMEDIATELY - before any other operations
       const emailTime = Date.now();
       setEmailSubmitTime(emailTime);
-      setStep(2);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Small delay for animation visibility
+      setTimeout(() => {
+        setStep(2);
+        setIsSubmitting(false);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 600);
 
       // Calculate time from page load to email submission (in seconds)
       const timeToSubmit = Math.round((emailTime - pageLoadTimestamp) / 1000);
@@ -744,8 +750,13 @@ export default function JumperPage() {
       // Move to next step IMMEDIATELY
       const nameTime = Date.now();
       setNameSubmitTime(nameTime);
-      setStep(3);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Small delay for animation visibility
+      setTimeout(() => {
+        setStep(3);
+        setIsSubmitting(false);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 600);
 
       // Calculate time between email submit and name submit
       const emailToName = Math.round((nameTime - emailSubmitTime) / 1000);
@@ -770,7 +781,12 @@ export default function JumperPage() {
     } else if (step === 3) {
       // Move directly to step 5 (survey) - skip step 4
       const finalTime = Date.now();
-      setStep(5);
+
+      // Small delay for animation visibility
+      setTimeout(() => {
+        setStep(5);
+        setIsSubmitting(false);
+      }, 600);
 
       // Decrement voucher counter when voucher is claimed
       if (vouchersRemaining > 0) {
@@ -963,10 +979,19 @@ export default function JumperPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                disabled={isSubmitting}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                Submit
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : 'Submit'}
               </button>
 
               {/* Footer */}
@@ -1017,10 +1042,19 @@ export default function JumperPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
+                disabled={isSubmitting}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                Continue →
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : 'Continue →'}
               </button>
             </form>
           </div>
@@ -1077,10 +1111,19 @@ export default function JumperPage() {
 
               <button
                 type="submit"
-                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg"
+                disabled={isSubmitting}
+                className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg disabled:opacity-75 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#1f3a33' }}
               >
-                🎉 Claim My £{voucherValue} Voucher Now!
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : `🎉 Claim My £${voucherValue} Voucher Now!`}
               </button>
             </form>
           </div>
