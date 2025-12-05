@@ -84,7 +84,7 @@ export default function JumperPage() {
     sameClinician: '',
     neededTreatments: [] as string[],
     beforeAppointment: '',
-    stayLongTerm: '',
+    stayLongTerm: [] as string[],
     preventingVisits: '',
     cosmeticImportance: '',
     preferredContact: '',
@@ -1923,14 +1923,21 @@ export default function JumperPage() {
                     'Modern technology & facilities'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: extendedSurvey.stayLongTerm === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: extendedSurvey.stayLongTerm.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="stayLongTerm"
                         value={option}
-                        checked={extendedSurvey.stayLongTerm === option}
-                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, stayLongTerm: e.target.value })}
-                        required
+                        checked={extendedSurvey.stayLongTerm.includes(option)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setExtendedSurvey({
+                            ...extendedSurvey,
+                            stayLongTerm: e.target.checked
+                              ? [...extendedSurvey.stayLongTerm, value]
+                              : extendedSurvey.stayLongTerm.filter(item => item !== value)
+                          });
+                        }}
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
