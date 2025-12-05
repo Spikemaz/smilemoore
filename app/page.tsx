@@ -158,6 +158,8 @@ export default function LandingPage() {
         if (data.hasExtendedSurvey) {
           // They've completed everything - show final page
           setStep(7);
+          // Scroll to top when showing final page
+          setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
         } else if (data.hasSurveyQ1to5) {
           // They have basic survey, need extended survey
           setStep(6);
@@ -1720,10 +1722,12 @@ export default function LandingPage() {
               e.preventDefault();
               setIsSubmitting(true);
 
+              // Scroll to top FIRST (before state change) for mobile reliability
+              window.scrollTo({ top: 0, behavior: 'instant' });
+
               // Move to next step immediately for instant UX
               setStep(7);
               setIsSubmitting(false);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
 
               // Save extended survey responses in background (fire and forget)
               // Q1-Q5 were already saved in step 5
