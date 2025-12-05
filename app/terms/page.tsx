@@ -27,11 +27,11 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>1.1 These Terms & Conditions ("Terms") govern participation in the Your Local Research Survey Company Pre-Opening Giveaway ("the Promotion").</p>
             <p>1.2 By entering the Promotion, entrants agree to be bound by these Terms in full.</p>
-            <p>1.3 No purchase is necessary to enter or win.</p>
+            <p>1.3 No purchase is necessary to enter or win. Entering the Promotion is completely free and does not require purchasing dental treatment or registering with a dentist.</p>
             <p>1.4 Bonus entries may be awarded for optional actions.</p>
             <p>1.5 The Promoter reserves the right to update, amend, suspend or withdraw the Promotion at any time where reasonably necessary.</p>
             <p>1.6 Participation in the Promotion does not create any contractual, financial, clinical or professional relationship with any dental practice or healthcare provider.</p>
-            <p>1.7 The Promoter is a marketing company, not a dental provider, and makes no guarantees relating to clinical services or availability.</p>
+            <p>1.7 The Promoter is a research survey company, not a dental provider, and makes no guarantees relating to clinical services or availability.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
@@ -52,7 +52,7 @@ export default function TermsPage() {
           {/* Section 3 */}
           <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>3. How to Enter</h2>
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
-            <p>3.1 Free Entry Route: Completing the official online registration form provides 1 free entry.</p>
+            <p>3.1 Free Entry Route: Completing the official online registration form provides 1 free entry. The online registration form may include optional or required research questions to help the Promoter identify suitable locations and patient demand. The research survey is part of the entry process and must be completed to receive your free entry.</p>
             <p>3.2 Bonus Entries:</p>
             <ul className="list-disc ml-8 space-y-2">
               <li>+10 entries for each valid referral</li>
