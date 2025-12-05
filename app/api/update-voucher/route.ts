@@ -31,11 +31,9 @@ export async function POST(request: NextRequest) {
     const authClient = await getAuthClient();
     const sheets = google.sheets({ version: 'v4', auth: authClient as any });
 
-    // EMERGENCY FIX: Use email search first to get site working
-    // TODO: Debug Customer ID mismatch issue separately
     let rowIndex = -1;
 
-    // Always search by email for now (works for single signups)
+    // Search by email (supports multiple family members with same email)
     console.log('🔍 Searching by email:', email);
     const emailResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,

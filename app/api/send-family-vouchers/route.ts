@@ -14,9 +14,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate referral link using Customer ID only (privacy-friendly)
-    const cidParam = customerId ? `&cid=${customerId}` : '';
-    const referralLink = `https://smilemoore.co.uk?ref=${customerId}${cidParam}`;
+    // Generate referral link using Customer ID (privacy-friendly)
+    const referralLink = `https://www.smilemoore.co.uk?ref=${customerId}`;
 
     // Build HTML for voucher codes table
     const voucherRows = householdVouchers.map((member: any) => `
