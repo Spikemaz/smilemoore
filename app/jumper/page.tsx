@@ -1171,28 +1171,25 @@ export default function JumperPage() {
 
               setIsSubmitting(true);
 
-              // Save the first 5 questions to Google Sheets immediately
-              try {
-                await fetch('/api/save-survey', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.email,
-                    ...surveyData,
-                    householdNames, // Include household member names
-                  }),
-                });
-                console.log('✅ First 5 questions saved to Google Sheets');
-              } catch (error) {
-                console.error('Error saving first 5 questions:', error);
-              }
+              // Move to next step immediately for instant UX
+              setStep(6);
+              setIsSubmitting(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
 
-              // Move to extended survey (step 6) with animation delay
-              setTimeout(() => {
-                setStep(6);
-                setIsSubmitting(false);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }, 600);
+              // Save to Google Sheets in background (fire and forget)
+              fetch('/api/save-survey', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: formData.email,
+                  ...surveyData,
+                  householdNames, // Include household member names
+                }),
+              }).then(() => {
+                console.log('✅ First 5 questions saved to Google Sheets');
+              }).catch((error) => {
+                console.error('Error saving first 5 questions:', error);
+              });
             }} className="space-y-8">
               {/* Question 1: Multiple choice (was Q2) */}
               <div className="text-left">
@@ -1711,31 +1708,25 @@ export default function JumperPage() {
               e.preventDefault();
               setIsSubmitting(true);
 
-              // Save only the extended survey responses (Q6-Q15 + Additional Feedback)
-              // Q1-Q5 were already saved in step 5
-              try {
-                await fetch('/api/save-survey', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: formData.email,
-                    ...extendedSurvey,
-                  }),
-                });
+              // Move to next step immediately for instant UX
+              setStep(7);
+              setIsSubmitting(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                setTimeout(() => {
-                  setStep(7);
-                  setIsSubmitting(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 600);
-              } catch (error) {
+              // Save extended survey responses in background (fire and forget)
+              // Q1-Q5 were already saved in step 5
+              fetch('/api/save-survey', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: formData.email,
+                  ...extendedSurvey,
+                }),
+              }).then(() => {
+                console.log('✅ Extended survey saved to Google Sheets');
+              }).catch((error) => {
                 console.error('Survey submission error:', error);
-                setTimeout(() => {
-                  setStep(7);
-                  setIsSubmitting(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 600);
-              }
+              });
             }} className="space-y-8">
               {/* Question 1 */}
               <div className="text-left">
