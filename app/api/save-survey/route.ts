@@ -395,8 +395,8 @@ export async function POST(request: Request) {
     }
 
     // Send notification based on what was completed
+    const notificationType = isBasicSurvey && !isExtendedSurvey ? 'survey_4q_completed' : 'survey_10q_completed';
     try {
-      const notificationType = isBasicSurvey && !isExtendedSurvey ? 'survey_4q_completed' : 'survey_10q_completed';
       const timeToComplete = isBasicSurvey && !isExtendedSurvey
         ? Math.round((Date.now() - new Date(voucherTimestamp).getTime()) / 60000)
         : parseInt(rowData[49]) || 0;
@@ -419,7 +419,7 @@ export async function POST(request: Request) {
       });
       console.log(`✅ ${notificationType} notification sent successfully`);
     } catch (error) {
-      console.error(`❌ Failed to send ${notificationType || 'survey'} notification:`, error);
+      console.error(`❌ Failed to send ${notificationType} notification:`, error);
     }
 
     return NextResponse.json({ success: true });
