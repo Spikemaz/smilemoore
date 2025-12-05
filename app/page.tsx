@@ -1608,7 +1608,7 @@ export default function LandingPage() {
                   type="button"
                   onClick={() => {
                     const referralLink = `${window.location.origin}?ref=${customerId}`;
-                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
+                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
                   className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
