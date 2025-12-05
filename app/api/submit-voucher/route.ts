@@ -139,26 +139,54 @@ export async function POST(request: Request) {
       try {
         const sheets = getGoogleSheetsClient();
 
-        // Find referrer by matching their name in the referral code (format: Name-XXX)
-        // Extract the name portion from referredBy (e.g., "John-123" -> "John")
-        const referrerName = referredBy.split('-')[0];
-        console.log(`Looking for referrer with name: ${referrerName}`);
+        // referredBy can be either:
+        // 1. Customer ID (new format): "6VCH3GXWAV8"
+        // 2. Name-code (old format): "Marcus Moore-180"
 
-        const response = await sheets.spreadsheets.values.get({
-          spreadsheetId: SPREADSHEET_ID,
-          range: 'Home!D:D', // Name column
-        });
-
-        const names = response.data.values || [];
         let referrerRowIndex = -1;
 
-        // Match the name to find the referrer
-        for (let i = 1; i < names.length; i++) {
-          const name = names[i][0];
-          if (name && name.toLowerCase() === referrerName.toLowerCase()) {
-            referrerRowIndex = i + 1; // 1-indexed
-            console.log(`Found referrer "${name}" at row ${referrerRowIndex}`);
-            break;
+        // Try Customer ID search first (check if it looks like a Customer ID - all caps, no spaces/hyphens or just one hyphen)
+        const looksLikeCustomerId = /^[A-Z0-9]{8,12}$/.test(referredBy);
+
+        if (looksLikeCustomerId) {
+          console.log(`🔍 Looking for referrer by Customer ID: ${referredBy}`);
+
+          const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Home!A:A', // Customer ID column
+          });
+
+          const customerIds = response.data.values || [];
+
+          // Find matching Customer ID
+          for (let i = 1; i < customerIds.length; i++) {
+            const customerId = customerIds[i][0];
+            if (customerId && customerId === referredBy) {
+              referrerRowIndex = i + 1; // 1-indexed
+              console.log(`✅ Found referrer by Customer ID "${customerId}" at row ${referrerRowIndex}`);
+              break;
+            }
+          }
+        } else {
+          // Old format: Name-XXX
+          const referrerName = referredBy.split('-')[0];
+          console.log(`🔍 Looking for referrer by name: ${referrerName} (old format)`);
+
+          const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Home!D:D', // Name column
+          });
+
+          const names = response.data.values || [];
+
+          // Match the name to find the referrer
+          for (let i = 1; i < names.length; i++) {
+            const name = names[i][0];
+            if (name && name.toLowerCase() === referrerName.toLowerCase()) {
+              referrerRowIndex = i + 1; // 1-indexed
+              console.log(`✅ Found referrer by name "${name}" at row ${referrerRowIndex}`);
+              break;
+            }
           }
         }
 
