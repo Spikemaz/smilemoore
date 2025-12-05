@@ -154,23 +154,38 @@ export default function LandingPage() {
           }));
         }
 
+        // Check if they came from an email link (has ?cid= parameter)
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromEmailLink = urlParams.has('cid');
+
         // Skip to the appropriate step based on what data is missing
         if (data.hasExtendedSurvey) {
-          // They've completed everything - clear localStorage and start fresh
-          // This allows them to use their phone to fill out friends' details
-          console.log('✅ Survey complete - clearing localStorage to allow fresh signups');
-          localStorage.removeItem('smilemoore_customer_id');
-          localStorage.removeItem('smilemoore_last_email');
-          // Don't auto-resume, let them start fresh
-          setStep(1);
+          if (fromEmailLink) {
+            // They came from email link - show them thank you page (auto-resume)
+            console.log('📧 Email link detected - showing thank you page');
+            setStep(7);
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
+          } else {
+            // They came from QR/Direct URL - clear localStorage and start fresh
+            // This allows them to use their phone to fill out friends' details
+            console.log('✅ Survey complete - clearing localStorage to allow fresh signups');
+            localStorage.removeItem('smilemoore_customer_id');
+            localStorage.removeItem('smilemoore_last_email');
+            setStep(1);
+          }
         } else if (data.hasSurveyQ1to5) {
-          // They have basic survey (5Q complete) - clear localStorage and start fresh
-          // This allows them to sign up friends/family after completing 5 questions
-          console.log('✅ 5 questions complete - clearing localStorage to allow fresh signups');
-          localStorage.removeItem('smilemoore_customer_id');
-          localStorage.removeItem('smilemoore_last_email');
-          // Don't auto-resume, let them start fresh
-          setStep(1);
+          if (fromEmailLink) {
+            // They came from email link - resume to extended survey (auto-resume)
+            console.log('📧 Email link detected - resuming to extended survey');
+            setStep(6);
+          } else {
+            // They came from QR/Direct URL - clear localStorage and start fresh
+            // This allows them to sign up friends/family after completing 5 questions
+            console.log('✅ 5 questions complete - clearing localStorage to allow fresh signups');
+            localStorage.removeItem('smilemoore_customer_id');
+            localStorage.removeItem('smilemoore_last_email');
+            setStep(1);
+          }
         } else if (data.hasPhoneAddress) {
           // They have contact info, need to do 5 questions
           setStep(5);
