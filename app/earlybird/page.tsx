@@ -76,6 +76,7 @@ export default function EarlyBirdPage() {
   });
   const [householdNames, setHouseholdNames] = useState<string[]>([]);
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [extendedSurvey, setExtendedSurvey] = useState({
     dentalExperience: '',
     mostImportantFactor: '',
