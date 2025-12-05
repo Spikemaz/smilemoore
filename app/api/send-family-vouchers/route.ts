@@ -122,7 +122,6 @@ export async function POST(request: Request) {
               <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">𝕏 Twitter</a>
               <br/>
               <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0A${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #25d366; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">💬 WhatsApp</a>
-              <span style="display: inline-block; background-color: #E1306C; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; font-size: 13px; font-weight: bold;">📸 Instagram</span>
             </div>
           </div>
 

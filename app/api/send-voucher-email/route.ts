@@ -127,9 +127,6 @@ export async function POST(request: Request) {
                                         <td style="padding: 5px;">
                                           <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0Ahttps://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}" style="display: inline-block; background-color: #25d366; color: #ffffff; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">💬 WhatsApp</a>
                                         </td>
-                                        <td style="padding: 5px;">
-                                          <span style="display: inline-block; background-color: #E1306C; color: #ffffff; padding: 10px 15px; border-radius: 6px; font-size: 13px; font-weight: bold;">📸 Instagram</span>
-                                        </td>
                                       </tr>
                                     </table>
                                   </td>
