@@ -973,7 +973,7 @@ export default function LandingPage() {
                   style={{ accentColor: '#1f3a33' }}
                 />
                 <label htmlFor="terms" className="text-sm text-left" style={{ color: '#1f3a33' }}>
-                  I agree to the <a href="/terms" target="_blank" className="underline font-semibold hover:text-green-700">Terms and Conditions</a> and understand that my data will be used to administer this promotion.
+                  I agree to the <a href="/terms" target="_blank" className="underline font-semibold hover:text-green-700">Terms and Conditions</a> and understand my info will be used for this research survey and promotion.
                 </label>
               </div>
 
