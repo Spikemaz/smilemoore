@@ -745,9 +745,47 @@
                         <p style="font-size: 13px; color: #666; margin-top: 8px;">💡 Tip: Use {name} to personalize with customer names.</p>
                     </div>
 
-                    <button class="btn btn-primary" onclick="generateWhatsAppLinks()" style="background: #25d366; width: 100%;">
-                        💬 Generate WhatsApp Links for All Customers
-                    </button>
+                    <!-- Automation Settings (collapsible) -->
+                    <div id="whatsapp-automation-settings" style="margin-bottom: 20px; display: none; background: #fff3cd; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #856404; margin-bottom: 15px; font-size: 15px;">⚡ Automation Settings</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="font-size: 13px; color: #666;">Min Delay (seconds):</label>
+                                <input type="number" id="whatsapp-min-delay" value="3" min="2" max="10"
+                                    style="width: 100%; padding: 8px; border: 2px solid #cfe8d7; border-radius: 6px; margin-top: 5px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 13px; color: #666;">Max Delay (seconds):</label>
+                                <input type="number" id="whatsapp-max-delay" value="8" min="3" max="15"
+                                    style="width: 100%; padding: 8px; border: 2px solid #cfe8d7; border-radius: 6px; margin-top: 5px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 13px; color: #666;">Batch Size:</label>
+                                <input type="number" id="whatsapp-batch-size" value="20" min="10" max="50"
+                                    style="width: 100%; padding: 8px; border: 2px solid #cfe8d7; border-radius: 6px; margin-top: 5px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 13px; color: #666;">Rest Between Batches (min):</label>
+                                <input type="number" id="whatsapp-rest-time" value="2" min="1" max="10"
+                                    style="width: 100%; padding: 8px; border: 2px solid #cfe8d7; border-radius: 6px; margin-top: 5px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="startAutomatedWhatsApp()" style="background: #25d366;">
+                            🚀 Automated Send
+                        </button>
+                        <button class="btn btn-primary" onclick="generateWhatsAppLinks()" style="background: #128C7E;">
+                            📋 Manual Links
+                        </button>
+                    </div>
+
+                    <p style="text-align: center; font-size: 12px; color: #666; margin-bottom: 15px;">
+                        <a href="#" onclick="toggleAutomationSettings(); return false;" style="color: #25d366; text-decoration: underline;">
+                            ⚙️ Automation Settings
+                        </a>
+                    </p>
 
                     <div id="mass-whatsapp-results" style="margin-top: 20px; display: none;"></div>
                 </div>
@@ -3101,6 +3139,161 @@ Smile Moore Team`
                     </div>
                 `;
                 showAlert('Failed to send mass email', 'error');
+            }
+        }
+
+        function toggleAutomationSettings() {
+            const settings = document.getElementById('whatsapp-automation-settings');
+            settings.style.display = settings.style.display === 'none' ? 'block' : 'none';
+        }
+
+        let whatsappAutomationRunning = false;
+        let whatsappAutomationPaused = false;
+
+        async function startAutomatedWhatsApp() {
+            const message = document.getElementById('mass-whatsapp-message').value;
+            const minDelay = parseInt(document.getElementById('whatsapp-min-delay').value) * 1000;
+            const maxDelay = parseInt(document.getElementById('whatsapp-max-delay').value) * 1000;
+            const batchSize = parseInt(document.getElementById('whatsapp-batch-size').value);
+            const restTime = parseInt(document.getElementById('whatsapp-rest-time').value) * 60 * 1000;
+
+            if (!message) {
+                showAlert('Please enter a WhatsApp message', 'error');
+                return;
+            }
+
+            if (!confirm('⚠️ This will automatically send WhatsApp messages to all customers in your database.\n\n' +
+                        '📱 Make sure WhatsApp Web is open in another tab and you are logged in.\n\n' +
+                        'Continue?')) {
+                return;
+            }
+
+            const resultsDiv = document.getElementById('mass-whatsapp-results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<p style="text-align: center;">⏳ Loading customer data... Please wait.</p>';
+
+            try {
+                const response = await fetch('/api/generate-whatsapp-automation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load customer data');
+                }
+
+                const messages = data.messages;
+                let sent = 0;
+                let failed = 0;
+                whatsappAutomationRunning = true;
+
+                resultsDiv.innerHTML = `
+                    <div style="background: #d1f2eb; border: 2px solid #25d366; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #0c5460; margin-bottom: 15px;">🚀 Automated Campaign Running</h4>
+                        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong>Progress:</strong> <span id="wa-progress">0</span> / ${messages.length}
+                            </div>
+                            <div style="background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div id="wa-progress-bar" style="background: #25d366; height: 100%; width: 0%; transition: width 0.3s;"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 13px; color: #666;">
+                                <span style="color: #28a745;">✓ Sent: <strong id="wa-sent">0</strong></span> |
+                                <span style="color: #dc3545;">✗ Failed: <strong id="wa-failed">0</strong></span>
+                            </div>
+                        </div>
+                        <div id="wa-status" style="font-size: 13px; color: #0c5460; margin-bottom: 15px;">
+                            🔄 Starting automation...
+                        </div>
+                        <div style="text-align: center;">
+                            <button onclick="pauseWhatsAppAutomation()" class="btn btn-primary" style="background: #ffc107; color: #000;">
+                                ⏸️ Pause
+                            </button>
+                        </div>
+                        <div id="wa-log" style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 4px; margin-top: 15px; font-size: 12px; font-family: monospace;"></div>
+                    </div>
+                `;
+
+                // Process messages in batches
+                for (let i = 0; i < messages.length; i++) {
+                    if (!whatsappAutomationRunning) break;
+
+                    while (whatsappAutomationPaused) {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+
+                    const msg = messages[i];
+                    const delay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+
+                    updateWhatsAppStatus(`📤 Sending to ${msg.name} (${msg.phone})...`);
+                    addWhatsAppLog(`[${new Date().toLocaleTimeString()}] Sending to ${msg.name}...`);
+
+                    // Open WhatsApp Web with message
+                    const whatsappUrl = `https://web.whatsapp.com/send?phone=${msg.phone}&text=${encodeURIComponent(msg.message)}`;
+                    window.open(whatsappUrl, 'whatsapp_' + i, 'width=1000,height=600');
+
+                    sent++;
+                    updateWhatsAppProgress(sent, failed, messages.length);
+                    addWhatsAppLog(`[${new Date().toLocaleTimeString()}] ✓ Opened for ${msg.name}`);
+
+                    // Rest between batches
+                    if ((i + 1) % batchSize === 0 && i + 1 < messages.length) {
+                        updateWhatsAppStatus(`😴 Resting for ${restTime/60000} minutes after ${batchSize} messages...`);
+                        await new Promise(resolve => setTimeout(resolve, restTime));
+                    } else if (i + 1 < messages.length) {
+                        updateWhatsAppStatus(`⏳ Waiting ${delay/1000}s before next message...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+
+                whatsappAutomationRunning = false;
+                updateWhatsAppStatus('✅ Campaign completed!');
+                showAlert('Automated WhatsApp campaign completed!', 'success');
+
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div style="background: #f8d7da; border: 2px solid #dc3545; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #721c24;">❌ Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                showAlert('Failed to start automation', 'error');
+            }
+        }
+
+        function pauseWhatsAppAutomation() {
+            whatsappAutomationPaused = !whatsappAutomationPaused;
+            const btn = event.target;
+            if (whatsappAutomationPaused) {
+                btn.innerHTML = '▶️ Resume';
+                updateWhatsAppStatus('⏸️ Paused by user');
+            } else {
+                btn.innerHTML = '⏸️ Pause';
+                updateWhatsAppStatus('▶️ Resuming...');
+            }
+        }
+
+        function updateWhatsAppProgress(sent, failed, total) {
+            document.getElementById('wa-progress').textContent = sent + failed;
+            document.getElementById('wa-sent').textContent = sent;
+            document.getElementById('wa-failed').textContent = failed;
+            const progress = ((sent + failed) / total) * 100;
+            document.getElementById('wa-progress-bar').style.width = progress + '%';
+        }
+
+        function updateWhatsAppStatus(status) {
+            const statusEl = document.getElementById('wa-status');
+            if (statusEl) statusEl.textContent = status;
+        }
+
+        function addWhatsAppLog(message) {
+            const logEl = document.getElementById('wa-log');
+            if (logEl) {
+                logEl.innerHTML += message + '<br>';
+                logEl.scrollTop = logEl.scrollHeight;
             }
         }
 
