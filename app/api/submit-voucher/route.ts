@@ -238,8 +238,7 @@ export async function POST(request: Request) {
             console.error('Failed to send referral notification:', notifError);
           }
         } else {
-          console.log(`Referrer not found for: ${referredBy} (name: ${referrerName})`);
-          console.log(`Total names in sheet: ${names.length - 1}`);
+          console.log(`❌ Referrer not found for: ${referredBy}`);
         }
       } catch (error) {
         console.error('Error updating referrer stats:', error);
