@@ -93,13 +93,25 @@ export default function LandingPage() {
 
   // Retrieve customerId from localStorage on mount (for family signups with same email)
   useEffect(() => {
-    const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
-    if (storedCustomerId) {
-      setCustomerId(storedCustomerId);
-      console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+    // Check URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    const cidFromUrl = urlParams.get('cid');
 
-      // Fetch existing customer data and pre-fill form
-      fetchAndPrefillCustomerData(storedCustomerId);
+    if (cidFromUrl) {
+      // Email link with Customer ID - use that (takes priority)
+      setCustomerId(cidFromUrl);
+      localStorage.setItem('smilemoore_customer_id', cidFromUrl);
+      console.log('🆔 Customer ID from URL:', cidFromUrl);
+      fetchAndPrefillCustomerData(cidFromUrl);
+    } else {
+      // No URL param - check localStorage
+      const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
+      if (storedCustomerId) {
+        setCustomerId(storedCustomerId);
+        console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+        // Fetch existing customer data and pre-fill form
+        fetchAndPrefillCustomerData(storedCustomerId);
+      }
     }
   }, []);
 
@@ -999,7 +1011,18 @@ export default function LandingPage() {
                   style={{ accentColor: '#1f3a33' }}
                 />
                 <label htmlFor="terms" className="text-sm text-left" style={{ color: '#1f3a33' }}>
-                  I agree to the <a href="/terms" target="_blank" className="underline font-semibold hover:text-green-700">Terms and Conditions</a> and understand my info will be used for this research survey and promotion.
+                  I agree to the <a
+                    href="/terms"
+                    target="_blank"
+                    className="underline font-semibold hover:text-green-700"
+                    onClick={() => {
+                      fetch('/api/track-tc-click', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ customerId, location: 'step3_checkbox' }),
+                      }).catch(console.error);
+                    }}
+                  >Terms and Conditions</a> and understand my info will be used for this research survey and promotion.
                 </label>
               </div>
 
@@ -1026,7 +1049,18 @@ export default function LandingPage() {
                   🔒 We never share your information. You'll receive your voucher instantly.
                 </p>
                 <p className="text-xs mt-2" style={{ color: '#999' }}>
-                  <a href="/terms" target="_blank" className="underline hover:text-gray-700">Terms and Conditions</a>
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    className="underline hover:text-gray-700"
+                    onClick={() => {
+                      fetch('/api/track-tc-click', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ customerId, location: 'step3_bottom' }),
+                      }).catch(console.error);
+                    }}
+                  >Terms and Conditions</a>
                 </p>
               </div>
             </form>
@@ -2217,7 +2251,17 @@ export default function LandingPage() {
             </div>
 
             <p className="text-sm text-center" style={{ color: '#999' }}>
-              <a href="/terms" className="underline hover:text-gray-700">Terms and Conditions</a>
+              <a
+                href="/terms"
+                className="underline hover:text-gray-700"
+                onClick={() => {
+                  fetch('/api/track-tc-click', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customerId, location: 'success_page' }),
+                  }).catch(console.error);
+                }}
+              >Terms and Conditions</a>
             </p>
           </div>
         )}

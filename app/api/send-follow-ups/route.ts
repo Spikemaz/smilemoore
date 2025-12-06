@@ -34,7 +34,7 @@ const fourQuestionVariations = [
 
       It only takes 1 minute to answer 4 quick questions and you'll receive +1 bonus entry.
 
-      Click here to complete: https://smilemoore.co.uk
+      Click here to complete: https://smilemoore.co.uk?cid=${customerId}
 
       Thank you!
       Smile Moore Team
@@ -49,7 +49,7 @@ const fourQuestionVariations = [
 
       Plus, you'll earn another entry bringing your total to 2 entries.
 
-      Complete now: https://smilemoore.co.uk
+      Complete now: https://smilemoore.co.uk?cid=${customerId}
 
       Best regards,
       Smile Moore Team
@@ -65,7 +65,7 @@ const fourQuestionVariations = [
       4 quick questions = +1 entry in the draw
       Takes less than 60 seconds
 
-      Complete your entry: https://smilemoore.co.uk
+      Complete your entry: https://smilemoore.co.uk?cid=${customerId}
 
       Thank you,
       Smile Moore Team
@@ -90,7 +90,7 @@ const christmasSharingEmail = {
     • Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
     • Perfect timing before the Christmas period!
 
-    Your Referral Link: https://smilemoore.co.uk?ref=${encodeURIComponent(name)}
+    Your Referral Link: https://www.smilemoore.co.uk?ref={{CUSTOMER_ID}}
 
     The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
 
@@ -110,7 +110,7 @@ const tenQuestionVariations = [
 
       Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
 
-      Continue here: https://smilemoore.co.uk
+      Continue here: https://smilemoore.co.uk?cid=${customerId}
 
       Thank you!
       Smile Moore Team
@@ -127,7 +127,7 @@ const tenQuestionVariations = [
       • +1 bonus entry in the prize draw (3 total)
       • Help shape your perfect dental experience
 
-      Share your thoughts: https://smilemoore.co.uk
+      Share your thoughts: https://smilemoore.co.uk?cid=${customerId}
 
       Best regards,
       Smile Moore Team
@@ -142,7 +142,7 @@ const tenQuestionVariations = [
 
       You currently have 2 entries. Complete the extended survey to earn your 3rd entry.
 
-      It takes just 2 minutes: https://smilemoore.co.uk
+      It takes just 2 minutes: https://smilemoore.co.uk?cid=${customerId}
 
       Thank you,
       Smile Moore Team
@@ -180,6 +180,7 @@ export async function GET(request: Request) {
     // Skip header row
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
+      const customerId = row[0]; // Column A (index 0) - Customer ID
       const email = row[2]; // Column C (index 2)
       const name = row[3]; // Column D (index 3)
       const voucherValue = row[7]; // Column H (index 7)
@@ -293,7 +294,7 @@ export async function GET(request: Request) {
             html: `
               <html>
                 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${christmasSharingEmail.body(name, voucherValue).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+                  ${christmasSharingEmail.body(name, voucherValue).replace('{{CUSTOMER_ID}}', customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
                   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
                     <p style="font-size: 12px; color: #999; margin: 5px 0;">
