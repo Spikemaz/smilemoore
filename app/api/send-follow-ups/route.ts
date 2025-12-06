@@ -27,7 +27,7 @@ function getGoogleSheetsClient() {
 const fourQuestionVariations = [
   {
     subject: "🎁 Quick reminder: Boost your prize draw entries!",
-    body: (name: string, voucherValue: number) => `
+    body: (name: string, voucherValue: number, customerId: string) => `
       Hi ${name},
 
       We noticed you claimed your £${voucherValue} voucher but haven't entered the prize draw yet!
@@ -42,7 +42,7 @@ const fourQuestionVariations = [
   },
   {
     subject: "Don't miss out on winning up to £5,000 of free dentistry!",
-    body: (name: string, voucherValue: number) => `
+    body: (name: string, voucherValue: number, customerId: string) => `
       Hi ${name},
 
       You're so close! Complete 4 simple questions to enter the draw for 1 Year of FREE Dentistry worth up to £5,000.
@@ -57,7 +57,7 @@ const fourQuestionVariations = [
   },
   {
     subject: "Final chance: Enter the prize draw",
-    body: (name: string, voucherValue: number) => `
+    body: (name: string, voucherValue: number, customerId: string) => `
       Hi ${name},
 
       This is your last reminder to enter the prize draw worth up to £5,000!
@@ -76,7 +76,7 @@ const fourQuestionVariations = [
 // Christmas sharing incentive email
 const christmasSharingEmail = {
   subject: "🎄 Spread Christmas Joy - Share Your £50 Voucher!",
-  body: (name: string, voucherValue: number) => `
+  body: (name: string, voucherValue: number, customerId: string) => `
     Hi ${name},
 
     The festive season is here! 🎄✨
@@ -90,7 +90,7 @@ const christmasSharingEmail = {
     • Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
     • Perfect timing before the Christmas period!
 
-    Your Referral Link: https://www.smilemoore.co.uk?ref={{CUSTOMER_ID}}
+    Your Referral Link: https://www.smilemoore.co.uk?ref=${customerId}
 
     The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
 
@@ -103,7 +103,7 @@ const christmasSharingEmail = {
 const tenQuestionVariations = [
   {
     subject: "🌟 One more step to maximize your prize entries!",
-    body: (name: string) => `
+    body: (name: string, customerId: string) => `
       Hi ${name},
 
       Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
@@ -118,7 +118,7 @@ const tenQuestionVariations = [
   },
   {
     subject: "Help us build your perfect dental practice",
-    body: (name: string) => `
+    body: (name: string, customerId: string) => `
       Hi ${name},
 
       Your feedback is incredibly valuable! We'd love to hear more about your dental preferences.
@@ -135,7 +135,7 @@ const tenQuestionVariations = [
   },
   {
     subject: "Last call: Get your 3rd prize draw entry",
-    body: (name: string) => `
+    body: (name: string, customerId: string) => `
       Hi ${name},
 
       This is your final reminder to maximize your prize draw entries!
@@ -242,7 +242,7 @@ export async function GET(request: Request) {
             html: `
               <html>
                 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${variation.body(name, voucherValue).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+                  ${variation.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
                   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
                     <p style="font-size: 12px; color: #999; margin: 5px 0;">
@@ -294,7 +294,7 @@ export async function GET(request: Request) {
             html: `
               <html>
                 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${christmasSharingEmail.body(name, voucherValue).replace('{{CUSTOMER_ID}}', customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+                  ${christmasSharingEmail.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
                   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
                     <p style="font-size: 12px; color: #999; margin: 5px 0;">
@@ -369,7 +369,7 @@ export async function GET(request: Request) {
             html: `
               <html>
                 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${variation.body(name).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+                  ${variation.body(name, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
                   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
                     <p style="font-size: 12px; color: #999; margin: 5px 0;">
