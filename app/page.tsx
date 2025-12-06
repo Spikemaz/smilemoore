@@ -79,7 +79,7 @@ export default function LandingPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [extendedSurvey, setExtendedSurvey] = useState({
     dentalExperience: '',
-    mostImportantFactor: '',
+    mostImportantFactor: [] as string[],
     smileConfidence: '',
     sameClinician: '',
     neededTreatments: [] as string[],
@@ -1673,7 +1673,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#1877f2' }}
                 >
                   📘 Facebook
@@ -1685,7 +1685,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#000000' }}
                 >
                   𝕏 Twitter
@@ -1697,7 +1697,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#25d366' }}
                 >
                   💬 WhatsApp
@@ -1821,7 +1821,7 @@ export default function LandingPage() {
               {/* Question 2 */}
               <div className="text-left">
                 <label className="block text-lg font-semibold mb-4" style={{ color: '#1f3a33' }}>
-                  2. When thinking about dental care, which factor matters most to you?
+                  2. When thinking about dental care, which factors matter most to you? (Select all that apply)
                 </label>
                 <div className="space-y-3">
                   {[
@@ -1833,14 +1833,18 @@ export default function LandingPage() {
                     'A calm, modern clinic environment'
                   ].map((option) => (
                     <label key={option} className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-all"
-                      style={{ borderColor: extendedSurvey.mostImportantFactor === option ? '#1f3a33' : '#cfe8d7' }}>
+                      style={{ borderColor: extendedSurvey.mostImportantFactor.includes(option) ? '#1f3a33' : '#cfe8d7' }}>
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="mostImportantFactor"
                         value={option}
-                        checked={extendedSurvey.mostImportantFactor === option}
-                        onChange={(e) => setExtendedSurvey({ ...extendedSurvey, mostImportantFactor: e.target.value })}
-                        required
+                        checked={extendedSurvey.mostImportantFactor.includes(option)}
+                        onChange={(e) => {
+                          const updatedFactors = e.target.checked
+                            ? [...extendedSurvey.mostImportantFactor, option]
+                            : extendedSurvey.mostImportantFactor.filter(f => f !== option);
+                          setExtendedSurvey({ ...extendedSurvey, mostImportantFactor: updatedFactors });
+                        }}
                         className="mr-3 w-5 h-5"
                       />
                       <span className="text-base" style={{ color: '#1f3a33' }}>{option}</span>
@@ -2214,7 +2218,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#1877f2' }}
                 >
                   📘 Facebook
@@ -2226,7 +2230,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#000000' }}
                 >
                   𝕏 Twitter
@@ -2238,7 +2242,7 @@ export default function LandingPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="px-3 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105 text-sm sm:text-base sm:px-4 sm:py-3 break-words"
                   style={{ backgroundColor: '#25d366' }}
                 >
                   💬 WhatsApp
