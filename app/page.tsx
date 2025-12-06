@@ -1011,7 +1011,7 @@ export default function LandingPage() {
                   style={{ accentColor: '#1f3a33' }}
                 />
                 <label htmlFor="terms" className="text-sm text-left" style={{ color: '#1f3a33' }}>
-                  I agree to the <a
+                  ✓ I agree and consent, brighter smiles here we come! <a
                     href="/terms"
                     target="_blank"
                     className="underline font-semibold hover:text-green-700"
@@ -1022,7 +1022,7 @@ export default function LandingPage() {
                         body: JSON.stringify({ customerId, location: 'step3_checkbox' }),
                       }).catch(console.error);
                     }}
-                  >Terms and Conditions</a> and understand my info will be used for this research survey and promotion.
+                  >(Terms and Conditions)</a>
                 </label>
               </div>
 
