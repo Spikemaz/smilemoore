@@ -1011,7 +1011,7 @@ export default function LandingPage() {
                   style={{ accentColor: '#1f3a33' }}
                 />
                 <label htmlFor="terms" className="text-sm text-left" style={{ color: '#1f3a33' }}>
-                  ✓ I agree and consent, brighter smiles here we come! <a
+                  I agree and consent, brighter smiles here we come! <a
                     href="/terms"
                     target="_blank"
                     className="underline font-semibold hover:text-green-700"
