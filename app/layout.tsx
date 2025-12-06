@@ -23,20 +23,20 @@ export const metadata: Metadata = {
     siteName: "Smile Moore Dental Practice",
     images: [
       {
-        url: "/favicon.svg",
-        width: 512,
-        height: 512,
-        alt: "Smile Moore - Claim Your £50 Voucher",
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Smile Moore - Get Your FREE £50 Voucher Plus Win 1 Year of FREE Dentistry Worth £5,000",
       },
     ],
     locale: "en_GB",
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Claim Your £50 Dental Voucher - Smile Moore",
     description: "Your friend shared this exclusive £50 voucher with you! Limited vouchers remaining - claim yours now.",
-    images: ["/favicon.svg"],
+    images: ["/og-image.svg"],
   },
   icons: {
     icon: [

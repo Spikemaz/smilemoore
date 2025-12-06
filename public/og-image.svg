@@ -1,0 +1,38 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#cfe8d7"/>
+
+  <!-- Top accent bar -->
+  <rect width="1200" height="120" fill="#1f3a33"/>
+
+  <!-- Main content area -->
+  <rect x="50" y="160" width="1100" height="420" fill="white" rx="20"/>
+
+  <!-- Christmas emoji -->
+  <text x="600" y="250" font-size="80" text-anchor="middle">🎄</text>
+
+  <!-- Main heading -->
+  <text x="600" y="340" font-size="60" font-weight="bold" text-anchor="middle" fill="#1f3a33" font-family="Arial, sans-serif">
+    Get Your FREE £50 Voucher
+  </text>
+
+  <!-- Subheading -->
+  <text x="600" y="400" font-size="36" text-anchor="middle" fill="#1f3a33" font-family="Arial, sans-serif">
+    Plus Win 1 Year of FREE Dentistry
+  </text>
+
+  <!-- Prize value -->
+  <text x="600" y="450" font-size="32" text-anchor="middle" fill="#666" font-family="Arial, sans-serif">
+    🎁 Worth £5,000!
+  </text>
+
+  <!-- Bottom CTA -->
+  <text x="600" y="520" font-size="28" font-weight="bold" text-anchor="middle" fill="#1f3a33" font-family="Arial, sans-serif">
+    Smile Moore Dental Practice
+  </text>
+
+  <!-- Top left text -->
+  <text x="50" y="80" font-size="40" font-weight="bold" fill="white" font-family="Arial, sans-serif">
+    Smile Moore
+  </text>
+</svg>
