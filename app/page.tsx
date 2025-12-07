@@ -285,10 +285,8 @@ export default function LandingPage() {
           setReferredBy(ref);
         }
 
-        // Extract click IDs for ad platforms (Facebook, Google, Microsoft, TikTok)
-        const fbclid = urlParams.get('fbclid') || '';
+        // Extract click IDs for ad platforms (Google, TikTok)
         const gclid = urlParams.get('gclid') || '';
-        const msclkid = urlParams.get('msclkid') || ''; // Microsoft Ads
         const ttclid = urlParams.get('ttclid') || ''; // TikTok
 
         // Enhanced device detection
@@ -390,11 +388,8 @@ export default function LandingPage() {
         };
 
         // Wait for GTM and pixels to set cookies (try multiple times with increasing delays)
-        let fbp = '';
-        let fbc = '';
         let gaClientId = '';
         let gid = '';
-        let muid = '';
         let ttp = '';
         let tta = '';
 
@@ -402,43 +397,33 @@ export default function LandingPage() {
         for (let attempt = 0; attempt < 5; attempt++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
 
-          fbp = getCookie('_fbp');
-          fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
           gaClientId = getCookie('_ga');
           gid = getCookie('_gid');
-          muid = getCookie('MUID');
           ttp = getCookie('_ttp');
           tta = getCookie('_tta');
 
           console.log(`Attempt ${attempt + 1}: Cookies:`, {
-            fbp,
-            fbc,
             gaClientId,
             gid,
-            muid,
             ttp,
             tta,
             allCookies: document.cookie
           });
 
-          // Count how many platform cookies we have (4 platforms: Facebook, Google, Microsoft, TikTok)
+          // Count how many platform cookies we have (2 platforms: Google, TikTok)
           let platformCount = 0;
-          if (fbp) platformCount++;
           if (gaClientId) platformCount++;
-          if (muid) platformCount++;
           if (ttp || tta) platformCount++;
 
-          // If we have all 4 platform cookies, stop trying
-          if (platformCount >= 4) {
-            console.log(`✅ Found ${platformCount}/4 platform tracking cookies!`);
+          // If we have both platform cookies, stop trying
+          if (platformCount >= 2) {
+            console.log(`✅ Found ${platformCount}/2 platform tracking cookies!`);
             break;
           }
         }
 
         // Log warnings for missing cookies
-        if (!fbp) console.warn('⚠️ Facebook _fbp cookie not found after 5 seconds');
         if (!gaClientId) console.warn('⚠️ Google _ga cookie not found after 5 seconds');
-        if (!muid) console.warn('⚠️ Microsoft MUID cookie not found after 5 seconds');
         if (!ttp && !tta) console.warn('⚠️ TikTok cookies not found after 5 seconds');
 
         // Extract email and SMS campaign parameters
@@ -522,15 +507,10 @@ export default function LandingPage() {
             language,
             timezone,
             landingPage,
-            fbp,
-            fbc,
             gaClientId,
             gid,
-            fbclid,
             gclid,
-            msclkid,
             ttclid,
-            muid,
             ttp,
             tta,
             smUniversalId,
@@ -562,46 +542,37 @@ export default function LandingPage() {
               return '';
             };
 
-            const delayedFbp = getCookie('_fbp');
-            const delayedFbc = getCookie('_fbc');
             const delayedGa = getCookie('_ga');
             const delayedGid = getCookie('_gid');
-            const delayedMuid = getCookie('MUID');
             const delayedTtp = getCookie('_ttp');
             const delayedTta = getCookie('_tta');
 
             console.log('🔄 Updating visitor with delayed cookies:', {
               visitorId: data.visitorId,
-              fbp: delayedFbp,
-              fbc: delayedFbc,
               ga: delayedGa,
               gid: delayedGid,
-              muid: delayedMuid,
               ttp: delayedTtp,
               tta: delayedTta,
               smUniversalId,
               allCookies: document.cookie
             });
 
-            // Update the visitor row with all cookies (4 platforms: Facebook, Google, Microsoft, TikTok)
-            if (delayedFbp || delayedGa || delayedMuid || delayedTtp) {
+            // Update the visitor row with cookies (2 platforms: Google, TikTok)
+            if (delayedGa || delayedTtp) {
               try {
                 await fetch('/api/update-visitor-cookies', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     visitorId: data.visitorId,
-                    fbp: delayedFbp,
-                    fbc: delayedFbc,
                     gaClientId: delayedGa,
                     gid: delayedGid,
-                    muid: delayedMuid,
                     ttp: delayedTtp,
                     tta: delayedTta,
                     smUniversalId,
                   }),
                 });
-                console.log('✅ All 4 platform cookies updated successfully!');
+                console.log('✅ Google and TikTok cookies updated successfully!');
               } catch (err) {
                 console.error('❌ Failed to update visitor cookies:', err);
               }
@@ -766,6 +737,44 @@ export default function LandingPage() {
             event: 'email_submitted',
             voucher_value: voucherValue
           });
+
+          // Request GPS location after successful email submission
+          if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+              async (position) => {
+                const gpsLat = position.coords.latitude;
+                const gpsLon = position.coords.longitude;
+                const gpsAccuracy = position.coords.accuracy;
+
+                console.log('📍 GPS Location captured:', { gpsLat, gpsLon, accuracy: `${gpsAccuracy}m` });
+
+                // Update visitor with GPS coordinates
+                try {
+                  await fetch('/api/update-visitor-gps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      email: formData.email,
+                      gpsLat,
+                      gpsLon,
+                      gpsAccuracy,
+                    }),
+                  });
+                  console.log('✅ GPS location saved');
+                } catch (err) {
+                  console.error('Failed to save GPS location:', err);
+                }
+              },
+              (error) => {
+                console.log('📍 GPS permission denied or unavailable:', error.message);
+              },
+              {
+                enableHighAccuracy: true, // Request most accurate location
+                timeout: 10000, // 10 second timeout
+                maximumAge: 0 // Don't use cached location
+              }
+            );
+          }
         }
       }).catch(error => {
         console.error('Error submitting email:', error);
