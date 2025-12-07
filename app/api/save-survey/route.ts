@@ -273,6 +273,32 @@ export async function POST(request: Request) {
             });
             console.log(`📧 Sent family voucher email to ${email}`);
 
+            // AWARD ENTRIES: Give mom +10 entries for each household member (they're like referrals)
+            // Get current entries and referrals for primary user
+            const primaryDataResponse = await sheets.spreadsheets.values.get({
+              spreadsheetId: SPREADSHEET_ID,
+              range: `Home!AF${rowIndex}:AG${rowIndex}`,
+            });
+            const primaryData = primaryDataResponse.data.values?.[0] || [];
+            const currentReferrals = parseInt(primaryData[0]) || 0;
+            const currentEntries = parseInt(primaryData[1]) || 0;
+
+            // Award +10 entries per household member, capped at 250 total
+            const entriesToAdd = householdVouchers.length * 10;
+            const newEntries = Math.min(currentEntries + entriesToAdd, 250); // Cap at 250
+            const newReferrals = currentReferrals + householdVouchers.length;
+
+            await sheets.spreadsheets.values.update({
+              spreadsheetId: SPREADSHEET_ID,
+              range: `Home!AF${rowIndex}:AG${rowIndex}`,
+              valueInputOption: 'USER_ENTERED',
+              requestBody: {
+                values: [[newReferrals, newEntries]],
+              },
+            });
+
+            console.log(`🎁 Awarded ${primaryName} +${entriesToAdd} entries for ${householdVouchers.length} household members (Total: ${newEntries})`);
+
             // Send WhatsApp messages for each household member (using primary phone number)
             if (primaryPhone) {
               for (const member of householdVouchers) {
@@ -528,12 +554,14 @@ export async function POST(request: Request) {
       }
     }
 
-    // Update entries (column AG = Total Draw Entries)
+    // Update entries (column AG = Total Draw Entries) - CAP AT 250
     if (entriesToAdd > 0) {
+      const newEntries = Math.min(currentEntries + entriesToAdd, 250); // Cap at 250
       updates.push({
         range: `Home!AG${rowIndex}`,
-        values: [[currentEntries + entriesToAdd]],
+        values: [[newEntries]],
       });
+      console.log(`📊 Entries updated: ${currentEntries} + ${entriesToAdd} = ${newEntries} (capped at 250)`);
     }
 
     // Batch update all changes

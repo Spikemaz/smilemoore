@@ -44,7 +44,8 @@ export async function POST(request: Request) {
       ? forwardedFor.split(',')[0].trim() // Take first IP if multiple
       : request.headers.get('x-real-ip') || 'unknown';
 
-    // CRITICAL: Check if this name+email already has a voucher (household member claiming their own voucher)
+    // CRITICAL: Check if this NAME already has a voucher (prevent duplicate vouchers per person)
+    // Match by NAME only - household members might use different email when claiming
     const sheets = getGoogleSheetsClient();
     const homeResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -55,20 +56,21 @@ export async function POST(request: Request) {
     let existingVoucher = null;
     let existingRowIndex = -1;
 
-    // Look for existing entry with same name AND email
+    // Look for existing entry with same NAME (case-insensitive, trimmed)
+    const searchName = name.trim().toLowerCase();
     for (let i = 1; i < homeRows.length; i++) {
       const row = homeRows[i];
-      const rowEmail = row[2]; // Column C
-      const rowName = row[3];  // Column D
+      const rowName = row[3]?.trim().toLowerCase();  // Column D
 
-      if (rowEmail === email && rowName === name) {
+      if (rowName === searchName) {
         existingVoucher = {
           customerId: row[0],
           voucherCode: row[8],
           voucherValue: row[7],
+          existingEmail: row[2], // Column C
         };
         existingRowIndex = i + 1;
-        console.log(`✅ Found existing voucher for ${name} (${email}) at row ${existingRowIndex}`);
+        console.log(`✅ Found existing voucher for ${name} at row ${existingRowIndex}`);
         break;
       }
     }
@@ -76,22 +78,25 @@ export async function POST(request: Request) {
     let customerId, voucherCode, tier;
 
     if (existingVoucher) {
-      // Household member is claiming their existing voucher - update their row with phone/postcode
+      // Household member is claiming their existing voucher - update their row with email/phone/postcode
       customerId = existingVoucher.customerId;
       voucherCode = existingVoucher.voucherCode;
       tier = { value: existingVoucher.voucherValue };
 
       console.log(`🎫 Household member ${name} claiming existing voucher: ${voucherCode}`);
 
-      // Update phone and postcode for the household member
+      // Update email, phone, and postcode for the household member
+      // This allows them to use a different email than their parent
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!E${existingRowIndex}:F${existingRowIndex}`,
+        range: `Home!C${existingRowIndex}:F${existingRowIndex}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[phone, address]],
+          values: [[email, name, phone, address]],
         },
       });
+
+      console.log(`📧 Updated household member details: email=${email}, phone=${phone}, postcode=${address}`);
 
     } else {
       // New voucher - create as normal
@@ -252,15 +257,18 @@ export async function POST(request: Request) {
           const currentReferrals = parseInt(currentTotals[0]) || 0;
           const currentEntries = parseInt(currentTotals[1]) || 0;
 
-          // Update: +1 referral, +10 draw entries
+          // Update: +1 referral, +10 draw entries (capped at 250)
+          const newEntries = Math.min(currentEntries + 10, 250); // Cap at 250
           await sheets.spreadsheets.values.update({
             spreadsheetId: SPREADSHEET_ID,
             range: `Home!AF${referrerRowIndex}:AG${referrerRowIndex}`,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
-              values: [[currentReferrals + 1, currentEntries + 10]],
+              values: [[currentReferrals + 1, newEntries]],
             },
           });
+
+          console.log(`🎁 Referral bonus: ${currentEntries} + 10 = ${newEntries} entries (capped at 250)`);
 
           // Send referral conversion notification
           try {

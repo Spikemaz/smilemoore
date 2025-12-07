@@ -91,10 +91,35 @@ export async function POST(request: Request) {
             </ol>
           </div>
 
+          <!-- Help Household Members Earn Their Entries -->
+          <div style="background-color: #fff7e6; border-left: 4px solid #ffd700; padding: 20px; margin: 30px 0; border-radius: 4px;">
+            <h3 style="margin: 0 0 15px 0; color: #1f3a33; font-size: 18px;">🎁 Help Your Family Members Earn MORE Entries!</h3>
+            <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 15px; line-height: 1.6;">
+              Each family member currently has <strong>1 entry</strong>. They can earn <strong>2 more entries</strong> (total: 3) by completing a quick survey!
+            </p>
+            <p style="margin: 0 0 15px 0; color: #1f3a33; font-size: 15px; line-height: 1.6;">
+              Simply share these links with each person so they can enter their details and complete the survey:
+            </p>
+            ${householdVouchers.map((member: any) => `
+              <div style="background-color: #ffffff; padding: 15px; margin: 10px 0; border-radius: 6px; border: 2px solid #cfe8d7;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #1f3a33; font-size: 16px;">${member.name}'s Link:</p>
+                <a href="https://www.smilemoore.co.uk?cid=${member.customerId}" style="display: inline-block; color: #1f3a33; font-size: 14px; word-break: break-all; text-decoration: underline;">
+                  https://www.smilemoore.co.uk?cid=${member.customerId}
+                </a>
+                <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
+                  They'll enter their email, phone, and postcode, then answer a few questions to earn +2 more entries!
+                </p>
+              </div>
+            `).join('')}
+            <p style="margin: 15px 0 0 0; color: #1f3a33; font-size: 14px; font-weight: 600;">
+              💡 Tip: Forward this email or send them their individual link via WhatsApp or text!
+            </p>
+          </div>
+
           <!-- Prize Draw Reminder -->
           <div style="background-color: #f0f8f4; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
             <p style="margin: 0; font-size: 16px; color: #1f3a33;">
-              🏆 <strong>Each family member has 3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
+              🏆 <strong>Each family member can earn up to 3 entries</strong> in our draw to win 1 Year of FREE Dentistry worth up to £5,000!
             </p>
           </div>
 

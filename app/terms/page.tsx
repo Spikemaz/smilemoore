@@ -41,10 +41,11 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>2.1 Open to UK residents aged 18 or over.</p>
             <p>2.2 Entrants must live within a reasonable distance of the intended dental practice location (as determined by the Promoter).</p>
-            <p>2.3 Only one free entry per person; duplicate or fraudulent entries may be removed.</p>
-            <p>2.4 The Promoter may verify eligibility, identity and residency before awarding any prize.</p>
-            <p>2.5 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
-            <p>2.6 Automated, bot-generated or manipulated entries may be voided.</p>
+            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name (case-insensitive). If you have already claimed a voucher under your name, you cannot claim another voucher even with a different email address.</p>
+            <p>2.4 Prize draw entries are capped at a maximum of 250 entries per person, regardless of the number of referrals or bonus entries earned.</p>
+            <p>2.5 The Promoter may verify eligibility, identity and residency before awarding any prize.</p>
+            <p>2.6 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
+            <p>2.7 Automated, bot-generated or manipulated entries may be voided.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
@@ -55,13 +56,17 @@ export default function TermsPage() {
             <p>3.1 Free Entry Route: Completing the official online registration form provides 1 free entry. The online registration form may include optional or required research questions to help the Promoter identify suitable locations and patient demand. The research survey is part of the entry process and must be completed to receive your free entry.</p>
             <p>3.2 Bonus Entries:</p>
             <ul className="list-disc ml-8 space-y-2">
-              <li>+10 entries for each valid referral</li>
+              <li>+1 entry for completing the first 5 survey questions</li>
+              <li>+1 entry for completing the extended 10 survey questions</li>
+              <li>+10 entries for each valid referral (person who claims their voucher using your referral link)</li>
+              <li>+10 entries for each household member added (if they claim their voucher)</li>
               <li>+100 entries for redeeming a £50 Opening Voucher within the first 60 days after the practice opens (if applicable)</li>
             </ul>
-            <p>3.3 Bonus entries are optional and not required to enter or win.</p>
-            <p>3.4 No purchase or payment is required at any stage.</p>
-            <p>3.5 The Promoter may request proof that referrals are genuine.</p>
-            <p>3.6 Manipulation, duplication or fraudulent behaviour may result in disqualification.</p>
+            <p>3.3 Maximum entries per person: 250 entries. Once you reach 250 entries, no additional entries will be awarded.</p>
+            <p>3.4 Bonus entries are optional and not required to enter or win.</p>
+            <p>3.5 No purchase or payment is required at any stage.</p>
+            <p>3.6 The Promoter may request proof that referrals are genuine.</p>
+            <p>3.7 Manipulation, duplication or fraudulent behaviour may result in disqualification.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
