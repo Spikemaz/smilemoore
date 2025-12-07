@@ -117,12 +117,23 @@ export async function POST(request: Request) {
             </p>
 
             <!-- Social Share Buttons -->
-            <div style="text-align: center; margin-top: 15px;">
-              <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁" style="display: inline-block; background-color: #1877f2; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">📘 Facebook</a>
-              <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">𝕏 Twitter</a>
-              <br/>
-              <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0A${encodeURIComponent(referralLink)}" style="display: inline-block; background-color: #25d366; color: #ffffff; padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">💬 WhatsApp</a>
-            </div>
+            <table cellpadding="0" cellspacing="0" style="width: 100%; max-width: 300px; margin: 15px auto 0;">
+              <tr>
+                <td style="padding: 5px 0;">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁" style="display: block; background-color: #1877f2; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">📘 Facebook</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">
+                  <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=${encodeURIComponent(referralLink)}" style="display: block; background-color: #000000; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">𝕏 X</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">
+                  <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0A${encodeURIComponent(referralLink)}" style="display: block; background-color: #25d366; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">💬 WhatsApp</a>
+                </td>
+              </tr>
+            </table>
           </div>
 
           <!-- What Happens Next -->

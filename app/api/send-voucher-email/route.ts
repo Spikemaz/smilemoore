@@ -114,18 +114,20 @@ export async function POST(request: Request) {
                               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 15px 0 0 0;">
                                 <tr>
                                   <td align="center">
-                                    <table cellpadding="0" cellspacing="0" style="display: inline-block;">
+                                    <table cellpadding="0" cellspacing="0" style="width: 100%; max-width: 300px; margin: 0 auto;">
                                       <tr>
-                                        <td style="padding: 5px;">
-                                          <a href="https://www.facebook.com/sharer/sharer.php?u=https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}&quote=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁" style="display: inline-block; background-color: #1877f2; color: #ffffff; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">📘 Facebook</a>
-                                        </td>
-                                        <td style="padding: 5px;">
-                                          <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}" style="display: inline-block; background-color: #000000; color: #ffffff; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">𝕏 Twitter</a>
+                                        <td style="padding: 5px 0;">
+                                          <a href="https://www.facebook.com/sharer/sharer.php?u=https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}&quote=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁" style="display: block; background-color: #1877f2; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">📘 Facebook</a>
                                         </td>
                                       </tr>
                                       <tr>
-                                        <td style="padding: 5px;">
-                                          <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0Ahttps://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}" style="display: inline-block; background-color: #25d366; color: #ffffff; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">💬 WhatsApp</a>
+                                        <td style="padding: 5px 0;">
+                                          <a href="https://twitter.com/intent/tweet?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁&url=https://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}" style="display: block; background-color: #000000; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">𝕏 X</a>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td style="padding: 5px 0;">
+                                          <a href="https://wa.me/?text=🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁%0A%0Ahttps://smilemoore.co.uk?ref=${encodeURIComponent(name)}-${Math.floor(100 + Math.random() * 900)}" style="display: block; background-color: #25d366; color: #ffffff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; text-align: center;">💬 WhatsApp</a>
                                         </td>
                                       </tr>
                                     </table>

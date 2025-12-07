@@ -1566,7 +1566,7 @@ export default function EarlyBirdPage() {
               </button>
 
               {/* Social Media Share Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="space-y-3 mb-4">
                 <button
                   type="button"
                   onClick={() => {
@@ -1574,7 +1574,7 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#1877f2' }}
                 >
                   📘 Facebook
@@ -1586,10 +1586,10 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#000000' }}
                 >
-                  𝕏 Twitter
+                  𝕏 X
                 </button>
                 <button
                   type="button"
@@ -1598,7 +1598,7 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#25d366' }}
                 >
                   💬 WhatsApp
@@ -2100,7 +2100,7 @@ export default function EarlyBirdPage() {
               </button>
 
               {/* Social Media Share Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="space-y-3 mb-4">
                 <button
                   type="button"
                   onClick={() => {
@@ -2108,7 +2108,7 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#1877f2' }}
                 >
                   📘 Facebook
@@ -2120,10 +2120,10 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#000000' }}
                 >
-                  𝕏 Twitter
+                  𝕏 X
                 </button>
                 <button
                   type="button"
@@ -2132,7 +2132,7 @@ export default function EarlyBirdPage() {
                     const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                   }}
-                  className="px-4 py-3 rounded-lg text-white font-semibold transition-all hover:scale-105"
+                  className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: '#25d366' }}
                 >
                   💬 WhatsApp
