@@ -44,52 +44,102 @@ export async function POST(request: Request) {
       ? forwardedFor.split(',')[0].trim() // Take first IP if multiple
       : request.headers.get('x-real-ip') || 'unknown';
 
-    // Get current signup count
-    const totalSignups = await getTotalSignups();
-    const counter = new VoucherCounter(totalSignups);
-    const tier = counter.getCurrentTier();
-    const batchNumber = Math.floor(totalSignups / 90) + 1;
-
-    // Generate random alphanumeric voucher code
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded I, O, 0, 1 for clarity
-    let code = '';
-
-    // Generate random 6-character code (e.g., SMILEA4N21K)
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * chars.length);
-      code += chars[randomIndex];
-    }
-
-    const voucherCode = `SMILE${code}`;
-
-    // Add to Google Sheets - this generates the Customer ID
-    const result = await addSignup({
-      email,
-      name,
-      phone,
-      postcode: address,
-      campaignSource: campaignSource || 'direct',
-      voucherValue: tier.value,
-      voucherCode,
-      batchNumber,
-      ipAddress: ip,
-      referredBy: referredBy || '',
-      smUniversalId: smUniversalId || '',
+    // CRITICAL: Check if this name+email already has a voucher (household member claiming their own voucher)
+    const sheets = getGoogleSheetsClient();
+    const homeResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!A:L',
     });
 
-    if (!result.success || !result.customerId) {
-      return NextResponse.json(
-        { error: 'Failed to save signup' },
-        { status: 500 }
-      );
+    const homeRows = homeResponse.data.values || [];
+    let existingVoucher = null;
+    let existingRowIndex = -1;
+
+    // Look for existing entry with same name AND email
+    for (let i = 1; i < homeRows.length; i++) {
+      const row = homeRows[i];
+      const rowEmail = row[2]; // Column C
+      const rowName = row[3];  // Column D
+
+      if (rowEmail === email && rowName === name) {
+        existingVoucher = {
+          customerId: row[0],
+          voucherCode: row[8],
+          voucherValue: row[7],
+        };
+        existingRowIndex = i + 1;
+        console.log(`✅ Found existing voucher for ${name} (${email}) at row ${existingRowIndex}`);
+        break;
+      }
     }
 
-    // Use the actual Customer ID that was written to the sheet
-    const customerId = result.customerId;
+    let customerId, voucherCode, tier;
+
+    if (existingVoucher) {
+      // Household member is claiming their existing voucher - update their row with phone/postcode
+      customerId = existingVoucher.customerId;
+      voucherCode = existingVoucher.voucherCode;
+      tier = { value: existingVoucher.voucherValue };
+
+      console.log(`🎫 Household member ${name} claiming existing voucher: ${voucherCode}`);
+
+      // Update phone and postcode for the household member
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `Home!E${existingRowIndex}:F${existingRowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: {
+          values: [[phone, address]],
+        },
+      });
+
+    } else {
+      // New voucher - create as normal
+      const totalSignups = await getTotalSignups();
+      const counter = new VoucherCounter(totalSignups);
+      tier = counter.getCurrentTier();
+      const batchNumber = Math.floor(totalSignups / 90) + 1;
+
+      // Generate random alphanumeric voucher code
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded I, O, 0, 1 for clarity
+      let code = '';
+
+      // Generate random 6-character code (e.g., SMILEA4N21K)
+      for (let i = 0; i < 6; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        code += chars[randomIndex];
+      }
+
+      voucherCode = `SMILE${code}`;
+
+      // Add to Google Sheets - this generates the Customer ID
+      const result = await addSignup({
+        email,
+        name,
+        phone,
+        postcode: address,
+        campaignSource: campaignSource || 'direct',
+        voucherValue: tier.value,
+        voucherCode,
+        batchNumber,
+        ipAddress: ip,
+        referredBy: referredBy || '',
+        smUniversalId: smUniversalId || '',
+      });
+
+      if (!result.success || !result.customerId) {
+        return NextResponse.json(
+          { error: 'Failed to save signup' },
+          { status: 500 }
+        );
+      }
+
+      // Use the actual Customer ID that was written to the sheet
+      customerId = result.customerId;
+    }
 
     // Update Visitors sheet with voucher code at the same time - find most recent visitor
     try {
-      const sheets = getGoogleSheetsClient();
 
       const visitorsResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
