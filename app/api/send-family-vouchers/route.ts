@@ -107,7 +107,7 @@ export async function POST(request: Request) {
                   https://www.smilemoore.co.uk?cid=${member.customerId}
                 </a>
                 <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
-                  They'll enter their email, phone, and postcode, then answer a few questions to earn +2 more entries!
+                  They'll enter their email and phone, then answer a few questions to earn +2 more entries!
                 </p>
               </div>
             `).join('')}

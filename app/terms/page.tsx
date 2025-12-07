@@ -41,11 +41,12 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>2.1 Open to UK residents aged 18 or over.</p>
             <p>2.2 Entrants must live within a reasonable distance of the intended dental practice location (as determined by the Promoter).</p>
-            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name (case-insensitive). If you have already claimed a voucher under your name, you cannot claim another voucher even with a different email address.</p>
+            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name and postcode (both case-insensitive, postcode normalized by removing spaces). Entrants must provide a form of acceptable identification (such as passport, driving licence, or utility bill) that matches the name and postcode provided during registration. Verification of identity is at the sole discretion of the practice or Promoter.</p>
             <p>2.4 Prize draw entries are capped at a maximum of 250 entries per person, regardless of the number of referrals or bonus entries earned.</p>
-            <p>2.5 The Promoter may verify eligibility, identity and residency before awarding any prize.</p>
-            <p>2.6 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
-            <p>2.7 Automated, bot-generated or manipulated entries may be voided.</p>
+            <p>2.5 The Promoter reserves the right to refuse, withdraw, or invalidate any voucher, prize draw entry, or prize claim at any time, for any reason or no reason, without prior notice or explanation. This includes but is not limited to suspected fraud, abuse, breach of these Terms, or any other concern at the Promoter's sole discretion.</p>
+            <p>2.6 The Promoter may verify eligibility, identity and residency before awarding any prize or accepting any voucher redemption.</p>
+            <p>2.7 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
+            <p>2.8 Automated, bot-generated or manipulated entries may be voided.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
@@ -260,7 +261,24 @@ export default function TermsPage() {
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
 
-          <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>17. Acceptance</h2>
+          <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>17. Promoter's Rights & Discretion</h2>
+          <div className="mb-6 space-y-3" style={{ color: '#333' }}>
+            <p>17.1 The Promoter reserves the absolute right to:</p>
+            <ul className="list-disc ml-8 space-y-2">
+              <li>Refuse, reject, or invalidate any entry, voucher claim, or prize claim for any reason or no reason</li>
+              <li>Withdraw or suspend the Promotion at any time without liability</li>
+              <li>Amend these Terms at any time with or without notice</li>
+              <li>Disqualify any participant suspected of fraud, manipulation, or breach of these Terms</li>
+              <li>Request additional verification, identification, or proof of eligibility at any stage</li>
+              <li>Make final decisions on all matters relating to the Promotion, which are binding and non-appealable</li>
+            </ul>
+            <p>17.2 No participant shall have any claim, entitlement, or remedy against the Promoter except as expressly stated in these Terms.</p>
+            <p>17.3 The Promoter's decisions are final and binding. No correspondence will be entered into.</p>
+          </div>
+
+          <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
+
+          <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>18. Acceptance</h2>
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>By entering, participants confirm they:</p>
             <ul className="list-disc ml-8 space-y-2">
@@ -270,6 +288,7 @@ export default function TermsPage() {
               <li>Accept the Alternative Prize if the practice does not open</li>
               <li>Understand clinical decisions are independent of the Promoter</li>
               <li>Acknowledge no entitlement to dental treatment exists</li>
+              <li>Acknowledge the Promoter's absolute discretion as stated in Section 17</li>
               <li>Waive any right to claim beyond what is expressly stated in these Terms</li>
             </ul>
           </div>

@@ -44,8 +44,8 @@ export async function POST(request: Request) {
       ? forwardedFor.split(',')[0].trim() // Take first IP if multiple
       : request.headers.get('x-real-ip') || 'unknown';
 
-    // CRITICAL: Check if this NAME already has a voucher (prevent duplicate vouchers per person)
-    // Match by NAME only - household members might use different email when claiming
+    // CRITICAL: Check if this NAME + POSTCODE already has a voucher
+    // This prevents duplicate vouchers while avoiding issues with people who have same name
     const sheets = getGoogleSheetsClient();
     const homeResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -56,21 +56,31 @@ export async function POST(request: Request) {
     let existingVoucher = null;
     let existingRowIndex = -1;
 
-    // Look for existing entry with same NAME (case-insensitive, trimmed)
+    // Normalize postcode: remove spaces, convert to uppercase
+    // HP198HB, HP19 8HB, hp198hb all become HP198HB
+    const normalizePostcode = (postcode: string) => {
+      return postcode?.trim().replace(/\s+/g, '').toUpperCase() || '';
+    };
+
+    // Look for existing entry with same NAME + POSTCODE (both normalized)
     const searchName = name.trim().toLowerCase();
+    const searchPostcode = normalizePostcode(address);
+
     for (let i = 1; i < homeRows.length; i++) {
       const row = homeRows[i];
       const rowName = row[3]?.trim().toLowerCase();  // Column D
+      const rowPostcode = normalizePostcode(row[5]);  // Column F
 
-      if (rowName === searchName) {
+      if (rowName === searchName && rowPostcode === searchPostcode) {
         existingVoucher = {
           customerId: row[0],
           voucherCode: row[8],
           voucherValue: row[7],
           existingEmail: row[2], // Column C
+          existingPostcode: row[5], // Column F
         };
         existingRowIndex = i + 1;
-        console.log(`✅ Found existing voucher for ${name} at row ${existingRowIndex}`);
+        console.log(`✅ Found existing voucher for ${name} at postcode ${searchPostcode} (row ${existingRowIndex})`);
         break;
       }
     }
@@ -78,25 +88,25 @@ export async function POST(request: Request) {
     let customerId, voucherCode, tier;
 
     if (existingVoucher) {
-      // Household member is claiming their existing voucher - update their row with email/phone/postcode
+      // Household member is claiming their existing voucher - update email and phone only
+      // Keep existing postcode (they're in same household)
       customerId = existingVoucher.customerId;
       voucherCode = existingVoucher.voucherCode;
       tier = { value: existingVoucher.voucherValue };
 
       console.log(`🎫 Household member ${name} claiming existing voucher: ${voucherCode}`);
 
-      // Update email, phone, and postcode for the household member
-      // This allows them to use a different email than their parent
+      // Update email and phone only (NOT postcode - they share same household postcode)
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `Home!C${existingRowIndex}:F${existingRowIndex}`,
+        range: `Home!C${existingRowIndex}:E${existingRowIndex}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[email, name, phone, address]],
+          values: [[email, name, phone]],
         },
       });
 
-      console.log(`📧 Updated household member details: email=${email}, phone=${phone}, postcode=${address}`);
+      console.log(`📧 Updated household member details: email=${email}, phone=${phone} (postcode unchanged: ${existingVoucher.existingPostcode})`);
 
     } else {
       // New voucher - create as normal
