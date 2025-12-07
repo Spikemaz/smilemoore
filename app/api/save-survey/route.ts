@@ -274,6 +274,62 @@ export async function POST(request: Request) {
                   customerId: result.customerId,
                 });
                 console.log(`✅ Created voucher for ${memberName}: ${result.voucherCode}`);
+
+                // Format the entire household member row in red text
+                // Find the row that was just created by Customer ID
+                const allRows = await sheets.spreadsheets.values.get({
+                  spreadsheetId: SPREADSHEET_ID,
+                  range: 'Home!A:A',
+                });
+                const rows = allRows.data.values || [];
+                let newRowIndex = -1;
+                for (let i = rows.length - 1; i >= 1; i--) {
+                  if (rows[i][0] === result.customerId) {
+                    newRowIndex = i + 1; // 1-indexed
+                    break;
+                  }
+                }
+
+                if (newRowIndex !== -1) {
+                  // Get sheet ID for Home sheet
+                  const spreadsheet = await sheets.spreadsheets.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                  });
+                  const homeSheet = spreadsheet.data.sheets?.find(s => s.properties?.title === 'Home');
+                  const homeSheetId = homeSheet?.properties?.sheetId || 0;
+
+                  // Format entire row (columns A to BN - all 66 columns) in red text
+                  await sheets.spreadsheets.batchUpdate({
+                    spreadsheetId: SPREADSHEET_ID,
+                    requestBody: {
+                      requests: [{
+                        repeatCell: {
+                          range: {
+                            sheetId: homeSheetId,
+                            startRowIndex: newRowIndex - 1,
+                            endRowIndex: newRowIndex,
+                            startColumnIndex: 0, // Column A
+                            endColumnIndex: 66, // Column BN (0-indexed, exclusive end)
+                          },
+                          cell: {
+                            userEnteredFormat: {
+                              textFormat: {
+                                foregroundColor: {
+                                  red: 1.0,
+                                  green: 0.0,
+                                  blue: 0.0,
+                                },
+                              },
+                            },
+                          },
+                          fields: 'userEnteredFormat.textFormat.foregroundColor',
+                        },
+                      }],
+                    },
+                  });
+
+                  console.log(`🔴 Formatted entire row ${newRowIndex} in red text for household member: ${memberName}`);
+                }
               }
             } catch (error) {
               console.error(`❌ Failed to create voucher for ${memberName}:`, error);
