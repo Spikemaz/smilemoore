@@ -737,44 +737,6 @@ export default function LandingPage() {
             event: 'email_submitted',
             voucher_value: voucherValue
           });
-
-          // Request GPS location after successful email submission
-          if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition(
-              async (position) => {
-                const gpsLat = position.coords.latitude;
-                const gpsLon = position.coords.longitude;
-                const gpsAccuracy = position.coords.accuracy;
-
-                console.log('📍 GPS Location captured:', { gpsLat, gpsLon, accuracy: `${gpsAccuracy}m` });
-
-                // Update visitor with GPS coordinates
-                try {
-                  await fetch('/api/update-visitor-gps', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      email: formData.email,
-                      gpsLat,
-                      gpsLon,
-                      gpsAccuracy,
-                    }),
-                  });
-                  console.log('✅ GPS location saved');
-                } catch (err) {
-                  console.error('Failed to save GPS location:', err);
-                }
-              },
-              (error) => {
-                console.log('📍 GPS permission denied or unavailable:', error.message);
-              },
-              {
-                enableHighAccuracy: true, // Request most accurate location
-                timeout: 10000, // 10 second timeout
-                maximumAge: 0 // Don't use cached location
-              }
-            );
-          }
         }
       }).catch(error => {
         console.error('Error submitting email:', error);
