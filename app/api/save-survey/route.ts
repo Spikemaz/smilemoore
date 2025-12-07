@@ -231,7 +231,7 @@ export async function POST(request: Request) {
       if (householdNames && Array.isArray(householdNames) && householdNames.length > 0) {
         console.log(`👨‍👩‍👧‍👦 Creating vouchers for ${householdNames.length} household members`);
 
-        // Get the original customer's data to copy campaign source and referral info
+        // Get the original customer's data to copy campaign source, postcode, phone, and referral info
         const originalData = await sheets.spreadsheets.values.get({
           spreadsheetId: SPREADSHEET_ID,
           range: `Home!A${rowIndex}:L${rowIndex}`,
@@ -239,6 +239,8 @@ export async function POST(request: Request) {
         const originalRow = originalData.data.values?.[0] || [];
         const originalCampaignSource = originalRow[6] || 'URL Direct'; // Column G - Campaign Source
         const originalReferredBy = originalRow[11] || ''; // Column L
+        const originalPostcode = originalRow[5] || ''; // Column F - Postcode
+        const originalPhone = originalRow[4] || ''; // Column E - Phone
 
         // Call submit-voucher API for each household member
         const householdVouchers = [];
@@ -254,8 +256,8 @@ export async function POST(request: Request) {
                 body: JSON.stringify({
                   email, // Same email as primary user
                   name: memberName.trim(),
-                  phone: '', // Will be filled later if needed
-                  address: '', // Will be filled later if needed
+                  phone: originalPhone, // Copy primary user's phone
+                  address: originalPostcode, // Copy primary user's postcode - CRITICAL for response mirroring
                   campaignSource: householdCampaignSource, // Preserves original source + Q5 marker
                   timeToSubmit: 0,
                   scrollDepth: 0,
