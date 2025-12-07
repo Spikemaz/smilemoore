@@ -41,12 +41,13 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>2.1 Open to UK residents aged 18 or over.</p>
             <p>2.2 Entrants must live within a reasonable distance of the intended dental practice location (as determined by the Promoter).</p>
-            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name and postcode (both case-insensitive, postcode normalized by removing spaces). Entrants must provide a form of acceptable identification (such as passport, driving licence, or utility bill) that matches the name and postcode provided during registration. Verification of identity is at the sole discretion of the practice or Promoter.</p>
+            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name and postcode (both case-insensitive, postcode normalized by removing spaces).</p>
             <p>2.4 Prize draw entries are capped at a maximum of 250 entries per person, regardless of the number of referrals or bonus entries earned.</p>
-            <p>2.5 The Promoter reserves the right to refuse, withdraw, or invalidate any voucher, prize draw entry, or prize claim at any time, for any reason or no reason, without prior notice or explanation. This includes but is not limited to suspected fraud, abuse, breach of these Terms, or any other concern at the Promoter's sole discretion.</p>
-            <p>2.6 The Promoter may verify eligibility, identity and residency before awarding any prize or accepting any voucher redemption.</p>
-            <p>2.7 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
-            <p>2.8 Automated, bot-generated or manipulated entries may be voided.</p>
+            <p>2.5 Identification verification: Entrants must provide a form of acceptable identification (such as passport, driving licence, or utility bill) that matches the name and postcode provided during registration. ID is required (a) when redeeming a voucher at the practice (if the practice opens), or (b) when claiming the prize draw if selected as the winner. For prize claims, ID must confirm the winner is over 18 years of age and that their details match the entry. Failure to provide acceptable ID may result in invalidation of voucher redemption, prize claim, or prize draw entries at the sole discretion of the Promoter.</p>
+            <p>2.6 The Promoter reserves the right to refuse, withdraw, or invalidate any voucher, prize draw entry, or prize claim at any time, for any reason or no reason, without prior notice or explanation. This includes but is not limited to suspected fraud, abuse, breach of these Terms, or any other concern at the Promoter's sole discretion.</p>
+            <p>2.7 The Promoter may verify eligibility, identity and residency before awarding any prize or accepting any voucher redemption.</p>
+            <p>2.8 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
+            <p>2.9 Automated, bot-generated or manipulated entries may be voided.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />

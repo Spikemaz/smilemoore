@@ -71,29 +71,55 @@ export async function POST(request: Request) {
 
     const rows = response.data.values || [];
     const emailColumnIndex = 2; // Column C (0-indexed)
+    const postcodeColumnIndex = 5; // Column F (0-indexed)
     const campaignSourceIndex = 6; // Column G (0-indexed)
     let rowIndex = -1;
     let primaryRowIndex = -1;
     const householdRowIndices: number[] = [];
 
+    // Normalize postcode helper
+    const normalizePostcode = (postcode: string) => {
+      return postcode?.trim().replace(/\s+/g, '').toUpperCase() || '';
+    };
+
     // CRITICAL: Find the PRIMARY user (FIRST row with this email that's NOT a Q5 additional person)
-    // Also collect all household member rows for mirroring responses
+    // Also collect Q5 household members that share the SAME POSTCODE for mirroring
+    let primaryPostcode = '';
+
     for (let i = 1; i < rows.length; i++) {
       if (rows[i] && rows[i][emailColumnIndex] === email) {
         const currentRowIndex = i + 1; // +1 because sheets are 1-indexed
         const campaignSource = rows[i][campaignSourceIndex] || '';
+        const rowPostcode = normalizePostcode(rows[i][postcodeColumnIndex]);
 
         // Check if this is a Q5 additional household member
         const isHouseholdMember = campaignSource.includes('Q5 Additional Person');
 
-        if (isHouseholdMember) {
-          // This is a household member - save for mirroring
-          householdRowIndices.push(currentRowIndex);
-          console.log('📋 Found household member at row:', currentRowIndex);
-        } else if (primaryRowIndex === -1) {
+        if (!isHouseholdMember && primaryRowIndex === -1) {
           // This is the primary user - first non-household member with this email
           primaryRowIndex = currentRowIndex;
-          console.log('✅ Found PRIMARY user at row:', primaryRowIndex, 'Email:', email);
+          primaryPostcode = rowPostcode;
+          console.log('✅ Found PRIMARY user at row:', primaryRowIndex, 'Postcode:', primaryPostcode);
+        }
+      }
+    }
+
+    // Second pass: collect household members that share the SAME postcode as primary user
+    if (primaryRowIndex !== -1) {
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i] && rows[i][emailColumnIndex] === email) {
+          const currentRowIndex = i + 1;
+          const campaignSource = rows[i][campaignSourceIndex] || '';
+          const rowPostcode = normalizePostcode(rows[i][postcodeColumnIndex]);
+          const isHouseholdMember = campaignSource.includes('Q5 Additional Person');
+
+          if (isHouseholdMember && rowPostcode === primaryPostcode) {
+            // This is a Q5 household member in the SAME household (same postcode)
+            householdRowIndices.push(currentRowIndex);
+            console.log('📋 Found household member at row:', currentRowIndex, '(same postcode)');
+          } else if (isHouseholdMember && rowPostcode !== primaryPostcode) {
+            console.log('⚠️  Skipping household member at row:', currentRowIndex, '(different postcode - not same household)');
+          }
         }
       }
     }
