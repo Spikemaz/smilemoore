@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { Resend } from 'resend';
+import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
 
 const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -99,56 +100,8 @@ const christmasSharingEmail = {
   `
 };
 
-// Email variations for 10 questions follow-up
-const tenQuestionVariations = [
-  {
-    subject: "🌟 One more step to maximize your prize entries!",
-    body: (name: string, customerId: string) => `
-      Hi ${name},
-
-      Great job completing the first questions! You now have 2 entries in the prize draw worth up to £5,000.
-
-      Want to increase your chances? Answer 10 more quick questions and earn +1 bonus entry (3 entries total).
-
-      Continue here: https://smilemoore.co.uk?cid=${customerId}
-
-      Thank you!
-      Smile Moore Team
-    `
-  },
-  {
-    subject: "Help us build your perfect dental practice",
-    body: (name: string, customerId: string) => `
-      Hi ${name},
-
-      Your feedback is incredibly valuable! We'd love to hear more about your dental preferences.
-
-      Complete 10 additional questions and you'll receive:
-      • +1 bonus entry in the prize draw (3 total)
-      • Help shape your perfect dental experience
-
-      Share your thoughts: https://smilemoore.co.uk?cid=${customerId}
-
-      Best regards,
-      Smile Moore Team
-    `
-  },
-  {
-    subject: "Last call: Get your 3rd prize draw entry",
-    body: (name: string, customerId: string) => `
-      Hi ${name},
-
-      This is your final reminder to maximize your prize draw entries!
-
-      You currently have 2 entries. Complete the extended survey to earn your 3rd entry.
-
-      It takes just 2 minutes: https://smilemoore.co.uk?cid=${customerId}
-
-      Thank you,
-      Smile Moore Team
-    `
-  }
-];
+// 10-question follow-up emails removed - users now only complete 5 questions
+// const tenQuestionVariations = [...]; // Removed
 
 export async function GET(request: Request) {
   try {
@@ -231,6 +184,13 @@ export async function GET(request: Request) {
         }
 
         if (variationIndex !== -1) {
+          // Check if user has opted out
+          const hasOptedOut = await checkEmailOptOut(email);
+          if (hasOptedOut) {
+            console.log(`🚫 4Q Follow-up blocked: ${email} has STOP in column BE`);
+            continue; // Skip to next person
+          }
+
           const variation = fourQuestionVariations[variationIndex];
           const trackingParam = `?email=${encodeURIComponent(email)}&type=4q&v=${variationIndex + 1}`;
 
@@ -272,6 +232,9 @@ export async function GET(request: Request) {
             },
           });
 
+          // Increment email count
+          await incrementEmailCount(email);
+
           // Mark this email as sent in this run
           emailsSentThisRun.add(email);
           sentCount++;
@@ -283,6 +246,13 @@ export async function GET(request: Request) {
         const christmasEmailSent = row[48]; // Column AW (index 48) - Christmas Sharing Email Sent
 
         if (!christmasEmailSent) {
+          // Check if user has opted out
+          const hasOptedOut = await checkEmailOptOut(email);
+          if (hasOptedOut) {
+            console.log(`🚫 Christmas email blocked: ${email} has STOP in column BE`);
+            continue; // Skip to next person
+          }
+
           // Send Christmas sharing incentive email
           const trackingParam = `?email=${encodeURIComponent(email)}&type=christmas`;
 
@@ -321,89 +291,16 @@ export async function GET(request: Request) {
             },
           });
 
-          // Mark this email as sent in this run
-          emailsSentThisRun.add(email);
-          sentCount++;
-        }
-      }
-
-      // Check if needs 10-question follow-up (has 2 entries only)
-      if (entries === 2) {
-        const followup1Sent = row[40]; // Column AO (index 40)
-        const followup1Opened = row[41]; // Column AP (index 41)
-        const followup2Sent = row[42]; // Column AQ (index 42)
-        const followup2Opened = row[43]; // Column AR (index 43)
-        const followup3Sent = row[44]; // Column AS (index 44)
-
-        let variationIndex = -1;
-        let columnToUpdate = '';
-
-        if (!followup1Sent) {
-          variationIndex = 0;
-          columnToUpdate = 'AO';
-        } else if (followup1Sent && !followup1Opened && !followup2Sent) {
-          const sentDate = new Date(followup1Sent);
-          const now = new Date();
-          if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
-            variationIndex = 1;
-            columnToUpdate = 'AQ';
-          }
-        } else if (followup2Sent && !followup2Opened && !followup3Sent) {
-          const sentDate = new Date(followup2Sent);
-          const now = new Date();
-          if (now.getTime() - sentDate.getTime() > 48 * 60 * 60 * 1000) {
-            variationIndex = 2;
-            columnToUpdate = 'AS';
-          }
-        }
-
-        if (variationIndex !== -1) {
-          const variation = tenQuestionVariations[variationIndex];
-          const trackingParam = `?email=${encodeURIComponent(email)}&type=10q&v=${variationIndex + 1}`;
-
-          await resend.emails.send({
-            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
-            replyTo: 'reception@smilemoore.co.uk',
-            to: [email],
-            subject: variation.subject,
-            html: `
-              <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${variation.body(name, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
-
-                  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                      Don't want survey reminders?
-                      <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
-                        Unsubscribe here
-                      </a>
-                    </p>
-                    <p style="font-size: 11px; color: #999; margin: 5px 0;">
-                      Note: Your £50 voucher remains valid. You'll still receive important practice updates.
-                    </p>
-                  </div>
-
-                  <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
-                </body>
-              </html>
-            `,
-          });
-
-          // Mark as sent
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
-            range: `Home!${columnToUpdate}${rowIndex}`,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-              values: [[new Date().toISOString()]],
-            },
-          });
+          // Increment email count
+          await incrementEmailCount(email);
 
           // Mark this email as sent in this run
           emailsSentThisRun.add(email);
           sentCount++;
         }
       }
+
+      // 10-question follow-ups removed - users now only complete 5 questions
     }
 
     return NextResponse.json({

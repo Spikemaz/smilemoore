@@ -41,13 +41,14 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>2.1 Open to UK residents aged 18 or over.</p>
             <p>2.2 Entrants must live within a reasonable distance of the intended dental practice location (as determined by the Promoter).</p>
-            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name and postcode (both case-insensitive, postcode normalized by removing spaces).</p>
+            <p>2.3 Only one voucher per person; duplicate voucher claims will be rejected. A person is identified by their full name and postcode (both case-insensitive, postcode normalized by removing spaces). Household members (e.g., parents, children, partners) living at the same address are separate persons and may each claim their own individual voucher. Each household member receives their own unique voucher and must claim it independently using their personal link.</p>
             <p>2.4 Prize draw entries are capped at a maximum of 250 entries per person, regardless of the number of referrals or bonus entries earned.</p>
             <p>2.5 Identification verification: Entrants must provide a form of acceptable identification (such as passport, driving licence, or utility bill) that matches the name and postcode provided during registration. ID is required (a) when redeeming a voucher at the practice (if the practice opens), or (b) when claiming the prize draw if selected as the winner. For prize claims, ID must confirm the winner is over 18 years of age and that their details match the entry. Failure to provide acceptable ID may result in invalidation of voucher redemption, prize claim, or prize draw entries at the sole discretion of the Promoter.</p>
             <p>2.6 The Promoter reserves the right to refuse, withdraw, or invalidate any voucher, prize draw entry, or prize claim at any time, for any reason or no reason, without prior notice or explanation. This includes but is not limited to suspected fraud, abuse, breach of these Terms, or any other concern at the Promoter's sole discretion.</p>
             <p>2.7 The Promoter may verify eligibility, identity and residency before awarding any prize or accepting any voucher redemption.</p>
-            <p>2.8 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
-            <p>2.9 Automated, bot-generated or manipulated entries may be voided.</p>
+            <p>2.8 Address changes: If an entrant moves house or changes address between registration and prize claim/voucher redemption, they must notify the Promoter in writing and provide proof of both the old and new address (e.g., utility bills, council tax statements). Failure to notify the Promoter of an address change may result in disqualification or refusal of voucher redemption at the Promoter's sole discretion. The Promoter reserves the right to verify that the entrant has genuinely moved and is not attempting to manipulate the system.</p>
+            <p>2.9 Employees, contractors or agents of the Promoter may be excluded at the Promoter's discretion.</p>
+            <p>2.10 Automated, bot-generated or manipulated entries may be voided.</p>
           </div>
 
           <hr className="my-8" style={{ borderColor: '#cfe8d7' }} />
@@ -131,7 +132,7 @@ export default function TermsPage() {
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>6.1 £50 Opening Vouchers are valid only for the first 60 days after the practice officially opens.</p>
             <p>6.2 After 60 days, vouchers expire automatically without extension.</p>
-            <p>6.3 Vouchers have no monetary value and cannot be exchanged or transferred.</p>
+            <p>6.3 Vouchers have no monetary value and cannot be exchanged or transferred under any circumstances. Each voucher is strictly tied to the individual who registered and cannot be redeemed by any other person, including family members. No person may redeem more than one voucher, regardless of how it was obtained.</p>
             <p>6.4 Redeeming a voucher provides +100 bonus entries, but voucher redemption is entirely optional.</p>
             <p className="font-semibold mt-4">6.5 Free Alternative Bonus Entry Clause (Required for Legal Compliance)</p>
             <p>No purchase is necessary to obtain bonus entries. For entrants who do not wish to incur any cost when redeeming the £50 Opening Voucher, a no-cost alternative item or service of equal voucher value will be made available upon request. Redeeming the voucher against either standard services or the no-cost alternative provides the same number of bonus entries (+100). This ensures that no entrant is required to make any payment in order to gain bonus entries or enhance their chances of winning.</p>
@@ -235,7 +236,7 @@ export default function TermsPage() {
           <h2 className="text-2xl font-bold mb-4" style={{ color: '#1f3a33' }}>13. Data Protection (GDPR/ICO)</h2>
           <div className="mb-6 space-y-3" style={{ color: '#333' }}>
             <p>13.1 Personal data is used solely for administering the Promotion and providing relevant updates.</p>
-            <p>13.2 Entrants may request deletion of their data at any time, removing their entries.</p>
+            <p>13.2 Entrants may request deletion of their data at any time before the prize draw takes place, which will remove their entries from the draw. Requests made after the draw has been conducted cannot be processed retroactively. Data deletion requests must be submitted in writing to the Promoter's official contact email.</p>
             <p>13.3 Data will never be sold and will only be shared when necessary to operate the Promotion.</p>
           </div>
 

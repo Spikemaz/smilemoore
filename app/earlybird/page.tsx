@@ -159,8 +159,8 @@ export default function EarlyBirdPage() {
           // They've completed everything - show final page
           setStep(7);
         } else if (data.hasSurveyQ1to5) {
-          // They have basic survey, need extended survey
-          setStep(6);
+          // They have basic survey - show thank you page (step 6/10 questions removed)
+          setStep(7);
         } else if (data.hasPhoneAddress) {
           // They have contact info, need to do 5 questions
           setStep(5);
@@ -838,16 +838,7 @@ export default function EarlyBirdPage() {
   };
 
   const getBannerMessage = () => {
-    // Message for step 6 (final questions page)
-    if (step === 6) {
-      return (
-        <span className="text-lg md:text-xl">
-          🎉 You have been entered into our draw and have been sent your voucher code via email
-        </span>
-      );
-    }
-
-    // Simplified message for step 4-5 (success page and survey)
+    // Simplified message for step 4-7 (success page and survey)
     if (step >= 4) {
       return (
         <span className="text-lg md:text-xl">
@@ -1153,8 +1144,8 @@ export default function EarlyBirdPage() {
 
               setIsSubmitting(true);
 
-              // Move to next step immediately for instant UX
-              setStep(6);
+              // Move to step 7 (thank you) immediately - skip step 6 (10 questions removed)
+              setStep(7);
               setIsSubmitting(false);
               window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1520,8 +1511,8 @@ export default function EarlyBirdPage() {
           </div>
         )}
 
-        {/* Step 6: Referral FIRST + Congratulations + Bonus Questions */}
-        {step === 6 && (
+        {/* Step 7: Final Thank You & Share Again */}
+        {step === 7 && (
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
             {/* Referral Section - PRIORITY #1 */}
             <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: '#cfe8d7' }}>
@@ -2051,12 +2042,11 @@ export default function EarlyBirdPage() {
               {/* Final Prize Draw Count */}
               <div className="rounded-xl p-4 mb-6 inline-block" style={{ backgroundColor: '#fff7e6', border: '2px solid #ffd700' }}>
                 <p className="text-2xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-                  🎟️ You now have 3 entries in the prize draw!
+                  🎟️ You now have 2 entries in the prize draw!
                 </p>
                 <p className="text-sm" style={{ color: '#666' }}>
                   • 1 entry for claiming your voucher<br/>
-                  • 1 entry for answering 5 questions<br/>
-                  • 1 entry for completing bonus questions
+                  • 1 entry for answering 5 questions
                 </p>
               </div>
             </div>
