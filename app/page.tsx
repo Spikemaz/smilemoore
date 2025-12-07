@@ -1202,7 +1202,9 @@ export default function LandingPage() {
               // Move to step 7 (thank you) immediately - skip step 6 (10 questions removed)
               setStep(7);
               setIsSubmitting(false);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+
+              // Scroll to top after React updates (mobile-friendly)
+              setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
 
               // Save to Google Sheets in background (fire and forget)
               fetch('/api/save-survey', {
