@@ -59,8 +59,7 @@ export default function TermsPage() {
             <p>3.1 Free Entry Route: Completing the official online registration form provides 1 free entry. The online registration form may include optional or required research questions to help the Promoter identify suitable locations and patient demand. The research survey is part of the entry process and must be completed to receive your free entry.</p>
             <p>3.2 Bonus Entries:</p>
             <ul className="list-disc ml-8 space-y-2">
-              <li>+1 entry for completing the first 5 survey questions</li>
-              <li>+1 entry for completing the extended 10 survey questions</li>
+              <li>+1 entry for completing the 5 survey questions</li>
               <li>+10 entries for each valid referral (person who claims their voucher using your referral link)</li>
               <li>+10 entries for each household member added (if they claim their voucher)</li>
               <li>+100 entries for redeeming a £50 Opening Voucher within the first 60 days after the practice opens (if applicable)</li>
