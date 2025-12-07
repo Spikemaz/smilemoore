@@ -56,6 +56,13 @@ export async function POST(request: Request) {
 
     const sheets = getGoogleSheetsClient();
 
+    // Get the Home sheet ID for formatting requests
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId: SPREADSHEET_ID,
+    });
+    const homeSheet = spreadsheet.data.sheets?.find(s => s.properties?.title === 'Home');
+    const homeSheetId = homeSheet?.properties?.sheetId || 0;
+
     // Find the row with this email in the Home sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
@@ -64,17 +71,34 @@ export async function POST(request: Request) {
 
     const rows = response.data.values || [];
     const emailColumnIndex = 2; // Column C (0-indexed)
+    const campaignSourceIndex = 6; // Column G (0-indexed)
     let rowIndex = -1;
+    let primaryRowIndex = -1;
+    const householdRowIndices: number[] = [];
 
-    // CRITICAL: Find the LAST (most recent) row with this email
-    // This prevents overwriting earlier family members who share the same email
-    for (let i = rows.length - 1; i >= 1; i--) {
+    // CRITICAL: Find the PRIMARY user (FIRST row with this email that's NOT a Q5 additional person)
+    // Also collect all household member rows for mirroring responses
+    for (let i = 1; i < rows.length; i++) {
       if (rows[i] && rows[i][emailColumnIndex] === email) {
-        rowIndex = i + 1; // +1 because sheets are 1-indexed
-        console.log('✅ Found email at row:', rowIndex, 'Email:', email);
-        break;
+        const currentRowIndex = i + 1; // +1 because sheets are 1-indexed
+        const campaignSource = rows[i][campaignSourceIndex] || '';
+
+        // Check if this is a Q5 additional household member
+        const isHouseholdMember = campaignSource.includes('Q5 Additional Person');
+
+        if (isHouseholdMember) {
+          // This is a household member - save for mirroring
+          householdRowIndices.push(currentRowIndex);
+          console.log('📋 Found household member at row:', currentRowIndex);
+        } else if (primaryRowIndex === -1) {
+          // This is the primary user - first non-household member with this email
+          primaryRowIndex = currentRowIndex;
+          console.log('✅ Found PRIMARY user at row:', primaryRowIndex, 'Email:', email);
+        }
       }
     }
+
+    rowIndex = primaryRowIndex;
 
     if (rowIndex === -1) {
       return NextResponse.json(
@@ -112,6 +136,70 @@ export async function POST(request: Request) {
 
       // Update CustomerID sheet with live-calculated metrics
       await updateCustomerIDSheet();
+
+      // MIRROR Q1-Q5 to household members with RED text formatting
+      if (householdRowIndices.length > 0) {
+        console.log(`🔄 Mirroring Q1-Q5 responses to ${householdRowIndices.length} household members with red text`);
+
+        const dentalCareString = Array.isArray(dentalCare) ? dentalCare.join(', ') : dentalCare;
+        const appointmentTimesString = Array.isArray(appointmentTimes) ? appointmentTimes.join(', ') : appointmentTimes;
+        const factorsString = Array.isArray(importantFactors) ? importantFactors.join(', ') : importantFactors;
+
+        // Prepare the formatting requests for red text
+        const formattingRequests = [];
+
+        for (const houseHoldRow of householdRowIndices) {
+          // Update the values
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!M${houseHoldRow}:Q${houseHoldRow}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[
+                appointmentTimesString,
+                timeline,
+                dentalCareString,
+                factorsString,
+                previousExperience || '',
+              ]],
+            },
+          });
+
+          // Add red text formatting (RGB: 255, 0, 0)
+          formattingRequests.push({
+            repeatCell: {
+              range: {
+                sheetId: homeSheetId,
+                startRowIndex: houseHoldRow - 1,
+                endRowIndex: houseHoldRow,
+                startColumnIndex: 12, // Column M (0-indexed)
+                endColumnIndex: 17, // Column Q (0-indexed, exclusive end)
+              },
+              cell: {
+                userEnteredFormat: {
+                  textFormat: {
+                    foregroundColor: {
+                      red: 1.0,
+                      green: 0.0,
+                      blue: 0.0,
+                    },
+                  },
+                },
+              },
+              fields: 'userEnteredFormat.textFormat.foregroundColor',
+            },
+          });
+        }
+
+        // Apply red text formatting in batch
+        if (formattingRequests.length > 0) {
+          await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            requestBody: { requests: formattingRequests },
+          });
+          console.log(`✅ Applied red text formatting to ${householdRowIndices.length} household member rows`);
+        }
+      }
 
       // HOUSEHOLD MEMBERS: Create voucher entries for each household member
       if (householdNames && Array.isArray(householdNames) && householdNames.length > 0) {
@@ -241,6 +329,71 @@ export async function POST(request: Request) {
       console.log(`✅ Extended survey saved successfully to row ${rowIndex}`);
 
       await updateCustomerIDSheet();
+
+      // MIRROR Q6-Q15 to household members with RED text formatting
+      if (householdRowIndices.length > 0) {
+        console.log(`🔄 Mirroring Q6-Q15 responses to ${householdRowIndices.length} household members with red text`);
+
+        const formattingRequests = [];
+
+        for (const houseHoldRow of householdRowIndices) {
+          // Update the values
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!R${houseHoldRow}:AB${houseHoldRow}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[
+                dentalExperience || '',
+                mostImportantFactor || '',
+                smileConfidence || '',
+                sameClinician || '',
+                treatmentsString,
+                beforeAppointment || '',
+                stayLongTermString,
+                preventingVisits || '',
+                cosmeticImportance || '',
+                preferredContact || '',
+                additionalFeedback || '',
+              ]],
+            },
+          });
+
+          // Add red text formatting (RGB: 255, 0, 0)
+          formattingRequests.push({
+            repeatCell: {
+              range: {
+                sheetId: homeSheetId,
+                startRowIndex: houseHoldRow - 1,
+                endRowIndex: houseHoldRow,
+                startColumnIndex: 17, // Column R (0-indexed)
+                endColumnIndex: 28, // Column AB (0-indexed, exclusive end)
+              },
+              cell: {
+                userEnteredFormat: {
+                  textFormat: {
+                    foregroundColor: {
+                      red: 1.0,
+                      green: 0.0,
+                      blue: 0.0,
+                    },
+                  },
+                },
+              },
+              fields: 'userEnteredFormat.textFormat.foregroundColor',
+            },
+          });
+        }
+
+        // Apply red text formatting in batch
+        if (formattingRequests.length > 0) {
+          await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            requestBody: { requests: formattingRequests },
+          });
+          console.log(`✅ Applied red text formatting to ${householdRowIndices.length} household member rows for Q6-Q15`);
+        }
+      }
     }
 
     // Award entries based on survey completion

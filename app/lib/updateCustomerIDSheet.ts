@@ -52,7 +52,7 @@ export async function updateCustomerIDSheet(): Promise<void> {
 
     const lastCustomerId = homeData.length > 0 ? homeData[homeData.length - 1][0] : '0';
 
-    // Count stages
+    // Count stages - EXCLUDE Q5 additional household members from all counts
     let stage1Count = 0;
     let stage2Count = 0;
     let stage3Count = 0;
@@ -63,8 +63,13 @@ export async function updateCustomerIDSheet(): Promise<void> {
       const hasName = row[3]?.trim();
       const hasPhone = row[4]?.trim();
       const hasPostcode = row[5]?.trim();
+      const campaignSource = row[6] || ''; // Column G - Campaign Source
 
-      if (hasCustomerId && hasEmail && hasName && hasPhone && hasPostcode) {
+      // CRITICAL: Skip Q5 additional household members from all counts
+      // These are auto-created entries, not real signups
+      const isHouseholdMember = campaignSource.includes('Q5 Additional Person');
+
+      if (hasCustomerId && hasEmail && hasName && hasPhone && hasPostcode && !isHouseholdMember) {
         stage1Count++;
 
         const hasQ1 = row[12]?.trim();
