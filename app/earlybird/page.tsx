@@ -91,6 +91,37 @@ export default function EarlybirdPage() {
     additionalFeedback: '',
   });
 
+  // Reset survey on refresh when on thank you page (so friends can sign up)
+  useEffect(() => {
+    const wasOnThankYouPage = sessionStorage.getItem('smilemoore_on_thank_you');
+    if (wasOnThankYouPage === 'true') {
+      // User refreshed while on thank you page - reset everything
+      sessionStorage.removeItem('smilemoore_on_thank_you');
+      localStorage.removeItem('smilemoore_customer_id');
+      setStep(1);
+      setFormData({ email: '', name: '', phone: '', address: '' });
+      setSurveyData({
+        dentalCare: [],
+        appointmentTimes: [],
+        timeline: '',
+        importantFactors: '',
+        previousExperience: '',
+      });
+      setHouseholdNames([]);
+      setTermsAccepted(false);
+      console.log('🔄 Survey reset after refresh - ready for new signup');
+    }
+  }, []);
+
+  // Track when user reaches thank you page
+  useEffect(() => {
+    if (step === 7) {
+      sessionStorage.setItem('smilemoore_on_thank_you', 'true');
+    } else {
+      sessionStorage.removeItem('smilemoore_on_thank_you');
+    }
+  }, [step]);
+
   // Retrieve customerId from localStorage on mount (for family signups with same email)
   useEffect(() => {
     const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
