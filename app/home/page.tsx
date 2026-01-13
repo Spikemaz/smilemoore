@@ -158,22 +158,15 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Side - Image Placeholder */}
+            {/* Right Side - Hero Image */}
             <div className="hidden lg:block">
               <div className="relative">
-                <div
-                  className="w-full aspect-square rounded-3xl flex items-center justify-center"
-                  style={{ backgroundColor: '#cfe8d7' }}
-                >
-                  <div className="text-center p-8">
-                    <div className="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1f3a33' }}>
-                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-lg font-medium" style={{ color: '#1f3a33' }}>Hero Image</p>
-                    <p className="text-sm text-gray-600">Practice or team photo placeholder</p>
-                  </div>
+                <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=800&fit=crop&q=80"
+                    alt="Smiling patient at dental clinic"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 {/* Decorative elements */}
                 <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-2xl" style={{ backgroundColor: '#B8860B', opacity: 0.2 }} />
@@ -267,106 +260,142 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Service 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">🦷</span>
+            {/* Service 1 - General Dentistry */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=300&fit=crop&q=80"
+                  alt="Dental checkup"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>General Dentistry</h3>
-              <p className="text-gray-600 mb-4">
-                Comprehensive check-ups, cleanings, fillings, and preventive care to maintain your oral health.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>General Dentistry</h3>
+                <p className="text-gray-600 mb-4">
+                  Comprehensive check-ups, cleanings, fillings, and preventive care to maintain your oral health.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
-            {/* Service 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490]">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">✨</span>
+            {/* Service 2 - Cosmetic Dentistry */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=400&h=300&fit=crop&q=80"
+                  alt="Beautiful smile"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Cosmetic Dentistry</h3>
-              <p className="text-gray-600 mb-4">
-                Transform your smile with veneers, bonding, and complete smile makeovers tailored to you.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Cosmetic Dentistry</h3>
+                <p className="text-gray-600 mb-4">
+                  Transform your smile with veneers, bonding, and complete smile makeovers tailored to you.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
-            {/* Service 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490]">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">💎</span>
+            {/* Service 3 - Teeth Whitening */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1606265752439-1f18756aa5fc?w=400&h=300&fit=crop&q=80"
+                  alt="Teeth whitening"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Teeth Whitening</h3>
-              <p className="text-gray-600 mb-4">
-                Professional whitening treatments for a brighter, more confident smile in just one visit.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Teeth Whitening</h3>
+                <p className="text-gray-600 mb-4">
+                  Professional whitening treatments for a brighter, more confident smile in just one visit.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
-            {/* Service 4 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490]">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">😁</span>
+            {/* Service 4 - Invisalign */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=400&h=300&fit=crop&q=80"
+                  alt="Clear aligners"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Invisalign</h3>
-              <p className="text-gray-600 mb-4">
-                Straighten your teeth discreetly with clear aligners. Achieve the smile you've always wanted.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Invisalign</h3>
+                <p className="text-gray-600 mb-4">
+                  Straighten your teeth discreetly with clear aligners. Achieve the smile you've always wanted.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
-            {/* Service 5 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490]">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">🔧</span>
+            {/* Service 5 - Dental Implants */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=300&fit=crop&q=80"
+                  alt="Dental implants"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Dental Implants</h3>
-              <p className="text-gray-600 mb-4">
-                Permanent tooth replacement solutions that look, feel, and function like natural teeth.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Dental Implants</h3>
+                <p className="text-gray-600 mb-4">
+                  Permanent tooth replacement solutions that look, feel, and function like natural teeth.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
-            {/* Service 6 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490]">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(184, 134, 11, 0.1)' }}>
-                <span className="text-3xl">🚨</span>
+            {/* Service 6 - Emergency Care */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#70d490] group overflow-hidden">
+              <div className="h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=300&fit=crop&q=80"
+                  alt="Emergency dental care"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Emergency Care</h3>
-              <p className="text-gray-600 mb-4">
-                Prompt treatment for dental emergencies. Same-day appointments available when you need us most.
-              </p>
-              <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
-                Learn More
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3" style={{ color: '#1f3a33' }}>Emergency Care</h3>
+                <p className="text-gray-600 mb-4">
+                  Prompt treatment for dental emergencies. Same-day appointments available when you need us most.
+                </p>
+                <a href="#book" className="inline-flex items-center font-semibold transition-colors hover:gap-3 gap-2" style={{ color: '#B8860B' }}>
+                  Learn More
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -416,6 +445,54 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mt-2 mb-4" style={{ color: '#1f3a33' }}>
               Trusted by Patients, Recognised by Experts
             </h2>
+          </div>
+
+          {/* Team & Practice Image Grid */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            {/* Dental Team */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg group">
+              <img
+                src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=400&h=500&fit=crop&q=80"
+                alt="Professional dental team"
+                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1f3a33]/80 to-transparent flex items-end p-6">
+                <div>
+                  <h4 className="text-white font-bold text-lg">Expert Team</h4>
+                  <p className="text-[#cfe8d7] text-sm">Qualified professionals dedicated to your care</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modern Practice */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg group">
+              <img
+                src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=500&fit=crop&q=80"
+                alt="Modern dental practice"
+                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1f3a33]/80 to-transparent flex items-end p-6">
+                <div>
+                  <h4 className="text-white font-bold text-lg">Modern Facilities</h4>
+                  <p className="text-[#cfe8d7] text-sm">State-of-the-art equipment & technology</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Happy Patient */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg group">
+              <img
+                src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=500&fit=crop&q=80"
+                alt="Happy patient with beautiful smile"
+                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1f3a33]/80 to-transparent flex items-end p-6">
+                <div>
+                  <h4 className="text-white font-bold text-lg">Beautiful Results</h4>
+                  <p className="text-[#cfe8d7] text-sm">Transforming smiles, changing lives</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Credentials Placeholder */}
@@ -477,18 +554,23 @@ export default function HomePage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Map Placeholder */}
-            <div className="rounded-2xl overflow-hidden shadow-lg" style={{ backgroundColor: '#cfe8d7' }}>
-              <div className="aspect-video flex items-center justify-center">
+            {/* Map Placeholder with Dental Practice Interior */}
+            <div className="rounded-2xl overflow-hidden shadow-lg relative">
+              <img
+                src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=800&h=600&fit=crop&q=80"
+                alt="Modern dental practice reception"
+                className="w-full aspect-video object-cover"
+              />
+              <div className="absolute inset-0 bg-[#1f3a33]/60 flex items-center justify-center">
                 <div className="text-center p-8">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1f3a33' }}>
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
-                  <p className="text-lg font-medium" style={{ color: '#1f3a33' }}>Map Coming Soon</p>
-                  <p className="text-sm text-gray-600">Interactive map will be added here</p>
+                  <p className="text-xl font-bold text-white mb-2">Location Coming Soon</p>
+                  <p className="text-[#cfe8d7]">Interactive map will be available once our location is confirmed</p>
                 </div>
               </div>
             </div>
