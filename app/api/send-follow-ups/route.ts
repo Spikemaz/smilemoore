@@ -75,32 +75,6 @@ const fourQuestionVariations = [
   }
 ];
 
-// Christmas sharing incentive email
-const christmasSharingEmail = {
-  subject: "🎄 Spread Christmas Joy - Share Your £50 Voucher!",
-  body: (name: string, voucherValue: number, customerId: string) => `
-    Hi ${name},
-
-    The festive season is here! 🎄✨
-
-    We noticed you claimed your £${voucherValue} voucher - why not spread some Christmas joy to your family and friends?
-
-    🎁 Give the Gift of a Healthy Smile This Christmas
-
-    Who else do you know who may also want this? Share your unique referral link and:
-    • Help your loved ones save £${voucherValue} on dental care
-    • Earn +10 bonus entries in the prize draw for EACH friend who claims their voucher
-    • Perfect timing before the Christmas period!
-
-    Your Referral Link: https://www.smilemoore.co.uk?ref=${customerId}
-
-    The more you share, the better your chances of winning 1 Year of FREE Dentistry worth up to £5,000!
-
-    Wishing you a wonderful festive season,
-    Smile Moore Team 🎅
-  `
-};
-
 // 10-question follow-up emails removed - users now only complete 5 questions
 // const tenQuestionVariations = [...]; // Removed
 

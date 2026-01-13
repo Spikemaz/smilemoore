@@ -1589,7 +1589,7 @@ export default function EarlybirdPage() {
             {/* Share Section */}
             <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: '#cfe8d7' }}>
               <h3 className="text-2xl font-bold mb-3" style={{ color: '#1f3a33' }}>
-                🎄 One More Time - Help Friends & Family Get Their £50 Voucher!
+                🎉 One More Time - Help Friends & Family Get Their £50 Voucher!
               </h3>
               <p className="text-lg mb-4" style={{ color: '#1f3a33' }}>
                 Share your referral link and earn +10 bonus entries for each friend who claims!
@@ -1607,7 +1607,7 @@ export default function EarlybirdPage() {
                   const referralLink = `${window.location.origin}?ref=${customerId}`;
                   try {
                     await navigator.clipboard.writeText(referralLink);
-                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                    alert('Copied! Now share to give someone a £50 voucher 🎉');
                   } catch (err) {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -1616,7 +1616,7 @@ export default function EarlybirdPage() {
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    alert('Copied! Now share to give someone a £50 voucher before Christmas 🎄');
+                    alert('Copied! Now share to give someone a £50 voucher 🎉');
                   }
                 }}
                 className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg mb-3"
@@ -1631,7 +1631,7 @@ export default function EarlybirdPage() {
                   type="button"
                   onClick={() => {
                     const referralLink = `${window.location.origin}?ref=${customerId}`;
-                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
+                    const shareText = `Get a FREE £50 dental voucher! Plus enter to win 1 YEAR of FREE dentistry worth £5,000!\n\n${referralLink}`;
                     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
                   }}
                   className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
@@ -1643,7 +1643,7 @@ export default function EarlybirdPage() {
                   type="button"
                   onClick={() => {
                     const referralLink = `${window.location.origin}?ref=${customerId}`;
-                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁`;
+                    const shareText = `Get a FREE £50 dental voucher! Plus enter to win 1 YEAR of FREE dentistry worth £5,000!`;
                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank', 'width=600,height=400');
                   }}
                   className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
@@ -1655,7 +1655,7 @@ export default function EarlybirdPage() {
                   type="button"
                   onClick={() => {
                     const referralLink = `${window.location.origin}?ref=${customerId}`;
-                    const shareText = `🎄 Get a FREE £50 dental voucher before Christmas! Plus enter to win 1 YEAR of FREE dentistry worth £5,000! 🎁\n\n${referralLink}`;
+                    const shareText = `Get a FREE £50 dental voucher! Plus enter to win 1 YEAR of FREE dentistry worth £5,000!\n\n${referralLink}`;
                     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
                   }}
                   className="w-full text-white px-8 py-5 rounded-xl text-xl font-bold transition-all transform hover:scale-105 shadow-lg"
