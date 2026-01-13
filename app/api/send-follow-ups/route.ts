@@ -244,69 +244,8 @@ export async function GET(request: Request) {
         }
       }
 
-      // Check if should receive Christmas sharing email (has 3 entries - completed everything)
-      if (entries === 3) {
-        const christmasEmailSent = row[48]; // Column AW (index 48) - Christmas Sharing Email Sent
-
-        if (!christmasEmailSent) {
-          // Check if user has opted out
-          const hasOptedOut = await checkEmailOptOut(email);
-          if (hasOptedOut) {
-            console.log(`🚫 Christmas email blocked: ${email} has STOP in column BE`);
-            continue; // Skip to next person
-          }
-
-          // Send Christmas sharing incentive email
-          const trackingParam = `?email=${encodeURIComponent(email)}&type=christmas`;
-
-          try {
-            await resend.emails.send({
-              from: getFromAddress(),
-              replyTo: EMAIL_CONFIG.replyTo,
-              to: [email],
-              subject: christmasSharingEmail.subject,
-              html: `
-                <html>
-                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    ${christmasSharingEmail.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
-
-                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                      <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                        Don't want these emails?
-                        <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
-                          Unsubscribe here
-                        </a>
-                      </p>
-                    </div>
-
-                    <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
-                  </body>
-                </html>
-              `,
-            });
-
-            // Mark as sent in Column AW
-            await sheets.spreadsheets.values.update({
-              spreadsheetId: SPREADSHEET_ID,
-              range: `Home!AW${rowIndex}`,
-              valueInputOption: 'USER_ENTERED',
-              requestBody: {
-                values: [[new Date().toISOString()]],
-              },
-            });
-
-            // Increment email count
-            await incrementEmailCount(email);
-
-            // Mark this email as sent in this run
-            emailsSentThisRun.add(email);
-            sentCount++;
-          } catch (emailError) {
-            console.error(`Failed to send Christmas email to ${email}:`, emailError);
-            // Continue to next person instead of failing entire batch
-          }
-        }
-      }
+      // DISABLED - Christmas campaign ended
+      // if (entries === 3) { ... }
 
       // 10-question follow-ups removed - users now only complete 5 questions
     }
