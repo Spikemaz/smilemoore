@@ -79,7 +79,7 @@ export default function EarlybirdPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [extendedSurvey, setExtendedSurvey] = useState({
     dentalExperience: '',
-    mostImportantFactor: '',
+    mostImportantFactor: [] as string[],
     smileConfidence: '',
     sameClinician: '',
     neededTreatments: [] as string[],
@@ -124,13 +124,25 @@ export default function EarlybirdPage() {
 
   // Retrieve customerId from localStorage on mount (for family signups with same email)
   useEffect(() => {
-    const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
-    if (storedCustomerId) {
-      setCustomerId(storedCustomerId);
-      console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+    // Check URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    const cidFromUrl = urlParams.get('cid');
 
-      // Fetch existing customer data and pre-fill form
-      fetchAndPrefillCustomerData(storedCustomerId);
+    if (cidFromUrl) {
+      // Email link with Customer ID - use that (takes priority)
+      setCustomerId(cidFromUrl);
+      localStorage.setItem('smilemoore_customer_id', cidFromUrl);
+      console.log('🆔 Customer ID from URL:', cidFromUrl);
+      fetchAndPrefillCustomerData(cidFromUrl);
+    } else {
+      // No URL param - check localStorage
+      const storedCustomerId = localStorage.getItem('smilemoore_customer_id');
+      if (storedCustomerId) {
+        setCustomerId(storedCustomerId);
+        console.log('🆔 Retrieved Customer ID from localStorage:', storedCustomerId);
+        // Fetch existing customer data and pre-fill form
+        fetchAndPrefillCustomerData(storedCustomerId);
+      }
     }
   }, []);
 
@@ -185,13 +197,39 @@ export default function EarlybirdPage() {
           }));
         }
 
+        // Check if they came from an email link (has ?cid= parameter)
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromEmailLink = urlParams.has('cid');
+
         // Skip to the appropriate step based on what data is missing
         if (data.hasExtendedSurvey) {
-          // They've completed everything - show final page
-          setStep(7);
+          if (fromEmailLink) {
+            // They came from email link - show them thank you page (auto-resume)
+            console.log('📧 Email link detected - showing thank you page');
+            setStep(7);
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
+          } else {
+            // They came from QR/Direct URL - clear localStorage and start fresh
+            // This allows them to use their phone to fill out friends' details
+            console.log('✅ Survey complete - clearing localStorage to allow fresh signups');
+            localStorage.removeItem('smilemoore_customer_id');
+            localStorage.removeItem('smilemoore_last_email');
+            setStep(1);
+          }
         } else if (data.hasSurveyQ1to5) {
-          // They have basic survey - show thank you page (step 6/10 questions removed)
-          setStep(7);
+          if (fromEmailLink) {
+            // They came from email link - show thank you page (step 6/10 questions removed)
+            console.log('📧 Email link detected - showing thank you page');
+            setStep(7);
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 100);
+          } else {
+            // They came from QR/Direct URL - clear localStorage and start fresh
+            // This allows them to sign up friends/family after completing 5 questions
+            console.log('✅ 5 questions complete - clearing localStorage to allow fresh signups');
+            localStorage.removeItem('smilemoore_customer_id');
+            localStorage.removeItem('smilemoore_last_email');
+            setStep(1);
+          }
         } else if (data.hasPhoneAddress) {
           // They have contact info, need to do 5 questions
           setStep(5);
