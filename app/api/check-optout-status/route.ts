@@ -31,7 +31,13 @@ interface OptOutStatus {
   optOutReason?: string;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Require CRON_SECRET for authorization (same as other protected endpoints)
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   // List of emails to check
   const emailsToCheck = [
     'taylormuir1993@gmail.com',
@@ -163,6 +169,12 @@ export async function GET() {
 
 // Also support POST with custom email list
 export async function POST(request: Request) {
+  // Require CRON_SECRET for authorization
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const emailsToCheck: string[] = body.emails || [];
