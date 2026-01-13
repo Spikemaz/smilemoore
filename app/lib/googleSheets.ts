@@ -345,7 +345,7 @@ export async function initializeSheet(): Promise<boolean> {
       'Additional Feedback', // AB
       'Email Sent', // AC
       'Email Opened', // AD
-      'Referral Link Clicked', // AE
+      'Did They Try To Share?', // AE
       'Total Referrals', // AF
       'Total Draw Entries', // AG
       'Referal Link', // AH (note: typo in your sheet - missing second 'r')
@@ -370,19 +370,29 @@ export async function initializeSheet(): Promise<boolean> {
       'Form Drop-off Stage', // BA
       'Device Converted', // BB
       'WhatsApp Follow-up Sent', // BC
-      'SMS Follow-up Sent', // BD
+      'Smile Moore Univeral ID', // BD (note: typo "Univeral" matches your sheet)
+      'Email Opt-Out Status', // BE - manually type "STOP" to prevent all automated emails (permanent)
+      'Total Emails Sent Count', // BF - tracks how many emails have been sent to this person
+      'Last Email 1 Status', // BG - Sent/Opened for most recent email
+      'Last Email 1 Date', // BH - Timestamp of most recent email
+      'Last Email 2 Status', // BI - Sent/Opened for 2nd most recent email
+      'Last Email 2 Date', // BJ - Timestamp of 2nd most recent email
+      'Last Email 3 Status', // BK - Sent/Opened for 3rd most recent email
+      'Last Email 3 Date', // BL - Timestamp of 3rd most recent email
+      'Auto-Stopped', // BM - YES/NO - automatically set after 3 unopened emails over 7 days, resets on any open
+      'SMS Follow-up Sent', // BN - tracks if SMS follow-up has been sent
     ]];
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Home!A1:BD1',
+      range: 'Home!A1:BN1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Earlybird!A1:BD1',
+      range: 'Earlybird!A1:BN1',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: headers },
     });
@@ -416,5 +426,211 @@ export async function initializeSheet(): Promise<boolean> {
   } catch (error) {
     console.error('Error initializing sheet:', error);
     return false;
+  }
+}
+
+/**
+ * Email Opt-Out System
+ * Column BE (index 56): Email Opt-Out Status - manually type "STOP" to prevent all automated emails (permanent)
+ * Column BF (index 57): Total Emails Sent Count - tracks how many emails have been sent to this person
+ * Column BG-BL (index 58-63): Last 3 email statuses and dates
+ * Column BM (index 64): Auto-Stopped - YES/NO - automatically set after 3 unopened emails over 7 days
+ */
+
+// Check if user has opted out of emails (unsubscribed, manual STOP, or auto-stopped)
+export async function checkEmailOptOut(email: string): Promise<boolean> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Find user by email in Home sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!C:BM', // Email (C) to Auto-Stopped (BM)
+    });
+
+    const rows = response.data.values || [];
+
+    for (let i = 1; i < rows.length; i++) { // Skip header
+      const rowEmail = rows[i][0]; // Column C (index 0 in this range)
+      const unsubscribed = rows[i][45]; // Column AV (absolute index 47, from C: 47-2=45) - Unsubscribed from Follow-ups
+      const manualOptOut = rows[i][54]; // Column BE (absolute index 56, from C: 56-2=54)
+      const autoStopped = rows[i][62]; // Column BM (absolute index 64, from C: 64-2=62)
+
+      if (rowEmail && rowEmail.toLowerCase().trim() === email.toLowerCase().trim()) {
+        // Check if user clicked unsubscribe link (Column AV has timestamp)
+        if (unsubscribed && unsubscribed.toString().trim() !== '') {
+          console.log(`🚫 Email blocked: ${email} has unsubscribed (column AV)`);
+          return true;
+        }
+
+        // Check manual opt-out status
+        if (manualOptOut && manualOptOut.toString().toUpperCase() === 'STOP') {
+          console.log(`🚫 Email blocked: ${email} has manual STOP in column BE`);
+          return true;
+        }
+
+        // Check auto-stop status
+        if (autoStopped && autoStopped.toString().toUpperCase() === 'YES') {
+          console.log(`🚫 Email blocked: ${email} is auto-stopped (3 unopened emails)`);
+          return true;
+        }
+
+        return false; // User has not opted out
+      }
+    }
+
+    // Email not found - allow email to proceed
+    return false;
+  } catch (error) {
+    console.error('Error checking email opt-out:', error);
+    return false; // On error, don't block emails
+  }
+}
+
+// Increment email sent counter and update last 3 email tracking
+export async function incrementEmailCount(email: string): Promise<void> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Find user by email in Home sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!C:BM', // Email (C) to Auto-Stopped (BM)
+    });
+
+    const rows = response.data.values || [];
+
+    for (let i = 1; i < rows.length; i++) { // Skip header
+      const rowEmail = rows[i][0]; // Column C (index 0 in this range)
+
+      if (rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) {
+        const rowNumber = i + 1; // 1-indexed for Sheets API
+        const currentCount = parseInt(rows[i][55]) || 0; // Column BF (absolute index 57, from C: 57-2=55)
+        const newCount = currentCount + 1;
+
+        // Get current last 3 email statuses
+        const email1Status = rows[i][56] || ''; // Column BG (absolute index 58, from C: 58-2=56)
+        const email1Date = rows[i][57] || ''; // Column BH (absolute index 59, from C: 59-2=57)
+        const email2Status = rows[i][58] || ''; // Column BI (absolute index 60, from C: 60-2=58)
+        const email2Date = rows[i][59] || ''; // Column BJ (absolute index 61, from C: 61-2=59)
+
+        const timestamp = new Date().toISOString();
+
+        // Shift emails down: Email 2 → Email 3, Email 1 → Email 2, New → Email 1
+        await sheets.spreadsheets.values.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            valueInputOption: 'USER_ENTERED',
+            data: [
+              { range: `Home!BF${rowNumber}`, values: [[newCount]] }, // Increment count
+              { range: `Home!BG${rowNumber}`, values: [['Sent']] }, // New email 1 status
+              { range: `Home!BH${rowNumber}`, values: [[timestamp]] }, // New email 1 date
+              { range: `Home!BI${rowNumber}`, values: [[email1Status]] }, // Email 1 → Email 2
+              { range: `Home!BJ${rowNumber}`, values: [[email1Date]] },
+              { range: `Home!BK${rowNumber}`, values: [[email2Status]] }, // Email 2 → Email 3
+              { range: `Home!BL${rowNumber}`, values: [[email2Date]] },
+            ],
+          },
+        });
+
+        console.log(`📧 Email count for ${email}: ${currentCount} → ${newCount}`);
+
+        // Check if we should auto-stop (3 unopened emails over 7 days)
+        await checkAndSetAutoStop(email, rowNumber);
+        return;
+      }
+    }
+
+    console.log(`⚠️ Could not find email ${email} to increment count`);
+  } catch (error) {
+    console.error('Error incrementing email count:', error);
+    // Don't throw - this is non-critical tracking
+  }
+}
+
+// Check if user should be auto-stopped (3 unopened emails over 7 days)
+async function checkAndSetAutoStop(email: string, rowNumber: number): Promise<void> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Get last 3 email statuses and dates
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `Home!BG${rowNumber}:BL${rowNumber}`,
+    });
+
+    const row = response.data.values?.[0] || [];
+    const email1Status = row[0]; // BG
+    const email1Date = row[1]; // BH
+    const email2Status = row[2]; // BI
+    const email2Date = row[3]; // BJ
+    const email3Status = row[4]; // BK
+    const email3Date = row[5]; // BL
+
+    // Check if all 3 are "Sent" (not opened)
+    if (email1Status === 'Sent' && email2Status === 'Sent' && email3Status === 'Sent') {
+      // Check if oldest email is over 7 days old
+      if (email3Date) {
+        const oldestDate = new Date(email3Date);
+        const now = new Date();
+        const daysDiff = (now.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (daysDiff >= 7) {
+          // Set Auto-Stop to YES
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!BM${rowNumber}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [['YES']],
+            },
+          });
+
+          console.log(`🛑 Auto-stopped ${email}: 3 unopened emails over 7 days`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error checking auto-stop:', error);
+  }
+}
+
+// Record email open and reset auto-stop if needed
+export async function recordEmailOpen(email: string): Promise<void> {
+  try {
+    const sheets = getGoogleSheetsClient();
+
+    // Find user by email
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: 'Home!C:BM',
+    });
+
+    const rows = response.data.values || [];
+
+    for (let i = 1; i < rows.length; i++) {
+      const rowEmail = rows[i][0];
+
+      if (rowEmail && rowEmail.toLowerCase() === email.toLowerCase()) {
+        const rowNumber = i + 1;
+
+        // Update most recent email status to "Opened"
+        await sheets.spreadsheets.values.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            valueInputOption: 'USER_ENTERED',
+            data: [
+              { range: `Home!BG${rowNumber}`, values: [['Opened']] }, // Mark as opened
+              { range: `Home!BM${rowNumber}`, values: [['NO']] }, // Reset auto-stop
+            ],
+          },
+        });
+
+        console.log(`✅ Email opened by ${email} - auto-stop reset to NO`);
+        return;
+      }
+    }
+  } catch (error) {
+    console.error('Error recording email open:', error);
   }
 }

@@ -69,7 +69,8 @@ export async function GET(request: NextRequest) {
     });
 
     const rows = response.data.values || [];
-    const rowIndex = rows.findIndex((row) => row[0] === email);
+    const emailLower = email.toLowerCase().trim();
+    const rowIndex = rows.findIndex((row) => row[0]?.toLowerCase().trim() === emailLower);
 
     if (rowIndex !== -1) {
       const actualRowIndex = rowIndex + 1; // 1-indexed
