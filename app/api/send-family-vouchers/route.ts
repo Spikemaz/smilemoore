@@ -218,8 +218,9 @@ export async function POST(request: Request) {
 
     // Send email
     const data = await resend.emails.send({
-      from: 'SmileMoore Dental <noreply@smilemoore.co.uk>',
+      from: 'SmileMoore Dental <reception@smilemoore.co.uk>',
       to: [email],
+      replyTo: 'reception@smilemoore.co.uk',
       subject: `🎉 Your Family Vouchers - ${householdVouchers.length} x £50 Codes Inside!`,
       html: htmlContent,
     });

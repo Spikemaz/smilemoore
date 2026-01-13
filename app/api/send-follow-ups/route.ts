@@ -194,50 +194,52 @@ export async function GET(request: Request) {
           const variation = fourQuestionVariations[variationIndex];
           const trackingParam = `?email=${encodeURIComponent(email)}&type=4q&v=${variationIndex + 1}`;
 
-          await resend.emails.send({
-            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
-            replyTo: 'reception@smilemoore.co.uk',
-            to: [email],
-            subject: variation.subject,
-            html: `
-              <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${variation.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+          try {
+            await resend.emails.send({
+              from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+              replyTo: 'reception@smilemoore.co.uk',
+              to: [email],
+              subject: variation.subject,
+              html: `
+                <html>
+                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    ${variation.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
-                  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                      Don't want survey reminders?
-                      <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
-                        Unsubscribe here
-                      </a>
-                    </p>
-                    <p style="font-size: 11px; color: #999; margin: 5px 0;">
-                      Note: Your £50 voucher remains valid. You'll still receive important practice updates.
-                    </p>
-                  </div>
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+                      <p style="font-size: 12px; color: #999; margin: 5px 0;">
+                        Don't want these emails?
+                        <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
+                          Unsubscribe here
+                        </a>
+                      </p>
+                    </div>
 
-                  <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
-                </body>
-              </html>
-            `,
-          });
+                    <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
+                  </body>
+                </html>
+              `,
+            });
 
-          // Mark as sent
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
-            range: `Home!${columnToUpdate}${rowIndex}`,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-              values: [[new Date().toISOString()]],
-            },
-          });
+            // Mark as sent
+            await sheets.spreadsheets.values.update({
+              spreadsheetId: SPREADSHEET_ID,
+              range: `Home!${columnToUpdate}${rowIndex}`,
+              valueInputOption: 'USER_ENTERED',
+              requestBody: {
+                values: [[new Date().toISOString()]],
+              },
+            });
 
-          // Increment email count
-          await incrementEmailCount(email);
+            // Increment email count
+            await incrementEmailCount(email);
 
-          // Mark this email as sent in this run
-          emailsSentThisRun.add(email);
-          sentCount++;
+            // Mark this email as sent in this run
+            emailsSentThisRun.add(email);
+            sentCount++;
+          } catch (emailError) {
+            console.error(`Failed to send 4Q follow-up to ${email}:`, emailError);
+            // Continue to next person instead of failing entire batch
+          }
         }
       }
 
@@ -256,47 +258,52 @@ export async function GET(request: Request) {
           // Send Christmas sharing incentive email
           const trackingParam = `?email=${encodeURIComponent(email)}&type=christmas`;
 
-          await resend.emails.send({
-            from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
-            replyTo: 'reception@smilemoore.co.uk',
-            to: [email],
-            subject: christmasSharingEmail.subject,
-            html: `
-              <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  ${christmasSharingEmail.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
+          try {
+            await resend.emails.send({
+              from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+              replyTo: 'reception@smilemoore.co.uk',
+              to: [email],
+              subject: christmasSharingEmail.subject,
+              html: `
+                <html>
+                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    ${christmasSharingEmail.body(name, voucherValue, customerId).split('\n').map(line => line.trim() ? `<p style="margin: 10px 0;">${line.trim()}</p>` : '').join('')}
 
-                  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
-                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
-                      Don't want promotional emails?
-                      <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
-                        Unsubscribe here
-                      </a>
-                    </p>
-                  </div>
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+                      <p style="font-size: 12px; color: #999; margin: 5px 0;">
+                        Don't want these emails?
+                        <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #1f3a33; text-decoration: underline;">
+                          Unsubscribe here
+                        </a>
+                      </p>
+                    </div>
 
-                  <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
-                </body>
-              </html>
-            `,
-          });
+                    <img src="https://smilemoore.co.uk/api/track-followup-open${trackingParam}" width="1" height="1" alt="" style="display: block; border: 0;" />
+                  </body>
+                </html>
+              `,
+            });
 
-          // Mark as sent in Column AW
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
-            range: `Home!AW${rowIndex}`,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-              values: [[new Date().toISOString()]],
-            },
-          });
+            // Mark as sent in Column AW
+            await sheets.spreadsheets.values.update({
+              spreadsheetId: SPREADSHEET_ID,
+              range: `Home!AW${rowIndex}`,
+              valueInputOption: 'USER_ENTERED',
+              requestBody: {
+                values: [[new Date().toISOString()]],
+              },
+            });
 
-          // Increment email count
-          await incrementEmailCount(email);
+            // Increment email count
+            await incrementEmailCount(email);
 
-          // Mark this email as sent in this run
-          emailsSentThisRun.add(email);
-          sentCount++;
+            // Mark this email as sent in this run
+            emailsSentThisRun.add(email);
+            sentCount++;
+          } catch (emailError) {
+            console.error(`Failed to send Christmas email to ${email}:`, emailError);
+            // Continue to next person instead of failing entire batch
+          }
         }
       }
 

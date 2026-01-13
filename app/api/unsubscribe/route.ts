@@ -143,20 +143,19 @@ export async function GET(request: NextRequest) {
             <div class="container">
               <div class="success-icon">✅</div>
               <h1>You've Been Unsubscribed</h1>
-              <p>You will no longer receive follow-up emails about completing the survey questions.</p>
+              <p>You will no longer receive any marketing or promotional emails from Smile Moore.</p>
 
               <div class="important">
-                <strong>⚠️ Important:</strong>
-                <p style="margin-top: 10px;">Your £50 voucher is still valid and you will still receive important updates about:</p>
+                <strong>📋 Important:</strong>
+                <p style="margin-top: 10px;">Your £50 voucher is still valid! To stay updated about our practice opening and redeem your voucher, please:</p>
                 <ul style="text-align: left; margin: 10px 0; padding-left: 30px;">
-                  <li>Our CQC approval process</li>
-                  <li>Practice opening date</li>
-                  <li>Booking instructions to redeem your voucher</li>
-                  <li>Prize draw results</li>
+                  <li>Follow us on social media for updates</li>
+                  <li>Check our website: smilemoore.co.uk</li>
+                  <li>Contact us directly when you're ready to book</li>
                 </ul>
               </div>
 
-              <p>You've only unsubscribed from survey reminder emails.</p>
+              <p>If you change your mind, contact us to re-subscribe.</p>
 
               <div class="contact">
                 <p>Questions? Contact us at reception@smilemoore.co.uk</p>
