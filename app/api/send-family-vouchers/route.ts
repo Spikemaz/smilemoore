@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -12,6 +13,16 @@ export async function POST(request: Request) {
         { error: 'Email and household vouchers are required' },
         { status: 400 }
       );
+    }
+
+    // Check if user has opted out of emails
+    const hasOptedOut = await checkEmailOptOut(email);
+    if (hasOptedOut) {
+      console.log(`🚫 Family vouchers email blocked: ${email} has STOP in column BE`);
+      return NextResponse.json({
+        success: false,
+        message: 'User has opted out of emails',
+      });
     }
 
     // Generate referral link using Customer ID (privacy-friendly)
@@ -184,12 +195,20 @@ export async function POST(request: Request) {
           <p style="font-size: 14px; color: #999; text-align: center; margin-top: 40px; line-height: 1.6;">
             Questions? Contact us at info@smilemoore.co.uk or call 01234 567890
           </p>
+
+          <!-- Tracking Pixel -->
+          <img src="https://smilemoore.co.uk/api/track-email-open?email=${encodeURIComponent(email)}" width="1" height="1" alt="" style="display: block; border: 0;" />
         </div>
 
         <!-- Footer -->
         <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
-          <p style="margin: 0; font-size: 12px; color: #999;">
+          <p style="margin: 0 0 10px 0; font-size: 12px; color: #999;">
             © ${new Date().getFullYear()} SmileMoore Dental. All rights reserved.
+          </p>
+          <p style="margin: 0; font-size: 12px;">
+            <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #999; text-decoration: underline;">
+              Unsubscribe from emails
+            </a>
           </p>
         </div>
       </div>
@@ -206,6 +225,9 @@ export async function POST(request: Request) {
     });
 
     console.log(`✅ Family voucher email sent to ${email} with ${householdVouchers.length} codes`);
+
+    // Increment email count for this user
+    await incrementEmailCount(email);
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

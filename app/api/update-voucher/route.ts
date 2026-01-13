@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { updateVisitorStatus } from '@/app/lib/visitorTracking';
+import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
 
@@ -203,8 +204,20 @@ export async function POST(request: NextRequest) {
           row[0] === emailAddr && row[29] // Column AC (Email Sent) = index 29 from C
         );
 
-        // Only send email if not already sent to this address
-        if (emailAlreadySent) {
+        // Check if user has opted out of emails
+        const hasOptedOut = await checkEmailOptOut(emailAddr);
+        if (hasOptedOut) {
+          console.log(`🚫 Voucher email blocked: ${emailAddr} has STOP in column BE`);
+          // Mark email as "sent" so we don't keep trying
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `Home!AC${rowIndex + 1}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [['BLOCKED - OPTED OUT']],
+            },
+          });
+        } else if (emailAlreadySent) {
           console.log(`Skipping email to ${emailAddr} - already sent for this address`);
           // Just mark this row as email sent (timestamp)
           await sheets.spreadsheets.values.update({
@@ -376,8 +389,13 @@ export async function POST(request: NextRequest) {
                                 <p style="margin: 0 0 10px 0; color: #666666; font-size: 14px;">
                                   © ${new Date().getFullYear()} Smile Moore. All rights reserved.
                                 </p>
-                                <p style="margin: 0; color: #999999; font-size: 12px;">
+                                <p style="margin: 0 0 10px 0; color: #999999; font-size: 12px;">
                                   This email was sent because you claimed a voucher on our website.
+                                </p>
+                                <p style="margin: 0 0 10px 0; font-size: 12px;">
+                                  <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(emailAddr)}" style="color: #999999; text-decoration: underline;">
+                                    Unsubscribe from emails
+                                  </a>
                                 </p>
                                 <img src="https://smilemoore.co.uk/api/track-email-open?email=${encodeURIComponent(emailAddr)}" width="1" height="1" alt="" style="display: block; border: 0;" />
                               </td>
@@ -406,6 +424,9 @@ export async function POST(request: NextRequest) {
               );
               await Promise.all(updatePromises);
               console.log(`Marked ${sameEmailSignups.length} rows as email sent for ${emailAddr}`);
+
+              // Increment email count
+              await incrementEmailCount(emailAddr);
             }
           }
         } catch (emailError) {

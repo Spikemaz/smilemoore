@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +11,16 @@ export async function POST(request: Request) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // Check if user has opted out of emails
+    const hasOptedOut = await checkEmailOptOut(email);
+    if (hasOptedOut) {
+      console.log(`🚫 Email blocked: ${email} has STOP in column BE`);
+      return NextResponse.json({
+        success: false,
+        message: 'User has opted out of emails',
+      });
     }
 
     // Check if Resend API key is configured
@@ -141,6 +152,9 @@ export async function POST(request: Request) {
                         <p style="margin: 20px 0 0 0; color: #666666; font-size: 14px; line-height: 20px;">
                           If you have any questions, please reply to this email and we'll be happy to help.
                         </p>
+
+                        <!-- Tracking Pixel -->
+                        <img src="https://smilemoore.co.uk/api/track-email-open?email=${encodeURIComponent(email)}" width="1" height="1" alt="" style="display: block; border: 0;" />
                       </td>
                     </tr>
 
@@ -150,8 +164,13 @@ export async function POST(request: Request) {
                         <p style="margin: 0 0 10px 0; color: #666666; font-size: 14px;">
                           © ${new Date().getFullYear()} Smile Moore. All rights reserved.
                         </p>
-                        <p style="margin: 0; color: #999999; font-size: 12px;">
+                        <p style="margin: 0 0 10px 0; color: #999999; font-size: 12px;">
                           This email was sent because you claimed a voucher on our website.
+                        </p>
+                        <p style="margin: 0; font-size: 12px;">
+                          <a href="https://smilemoore.co.uk/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #999999; text-decoration: underline;">
+                            Unsubscribe from emails
+                          </a>
                         </p>
                       </td>
                     </tr>
@@ -172,6 +191,9 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Increment email count for this user
+    await incrementEmailCount(email);
 
     return NextResponse.json({
       success: true,
