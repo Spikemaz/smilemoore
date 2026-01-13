@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { Resend } from 'resend';
 import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
+import { EMAIL_CONFIG, getFromAddress } from '@/app/lib/emailConfig';
 
 export async function POST(request: Request) {
   try {
@@ -89,9 +90,9 @@ export async function POST(request: Request) {
         personalizedHtml = personalizedHtml.replace('</body>', `${unsubscribeLink}${trackingPixel}</body>`);
 
         await resend.emails.send({
-          from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+          from: getFromAddress(),
           to: [email],
-          replyTo: 'reception@smilemoore.co.uk',
+          replyTo: EMAIL_CONFIG.replyTo,
           subject: subject.replace(/\{name\}/g, name || 'Valued Customer'),
           html: personalizedHtml,
         });

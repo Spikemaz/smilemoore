@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { Resend } from 'resend';
 import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
+import { EMAIL_CONFIG, getFromAddress, SHEETS_CONFIG } from '@/app/lib/emailConfig';
 
-const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
+const SPREADSHEET_ID = SHEETS_CONFIG.spreadsheetId;
 
 function getGoogleSheetsClient() {
   const client_email = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
@@ -196,8 +197,8 @@ export async function GET(request: Request) {
 
           try {
             await resend.emails.send({
-              from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
-              replyTo: 'reception@smilemoore.co.uk',
+              from: getFromAddress(),
+              replyTo: EMAIL_CONFIG.replyTo,
               to: [email],
               subject: variation.subject,
               html: `
@@ -260,8 +261,8 @@ export async function GET(request: Request) {
 
           try {
             await resend.emails.send({
-              from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
-              replyTo: 'reception@smilemoore.co.uk',
+              from: getFromAddress(),
+              replyTo: EMAIL_CONFIG.replyTo,
               to: [email],
               subject: christmasSharingEmail.subject,
               html: `

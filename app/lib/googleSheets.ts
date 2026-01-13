@@ -1,7 +1,8 @@
 import { google } from 'googleapis';
 import { updateCustomerIDSheet } from './updateCustomerIDSheet';
+import { SHEETS_CONFIG } from './emailConfig';
 
-const SPREADSHEET_ID = '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
+const SPREADSHEET_ID = SHEETS_CONFIG.spreadsheetId;
 
 // Initialize Google Sheets API
 function getGoogleSheetsClient() {
@@ -541,7 +542,9 @@ export async function incrementEmailCount(email: string): Promise<void> {
       }
     }
 
-    console.log(`⚠️ Could not find email ${email} to increment count`);
+    // Email not found in sheet - this can happen for new signups not yet synced
+    // Log as warning but don't throw - tracking is non-critical
+    console.warn(`⚠️ Could not find email ${email} to increment count - may be a new signup`);
   } catch (error) {
     console.error('Error incrementing email count:', error);
     // Don't throw - this is non-critical tracking

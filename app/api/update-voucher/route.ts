@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { updateVisitorStatus } from '@/app/lib/visitorTracking';
 import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
+import { EMAIL_CONFIG, getFromAddress, SHEETS_CONFIG } from '@/app/lib/emailConfig';
 
-const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '181kDzZ-BbFqJVu4MEF-b2YhhTaNjmV_luMHvUNGQcCY';
+const SPREADSHEET_ID = SHEETS_CONFIG.spreadsheetId;
 
 async function getAuthClient() {
   const auth = new google.auth.GoogleAuth({
@@ -280,9 +281,9 @@ export async function POST(request: NextRequest) {
               : '';
 
             const emailResult = await resend.emails.send({
-              from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+              from: getFromAddress(),
               to: [emailAddr],
-              replyTo: 'reception@smilemoore.co.uk',
+              replyTo: EMAIL_CONFIG.replyTo,
               subject: isMultiple
                 ? `Your ${sameEmailSignups.length} Smile Moore Vouchers (£${totalValue} Total Value)`
                 : `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,

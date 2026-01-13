@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { checkEmailOptOut, incrementEmailCount } from '@/app/lib/googleSheets';
+import { EMAIL_CONFIG, getFromAddress } from '@/app/lib/emailConfig';
 
 export async function POST(request: Request) {
   try {
@@ -36,9 +37,9 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'Smile Moore Reception <reception@smilemoore.co.uk>',
+      from: getFromAddress(),
       to: [email],
-      replyTo: 'reception@smilemoore.co.uk',
+      replyTo: EMAIL_CONFIG.replyTo,
       subject: `Your £${voucherValue} Smile Moore Voucher - ${voucherCode}`,
       html: `
         <!DOCTYPE html>
