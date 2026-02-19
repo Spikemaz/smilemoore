@@ -968,7 +968,7 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#1f3a33' }}>
-              Claim Your £50 Voucher<br />& Book Your Appointment
+              Claim Your £50 Voucher<br />& Book an Appointment Now
             </h1>
 
             <p className="text-lg mb-2" style={{ color: '#666' }}>
